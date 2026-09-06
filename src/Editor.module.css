@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.editorContainer {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+    background-color: #fafafa;
+}
+
+.editorStatus {
+    margin: 1rem;
+    padding: 1rem;
+    font-size: 0.9rem;
+    color: hsl(6, 0%, 57%);
+    background-color: hsl(0, 0%, 95%);
+    border: 1px solid hsl(0, 0%, 84%);
+    border-radius: 4px;
+    text-align: center;
+}
+
+.error {
+    color: hsl(6, 78%, 57%);
+    background-color: hsl(0, 84%, 95%);
+    border: 1px solid hsl(0, 84%, 84%);
+    border-radius: 4px;
+}
+
+.milkdownEditorWrapper {
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 2rem;
+}
+
+/* Scoped global targeting for Crepe editor inside wrapper */
+.milkdownEditorWrapper :global(.milkdown) {
+    max-width: 800px;
+    margin: 0 auto;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow:
+        0 1px 3px rgba(0, 0, 0, 0.02),
+        0 16px 32px rgba(0, 0, 0, 0.03);
+}

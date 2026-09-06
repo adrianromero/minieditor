@@ -1,0 +1,89 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+/* Toolbar Styling with glassmorphism */
+.editorToolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+    z-index: 100;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.toolbarLeft {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.6rem;
+}
+
+.modifiedIndicator {
+    color: #e67e22;
+    font-size: 1.35rem;
+    line-height: 1;
+}
+
+.toolbarActions {
+    display: flex;
+    flex: 0 0 auto;
+    gap: 0.5rem;
+}
+
+.toolbarBtn {
+    background: #007aff;
+    color: white;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    box-shadow: 0 2px 5px rgba(0, 122, 255, 0.15);
+}
+
+.toolbarBtn:hover {
+    background: #0063cc;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 122, 255, 0.25);
+}
+
+.toolbarBtn:active {
+    transform: translateY(0);
+    background: #0051a8;
+}
+
+.toolbarBtn.secondary {
+    background: rgba(0, 0, 0, 0.05);
+    color: #2c3e50;
+    box-shadow: none;
+}
+
+.toolbarBtn.secondary:hover {
+    background: rgba(0, 0, 0, 0.08);
+    color: #1a252f;
+    transform: translateY(-1px);
+}
+
+.toolbarBtn.secondary:active {
+    background: rgba(0, 0, 0, 0.12);
+    transform: translateY(0);
+}
+
+.toolbarBtn:disabled,
+.toolbarBtn:disabled:hover,
+.toolbarBtn:disabled:active {
+    background: #b8c2cc;
+    color: rgba(255, 255, 255, 0.9);
+    cursor: not-allowed;
+    opacity: 0.65;
+    transform: none;
+    box-shadow: none;
+}

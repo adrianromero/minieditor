@@ -1,0 +1,29 @@
+{
+    "name": "minieditor",
+    "version": "0.1.0",
+    "description": "A lightweight desktop Markdown editor built with Tauri and SolidJS.",
+    "type": "module",
+    "scripts": {
+        "start": "vite",
+        "dev": "vite",
+        "build": "vite build",
+        "serve": "vite preview",
+        "tauri": "tauri"
+    },
+    "author": "Adrián Romero",
+    "license": "MIT",
+    "dependencies": {
+        "@milkdown/crepe": "^7.21.2",
+        "@milkdown/kit": "7.21.2",
+        "@solid-primitives/i18n": "^2.2.1",
+        "@tauri-apps/api": "^2",
+        "@tauri-apps/plugin-opener": "^2",
+        "solid-js": "^1.9.3"
+    },
+    "devDependencies": {
+        "@tauri-apps/cli": "^2",
+        "typescript": "~5.6.2",
+        "vite": "^6.0.3",
+        "vite-plugin-solid": "^2.11.0"
+    }
+}

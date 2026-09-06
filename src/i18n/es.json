@@ -1,0 +1,16 @@
+{
+    "editor": {
+        "loading": "Cargando {{ filename }}...",
+        "saving": "Guardando {{ filename }}..."
+    },
+    "toolbar": {
+        "save": "Guardar",
+        "unsavedChanges": "Cambios sin guardar",
+        "basePath": "<base>",
+        "pathNavigation": "Ruta del archivo actual"
+    },
+    "folder": {
+        "loading": "Cargando {{ path }}...",
+        "empty": "Esta carpeta está vacía"
+    }
+}

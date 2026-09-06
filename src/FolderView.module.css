@@ -1,0 +1,85 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.folderView {
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+    width: 100%;
+    min-height: 0;
+    min-width: 0;
+    padding: 1.5rem;
+    box-sizing: border-box;
+    color: #607080;
+    background-color: #fafafa;
+}
+
+.entryList {
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0;
+    overflow: auto;
+    scrollbar-gutter: stable;
+    list-style: none;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+    box-sizing: border-box;
+}
+
+.entryList li + li {
+    border-top: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.entryButton {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    width: 100%;
+    min-width: 0;
+    padding: 0.75rem 1rem;
+    color: #2c3e50;
+    background: transparent;
+    border: 0;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 150ms ease;
+}
+
+.entryButton:hover {
+    background-color: rgba(0, 122, 255, 0.07);
+}
+
+.entryButton:focus-visible {
+    outline: 2px solid #007aff;
+    outline-offset: -2px;
+}
+
+.entryIcon {
+    flex: 0 0 auto;
+    font-size: 1.15rem;
+}
+
+.entryName {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.emptyFolder,
+.folderError {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 1rem;
+    text-align: center;
+}
+
+.folderError {
+    color: hsl(6, 78%, 47%);
+}

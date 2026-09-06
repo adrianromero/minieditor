@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.breadcrumb {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    color: #2c3e50;
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
+}
+
+.fileIcon {
+    flex: 0 0 auto;
+    margin-right: 0.6rem;
+    font-size: 1.1rem;
+}
+
+.segmentLink {
+    appearance: none;
+    flex: 0 0 auto;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    color: #007aff;
+    font: inherit;
+    cursor: pointer;
+}
+
+.segmentLink:hover {
+    color: #0051a8;
+    text-decoration: underline;
+}
+
+.segmentLink:focus-visible {
+    border-radius: 2px;
+    outline: 2px solid rgba(0, 122, 255, 0.45);
+    outline-offset: 2px;
+}
+
+.separator {
+    flex: 0 0 auto;
+    margin: 0 0.35rem;
+    color: #8a96a3;
+    font-weight: 400;
+}
+
+.currentSegment {
+    overflow: hidden;
+    min-width: 0;
+    text-overflow: ellipsis;
+}

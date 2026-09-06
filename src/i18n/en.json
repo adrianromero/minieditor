@@ -1,0 +1,16 @@
+{
+    "editor": {
+        "loading": "Loading {{ filename }}...",
+        "saving": "Saving {{ filename }}..."
+    },
+    "toolbar": {
+        "save": "Save",
+        "unsavedChanges": "Unsaved changes",
+        "basePath": "<base>",
+        "pathNavigation": "Current file path"
+    },
+    "folder": {
+        "loading": "Loading {{ path }}...",
+        "empty": "This folder is empty"
+    }
+}
