@@ -1,0 +1,70 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+/* Theme tokens. Add a [data-theme="dark"] block here when the dark palette exists. */
+:root,
+[data-theme="light"] {
+    color-scheme: light;
+
+    --color-background: #ffffff;
+    --color-view-background: #fafafa;
+    --color-surface: #ffffff;
+    --color-text: #2c3e50;
+    --color-text-muted: #607080;
+    --color-text-subtle: #8a96a3;
+    --color-primary: #007aff;
+    --color-primary-hover: #0063cc;
+    --color-primary-active: #0051a8;
+    --color-primary-soft: rgba(0, 122, 255, 0.07);
+    --color-primary-focus: rgba(0, 122, 255, 0.45);
+    --color-warning: #e67e22;
+    --color-error: hsl(6, 78%, 47%);
+    --color-error-text: hsl(6, 78%, 57%);
+    --color-error-background: hsl(0, 84%, 95%);
+    --color-error-border: hsl(0, 84%, 84%);
+    --color-status-text: hsl(6, 0%, 57%);
+    --color-status-background: hsl(0, 0%, 95%);
+    --color-status-border: hsl(0, 0%, 84%);
+    --color-border: rgba(0, 0, 0, 0.08);
+    --color-border-subtle: rgba(0, 0, 0, 0.06);
+    --color-secondary: rgba(0, 0, 0, 0.05);
+    --color-secondary-hover: rgba(0, 0, 0, 0.08);
+    --color-secondary-active: rgba(0, 0, 0, 0.12);
+    --color-disabled: #b8c2cc;
+    --color-on-primary: #ffffff;
+    --color-overlay: rgba(248, 250, 252, 0.58);
+
+    --view-padding: 2rem;
+    --content-max-width: 800px;
+    --radius-small: 4px;
+    --radius-medium: 8px;
+    --shadow-surface: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+/* Shared structure for full-height, independently scrolling application views. */
+.scrollingView {
+    flex: 1 1 0;
+    width: 100%;
+    min-width: 0;
+    min-height: 0;
+    overflow: auto;
+    scrollbar-gutter: stable;
+    box-sizing: border-box;
+    padding: var(--view-padding);
+    background-color: var(--color-view-background);
+}
+
+.scrollingView > .contentView,
+.scrollingView > .milkdown {
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    box-sizing: border-box;
+
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-surface);
+}

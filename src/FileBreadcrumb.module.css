@@ -7,7 +7,7 @@
     display: flex;
     min-width: 0;
     align-items: center;
-    color: #2c3e50;
+    color: var(--color-text);
     font-size: 0.9rem;
     font-weight: 600;
     letter-spacing: -0.01em;
@@ -27,26 +27,26 @@
     padding: 0;
     border: 0;
     background: none;
-    color: #007aff;
+    color: var(--color-primary);
     font: inherit;
     cursor: pointer;
 }
 
 .segmentLink:hover {
-    color: #0051a8;
+    color: var(--color-primary-active);
     text-decoration: underline;
 }
 
 .segmentLink:focus-visible {
     border-radius: 2px;
-    outline: 2px solid rgba(0, 122, 255, 0.45);
+    outline: 2px solid var(--color-primary-focus);
     outline-offset: 2px;
 }
 
 .separator {
     flex: 0 0 auto;
     margin: 0 0.35rem;
-    color: #8a96a3;
+    color: var(--color-text-subtle);
     font-weight: 400;
 }
 

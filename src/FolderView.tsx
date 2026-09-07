@@ -42,7 +42,7 @@ export function FolderView(): JSX.Element {
     );
 
     return (
-        <section class={styles.folderView}>
+        <section class="scrollingView">
             <Show when={!directoryResult.loading}>
                 <Switch>
                     <Match when={directoryResult()?.error}>
@@ -53,7 +53,7 @@ export function FolderView(): JSX.Element {
                             when={(directoryResult()?.entries?.length ?? 0) > 0}
                             fallback={<div class={styles.emptyFolder}>{t("folder.empty")}</div>}
                         >
-                            <ul class={styles.entryList}>
+                            <ul class={`${styles.entryList} contentView`}>
                                 <For each={directoryResult()?.entries}>
                                     {(entry) => (
                                         <li>

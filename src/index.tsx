@@ -7,6 +7,9 @@
 import { invoke } from "@tauri-apps/api/core";
 import { render } from "solid-js/web";
 import App from "./App";
+import "./theme.css";
+
+document.documentElement.dataset.theme = "light";
 
 type InitialConfig = {
     basepath: string;

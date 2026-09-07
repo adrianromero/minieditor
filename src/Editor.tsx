@@ -123,12 +123,12 @@ export function Editor(): JSX.Element {
     });
 
     return (
-        <div class={styles.editorContainer}>
+        <>
             <Show when={error()}>
                 <div class={`${styles.editorStatus} ${styles.error}`}>Error: {error()}</div>
             </Show>
-            <div ref={editorRef} class={styles.milkdownEditorWrapper} />
-        </div>
+            <div ref={editorRef} class="scrollingView" />
+        </>
     );
 }
 

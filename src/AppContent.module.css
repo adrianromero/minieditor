@@ -6,16 +6,16 @@
 .pathStatus {
     margin: 1rem;
     padding: 1rem;
-    color: hsl(6, 0%, 57%);
-    background-color: hsl(0, 0%, 95%);
-    border: 1px solid hsl(0, 0%, 84%);
-    border-radius: 4px;
+    color: var(--color-status-text);
+    background-color: var(--color-status-background);
+    border: 1px solid var(--color-status-border);
+    border-radius: var(--radius-small);
     font-size: 0.9rem;
     text-align: center;
 }
 
 .pathError {
-    color: hsl(6, 78%, 57%);
-    background-color: hsl(0, 84%, 95%);
-    border-color: hsl(0, 84%, 84%);
+    color: var(--color-error-text);
+    background-color: var(--color-error-background);
+    border-color: var(--color-error-border);
 }

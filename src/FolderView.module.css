@@ -3,38 +3,14 @@
  * SPDX-License-Identifier: MIT
  */
 
-.folderView {
-    flex: 1 1 0;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 1rem;
-    width: 100%;
-    min-height: 0;
-    min-width: 0;
-    overflow: auto;
-    scrollbar-gutter: stable;
-    padding: 2rem;
-    box-sizing: border-box;
-    color: #607080;
-    background-color: #fafafa;
-}
-
 .entryList {
-    width: 100%;
-    max-width: 800px;
-    margin: 0 auto;
     padding: 0;
+    margin: 0;
     list-style: none;
-    background: #fff;
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 8px;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
-    box-sizing: border-box;
 }
 
 .entryList li + li {
-    border-top: 1px solid rgba(0, 0, 0, 0.06);
+    border-top: 1px solid var(--color-border-subtle);
 }
 
 .entryButton {
@@ -44,7 +20,7 @@
     width: 100%;
     min-width: 0;
     padding: 0.75rem 1rem;
-    color: #2c3e50;
+    color: var(--color-text);
     background: transparent;
     border: 0;
     font: inherit;
@@ -54,11 +30,11 @@
 }
 
 .entryButton:hover {
-    background-color: rgba(0, 122, 255, 0.07);
+    background-color: var(--color-primary-soft);
 }
 
 .entryButton:focus-visible {
-    outline: 2px solid #007aff;
+    outline: 2px solid var(--color-primary);
     outline-offset: -2px;
 }
 
@@ -74,12 +50,13 @@
 
 .emptyFolder,
 .folderError {
-    max-width: 800px;
+    width: 100%;
+    max-width: var(--content-max-width);
     margin: 0 auto;
     padding: 1rem;
     text-align: center;
 }
 
 .folderError {
-    color: hsl(6, 78%, 47%);
+    color: var(--color-error);
 }
