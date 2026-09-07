@@ -8,7 +8,6 @@ import Toolbar from "./Toolbar";
 import styles from "./App.module.css";
 import { AppProvider } from "./AppContext";
 import I18NProvider from "./Localization";
-import TestToolbar from "./TestToolbar";
 
 type AppProps = {
     initialBasepath: string;
@@ -19,7 +18,6 @@ function App(props: AppProps) {
         <I18NProvider>
             <AppProvider initialBasepath={props.initialBasepath}>
                 <main class={styles.appMain}>
-                    <TestToolbar />
                     <Toolbar />
                     <AppContent />
                 </main>

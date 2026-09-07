@@ -12,7 +12,9 @@
     width: 100%;
     min-height: 0;
     min-width: 0;
-    padding: 1.5rem;
+    overflow: auto;
+    scrollbar-gutter: stable;
+    padding: 2rem;
     box-sizing: border-box;
     color: #607080;
     background-color: #fafafa;
@@ -23,8 +25,6 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 0;
-    overflow: auto;
-    scrollbar-gutter: stable;
     list-style: none;
     background: #fff;
     border: 1px solid rgba(0, 0, 0, 0.08);
