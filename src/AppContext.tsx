@@ -38,9 +38,13 @@ export function useAppContext() {
     return value;
 }
 
-export function AppProvider(props: { initialBasepath: string; children: JSX.Element }): JSX.Element {
+export function AppProvider(props: {
+    initialBasepath: string;
+    initialFilename: string;
+    children: JSX.Element;
+}): JSX.Element {
     const [basepath, setBasepath] = createSignal(props.initialBasepath);
-    const [filename, setFilename] = createSignal("");
+    const [filename, setFilename] = createSignal(props.initialFilename);
 
     const [saveFile, setSaveFileSignal] = createSignal<SaveFileHandler | null>(null);
     const [fileModified, setFileModified] = createSignal(false);

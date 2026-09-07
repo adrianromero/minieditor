@@ -12,13 +12,13 @@ use tracing_subscriber;
 #[derive(Debug, Parser)]
 #[command(version, about = "A lightweight Markdown editor")]
 struct Cli {
-    /// Base directory containing the files that can be opened
-    #[arg(value_name = "BASEPATH", value_hint = clap::ValueHint::DirPath)]
-    basepath: Option<PathBuf>,
+    /// File to open or base directory containing the files that can be opened
+    #[arg(value_name = "PATH", value_hint = clap::ValueHint::AnyPath)]
+    path: Option<PathBuf>,
 }
 
-fn resolve_basepath(basepath: Option<PathBuf>) -> Result<PathBuf, String> {
-    let requested_path = match basepath {
+fn resolve_path(path: Option<PathBuf>) -> Result<(PathBuf, String), String> {
+    let requested_path = match path {
         Some(path) => path,
         None => std::env::current_dir()
             .map_err(|error| format!("Failed to get current directory: {}", error))?,
@@ -31,24 +31,69 @@ fn resolve_basepath(basepath: Option<PathBuf>) -> Result<PathBuf, String> {
         )
     })?;
 
-    if !canonical_path.is_dir() {
-        return Err(format!(
-            "Base path is not a directory: '{}'",
-            canonical_path.display()
+    if canonical_path.is_dir() {
+        return Ok((canonical_path, String::new()));
+    }
+
+    if canonical_path.is_file() {
+        let basepath = canonical_path.parent().ok_or_else(|| {
+            format!(
+                "File path has no parent directory: '{}'",
+                canonical_path.display()
+            )
+        })?;
+        let filename = canonical_path
+            .file_name()
+            .ok_or_else(|| format!("File path has no filename: '{}'", canonical_path.display()))?;
+        return Ok((
+            basepath.to_path_buf(),
+            filename.to_string_lossy().into_owned(),
         ));
     }
 
-    Ok(canonical_path)
+    Err(format!(
+        "Path is not a regular file or directory: '{}'",
+        canonical_path.display()
+    ))
 }
 
 fn main() {
     tracing_subscriber::fmt::init();
     let cli = Cli::parse();
-    let basepath = resolve_basepath(cli.basepath).unwrap_or_else(|error| {
+    let (basepath, filename) = resolve_path(cli.path).unwrap_or_else(|error| {
         eprintln!("Error: {}", error);
         std::process::exit(2);
     });
 
-    info!("Starting MiniEditor with base path {}", basepath.display());
-    minieditor_lib::run_with_basepath(basepath)
+    info!(
+        "Starting MiniEditor with base path {} and filename {}",
+        basepath.display(),
+        filename
+    );
+    minieditor_lib::run_with_path(basepath, filename)
+}
+
+#[cfg(test)]
+mod tests {
+    use super::resolve_path;
+    use std::path::PathBuf;
+
+    #[test]
+    fn directory_path_has_an_empty_filename() {
+        let directory = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        let (basepath, filename) = resolve_path(Some(directory.clone())).unwrap();
+
+        assert_eq!(basepath, std::fs::canonicalize(directory).unwrap());
+        assert!(filename.is_empty());
+    }
+
+    #[test]
+    fn file_path_is_split_into_parent_and_filename() {
+        let file = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("Cargo.toml");
+        let canonical_file = std::fs::canonicalize(&file).unwrap();
+        let (basepath, filename) = resolve_path(Some(file)).unwrap();
+
+        assert_eq!(basepath, canonical_file.parent().unwrap());
+        assert_eq!(filename, "Cargo.toml");
+    }
 }

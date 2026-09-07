@@ -8,12 +8,14 @@ use tracing::info;
 
 struct AppState {
     basepath: PathBuf,
+    filename: String,
 }
 
 #[derive(serde::Serialize)]
 #[serde(rename_all = "camelCase")]
 struct InitialConfig {
     basepath: String,
+    filename: String,
 }
 
 #[derive(serde::Serialize)]
@@ -123,6 +125,7 @@ async fn resolve_write_path(basepath: &str, filename: &str) -> Result<PathBuf, S
 fn initial_config(state: tauri::State<'_, AppState>) -> InitialConfig {
     InitialConfig {
         basepath: state.basepath.to_string_lossy().into_owned(),
+        filename: state.filename.clone(),
     }
 }
 
@@ -220,9 +223,9 @@ async fn write_file(basepath: String, filename: String, content: String) -> Resu
         .map_err(|e| format!("Failed to write file '{}': {}", filename, e))
 }
 
-pub fn run_with_basepath(basepath: PathBuf) {
+pub fn run_with_path(basepath: PathBuf, filename: String) {
     tauri::Builder::default()
-        .manage(AppState { basepath })
+        .manage(AppState { basepath, filename })
         .plugin(tauri_plugin_opener::init())
         .setup(|app| {
             if let (Some(window), Some(icon)) =
@@ -246,5 +249,5 @@ pub fn run_with_basepath(basepath: PathBuf) {
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let basepath = std::env::current_dir().expect("failed to get current directory");
-    run_with_basepath(basepath);
+    run_with_path(basepath, String::new());
 }

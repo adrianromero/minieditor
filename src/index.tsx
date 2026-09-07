@@ -10,12 +10,13 @@ import App from "./App";
 
 type InitialConfig = {
     basepath: string;
+    filename: string;
 };
 
 async function bootstrap(): Promise<void> {
     const config = await invoke<InitialConfig>("initial_config");
     render(
-        () => <App initialBasepath={config.basepath} />,
+        () => <App initialBasepath={config.basepath} initialFilename={config.filename} />,
         document.getElementById("root") as HTMLElement
     );
 }

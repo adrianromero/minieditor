@@ -11,12 +11,16 @@ import I18NProvider from "./Localization";
 
 type AppProps = {
     initialBasepath: string;
+    initialFilename: string;
 };
 
 function App(props: AppProps) {
     return (
         <I18NProvider>
-            <AppProvider initialBasepath={props.initialBasepath}>
+            <AppProvider
+                initialBasepath={props.initialBasepath}
+                initialFilename={props.initialFilename}
+            >
                 <main class={styles.appMain}>
                     <Toolbar />
                     <AppContent />
