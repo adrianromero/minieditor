@@ -8,7 +8,7 @@ import { invoke } from "@tauri-apps/api/core";
 import Editor from "./Editor";
 import FolderView from "./FolderView";
 import { useAppContext } from "./AppContext";
-import styles from "./AppContent.module.css";
+import ErrorView from "./ErrorView";
 
 type PathKind = "file" | "directory" | "other";
 
@@ -46,12 +46,12 @@ export function AppContent(): JSX.Element {
                     <FolderView />
                 </Match>
                 <Match when={pathResult()?.kind === "other"}>
-                    <div class={styles.pathStatus}>Unsupported path type: {filename()}</div>
+                    <ErrorView style="errorStyleStatus">
+                        Unsupported path type: {filename()}
+                    </ErrorView>
                 </Match>
                 <Match when={pathResult()?.kind === "error"}>
-                    <div class={`${styles.pathStatus} ${styles.pathError}`}>
-                        {pathResult()?.error}
-                    </div>
+                    <ErrorView>{pathResult()?.error ?? "Error desconocido"}</ErrorView>
                 </Match>
             </Switch>
         </Show>

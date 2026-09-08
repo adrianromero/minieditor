@@ -13,6 +13,8 @@
     "author": "Adrián Romero",
     "license": "MIT",
     "dependencies": {
+        "@fortawesome/fontawesome-svg-core": "^7.3.1",
+        "@fortawesome/free-solid-svg-icons": "^7.3.1",
         "@milkdown/crepe": "^7.21.2",
         "@milkdown/kit": "7.21.2",
         "@solid-primitives/i18n": "^2.2.1",

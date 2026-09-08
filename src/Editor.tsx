@@ -12,7 +12,7 @@ import { useAppContext } from "./AppContext";
 
 import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
-import styles from "./Editor.module.css";
+import ErrorView from "./ErrorView";
 
 export function Editor(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -125,7 +125,7 @@ export function Editor(): JSX.Element {
     return (
         <>
             <Show when={error()}>
-                <div class={`${styles.editorStatus} ${styles.error}`}>Error: {error()}</div>
+                <ErrorView>{error() ?? "Error desconocido"}</ErrorView>
             </Show>
             <div ref={editorRef} class="scrollingView" />
         </>
