@@ -6,6 +6,7 @@
 import * as i18n from "@solid-primitives/i18n";
 import {
     createContext,
+    createEffect,
     createMemo,
     createSignal,
     useContext,
@@ -33,12 +34,18 @@ type I18NContextValue = {
     setLocale: Setter<Locale>;
 };
 
+export type Translator = I18NContextValue["t"];
+
 const I18NContext = createContext<I18NContextValue>();
 
 const I18NProvider: ParentComponent = props => {
     const [locale, setLocale] = createSignal<Locale>(getSystemLocale());
     const dictionary = createMemo(() => i18n.flatten(dictionaries[locale()]));
     const t = i18n.translator(dictionary, i18n.resolveTemplate);
+
+    createEffect(() => {
+        document.documentElement.lang = locale();
+    });
 
     return (
         <I18NContext.Provider value={{ t, locale, setLocale }}>

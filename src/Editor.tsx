@@ -13,6 +13,7 @@ import { useAppContext } from "./AppContext";
 import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
 import ErrorView from "./ErrorView";
+import { translateAppError } from "./AppError";
 
 export function Editor(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -47,7 +48,7 @@ export function Editor(): JSX.Element {
             setFileModified(false);
         } catch (err: unknown) {
             console.error("Error saving file in Editor:", err);
-            setError(String(err));
+            setError(translateAppError(err, t));
         } finally {
             hideSpinner();
         }
@@ -108,7 +109,7 @@ export function Editor(): JSX.Element {
                 crepeInstance = null;
             }
             console.error("Error loading file in Editor:", err);
-            setError(String(err));
+            setError(translateAppError(err, t));
         } finally {
             hideSpinner();
         }
@@ -125,7 +126,7 @@ export function Editor(): JSX.Element {
     return (
         <>
             <Show when={error()}>
-                <ErrorView>{error() ?? "Error desconocido"}</ErrorView>
+                <ErrorView>{error() ?? t("errors.unknown")}</ErrorView>
             </Show>
             <div ref={editorRef} class="scrollingView" />
         </>

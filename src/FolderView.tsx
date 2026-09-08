@@ -8,6 +8,7 @@ import { invoke } from "@tauri-apps/api/core";
 import { useAppContext } from "./AppContext";
 import { useI18N } from "./Localization";
 import styles from "./FolderView.module.css";
+import { translateAppError } from "./AppError";
 
 type DirectoryEntry = {
     name: string;
@@ -34,7 +35,8 @@ export function FolderView(): JSX.Element {
                 const entries = await invoke<DirectoryEntry[]>("list_directory", path);
                 return { entries };
             } catch (error: unknown) {
-                return { error: String(error) };
+                console.error("Unable to list directory:", error);
+                return { error: translateAppError(error, t) };
             } finally {
                 hideSpinner();
             }

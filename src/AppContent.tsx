@@ -9,12 +9,15 @@ import Editor from "./Editor";
 import FolderView from "./FolderView";
 import { useAppContext } from "./AppContext";
 import ErrorView from "./ErrorView";
+import { useI18N } from "./Localization";
+import { translateAppError } from "./AppError";
 
 type PathKind = "file" | "directory" | "other";
 
 type PathResult = { kind: PathKind; error?: never } | { kind: "error"; error: string };
 
 export function AppContent(): JSX.Element {
+    const { t } = useI18N();
     const {
         main: { basepath, filename },
         spinner: { showSpinner, hideSpinner, setSpinnerParams },
@@ -29,7 +32,8 @@ export function AppContent(): JSX.Element {
                 const kind = await invoke<PathKind>("path_kind", path);
                 return { kind };
             } catch (error: unknown) {
-                return { kind: "error", error: String(error) };
+                console.error("Unable to inspect path:", error);
+                return { kind: "error", error: translateAppError(error, t) };
             } finally {
                 hideSpinner();
             }
@@ -47,11 +51,11 @@ export function AppContent(): JSX.Element {
                 </Match>
                 <Match when={pathResult()?.kind === "other"}>
                     <ErrorView style="errorStyleStatus">
-                        Unsupported path type: {filename()}
+                        {t("errors.unsupportedPathType", { filename: filename() })}
                     </ErrorView>
                 </Match>
                 <Match when={pathResult()?.kind === "error"}>
-                    <ErrorView>{pathResult()?.error ?? "Error desconocido"}</ErrorView>
+                    <ErrorView>{pathResult()?.error ?? t("errors.unknown")}</ErrorView>
                 </Match>
             </Switch>
         </Show>

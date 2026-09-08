@@ -12,5 +12,16 @@
     "folder": {
         "loading": "Loading {{ path }}...",
         "empty": "This folder is empty"
+    },
+    "errors": {
+        "unknown": "Unknown error",
+        "unsupportedPathType": "Unsupported path type: {{ filename }}",
+        "invalidPath": "The selected path {{ path }} is not valid.",
+        "pathNotFound": "{{ path }} could not be found. It may have been moved or deleted.",
+        "permissionDenied": "You do not have permission to access {{ path }}.",
+        "inspectPathFailed": "The path {{ path }} could not be inspected.",
+        "readDirectoryFailed": "The folder {{ path }} could not be opened.",
+        "readFileFailed": "The file {{ path }} could not be read.",
+        "writeFileFailed": "The file {{ path }} could not be saved. Check that it is writable."
     }
 }
