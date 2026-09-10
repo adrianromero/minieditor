@@ -30,24 +30,24 @@
     box-shadow: var(--shadow-surface);
 }
 
-.errorStyleError > .errorContent {
+.styleError > .errorContent {
     background-color: var(--color-error-background);
     border: 1px solid var(--color-error-border);
 }
 
-.errorStyleError .icon,
-.errorStyleError .title {
+.styleError .icon,
+.styleError .title {
     font-weight: 600;
     color: var(--color-error-text);
 }
 
-.errorStyleStatus > .errorContent {
+.styleStatus > .errorContent {
     background-color: var(--color-status-background);
     border: 1px solid var(--color-status-border);
 }
 
-.errorStyleStatus .icon,
-.errorStyleStatus .title {
+.styleStatus .icon,
+.styleStatus .title {
     font-weight: 600;
     color: var(--color-status-text);
 }

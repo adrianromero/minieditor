@@ -50,7 +50,7 @@ export function AppContent(): JSX.Element {
                     <FolderView />
                 </Match>
                 <Match when={pathResult()?.kind === "other"}>
-                    <ErrorView style="errorStyleStatus">
+                    <ErrorView info="status">
                         {t("errors.unsupportedPathType", { filename: filename() })}
                     </ErrorView>
                 </Match>

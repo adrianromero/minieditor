@@ -3,30 +3,28 @@
  * SPDX-License-Identifier: MIT
  */
 
-import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { faCircleInfo, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
 import { JSX } from "solid-js";
 import styles from "./ErrorView.module.css";
 import AppIcon from "./AppIcon";
+import { messagesinfo, type MessageInfoKind, type MessageInfo } from "./messagesinfo";
 import { useI18N } from "./Localization";
 
 type ErrorViewProps = {
     children: JSX.Element;
-    style?: "errorStyleError" | "errorStyleStatus";
+    info?: MessageInfoKind;
 };
 
 export function ErrorView(props: ErrorViewProps): JSX.Element {
     const { t } = useI18N();
 
-    const style = (): NonNullable<ErrorViewProps["style"]> => props.style ?? "errorStyleError";
-    const icon = (): IconDefinition =>
-        style() === "errorStyleError" ? faCircleXmark : faCircleInfo;
+    const kind = (): MessageInfoKind => props.info ?? "error";
+    const info = (): MessageInfo => messagesinfo[kind()];
 
     return (
-        <section class={`${styles.errorView} ${styles[style()]}`}>
+        <section class={`${styles.errorView} ${styles[info().class]}`}>
             <div class={styles.errorContent}>
-                <AppIcon icon={icon()} class={styles.icon} />
-                <div class={styles.title}>{t("dialog.errorTitle")}</div>
+                <AppIcon icon={info().icon} class={styles.icon} />
+                <div class={styles.title}>{t(info().literal)}</div>
                 <div class={styles.message}>{props.children}</div>
             </div>
         </section>

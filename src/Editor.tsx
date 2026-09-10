@@ -205,7 +205,6 @@ export function Editor(): JSX.Element {
             </Show>
             <Dialog
                 open={dialogError() !== null}
-                title={t("dialog.errorTitle")}
                 message={dialogError() ?? ""}
                 closeLabel={t("dialog.close")}
                 onClose={() => setDialogError(null)}

@@ -21,6 +21,11 @@ import es from "./i18n/es.json";
 const dictionaries = { en, es };
 export type Locale = keyof typeof dictionaries;
 
+type Dictionary = i18n.Flatten<typeof en>;
+export type TranslationKey = {
+    [Key in keyof Dictionary]: Dictionary[Key] extends string ? Key : never;
+}[keyof Dictionary];
+
 function getSystemLocale(): Locale {
     const systemLocale = navigator.languages[0] ?? navigator.language;
     const language = systemLocale.split("-")[0].toLowerCase();
@@ -29,7 +34,7 @@ function getSystemLocale(): Locale {
 }
 
 type I18NContextValue = {
-    t: i18n.Translator<i18n.Flatten<typeof en>, string>;
+    t: i18n.Translator<Dictionary, string>;
     locale: Accessor<Locale>;
     setLocale: Setter<Locale>;
 };
