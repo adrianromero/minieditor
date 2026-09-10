@@ -14,8 +14,11 @@
         "empty": "This folder is empty"
     },
     "dialog": {
-        "errorTitle": "Error",
         "close": "Close"
+    },
+    "info": {
+        "status": "Information",
+        "error": "Error"
     },
     "errors": {
         "unknown": "Unknown error",

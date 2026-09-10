@@ -16,12 +16,12 @@ export type MessageInfo = Readonly<{
 export const messagesinfo = {
     status: {
         icon: faCircleInfo,
-        literal: "dialog.errorTitle",
+        literal: "info.status",
         class: "styleStatus",
     },
     error: {
         icon: faCircleXmark,
-        literal: "dialog.errorTitle",
+        literal: "info.error",
         class: "styleError",
     },
 } as const satisfies Readonly<Record<string, MessageInfo>>;

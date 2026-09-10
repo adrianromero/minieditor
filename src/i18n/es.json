@@ -14,8 +14,11 @@
         "empty": "Esta carpeta está vacía"
     },
     "dialog": {
-        "errorTitle": "Error",
         "close": "Cerrar"
+    },
+    "info": {
+        "status": "Información",
+        "error": "Error"
     },
     "errors": {
         "unknown": "Error desconocido",
