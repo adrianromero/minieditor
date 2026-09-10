@@ -13,6 +13,10 @@
         "loading": "Cargando {{ path }}...",
         "empty": "Esta carpeta está vacía"
     },
+    "dialog": {
+        "errorTitle": "Error",
+        "close": "Cerrar"
+    },
     "errors": {
         "unknown": "Error desconocido",
         "unsupportedPathType": "Tipo de ruta no compatible: {{ filename }}",

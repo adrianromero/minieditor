@@ -13,6 +13,7 @@ import { useAppContext } from "./AppContext";
 import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
 import ErrorView from "./ErrorView";
+import Dialog from "./Dialog";
 import { translateAppError } from "./AppError";
 
 export function Editor(): JSX.Element {
@@ -26,6 +27,7 @@ export function Editor(): JSX.Element {
         editor: { setSaveFile, setFileModified },
     } = useAppContext();
     const [error, setError] = createSignal<string | null>(null);
+    const [dialogError, setDialogError] = createSignal<string | null>(null);
 
     const navigateToAnchor = (href: string): boolean => {
         let anchor: string;
@@ -91,6 +93,7 @@ export function Editor(): JSX.Element {
             setFilename(resolvedFilename);
         } catch (err: unknown) {
             console.error("Unable to resolve editor link:", err);
+            setDialogError(translateAppError(err, t));
         }
     };
 
@@ -200,6 +203,13 @@ export function Editor(): JSX.Element {
             <Show when={error()}>
                 <ErrorView>{error() ?? t("errors.unknown")}</ErrorView>
             </Show>
+            <Dialog
+                open={dialogError() !== null}
+                title={t("dialog.errorTitle")}
+                message={dialogError() ?? ""}
+                closeLabel={t("dialog.close")}
+                onClose={() => setDialogError(null)}
+            />
             <div ref={editorRef} class="scrollingView" />
         </>
     );

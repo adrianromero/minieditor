@@ -1,0 +1,75 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.dialog {
+    max-width: 25em;
+    box-sizing: border-box;
+    padding: 0;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.18);
+    overflow: hidden;
+    text-align: center;
+}
+
+.dialog::backdrop {
+    background: rgba(0, 0, 0, 0.3);
+    backdrop-filter: blur(2px);
+}
+
+.title {
+    margin: 0;
+    padding: 0 1.25rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--color-error-text);
+}
+
+.iconRow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 1.5rem;
+}
+
+.icon {
+    width: 3em;
+    height: 3em;
+}
+
+.message {
+    margin-top: 0.75rem;
+    padding: 0 1.25rem;
+    line-height: 1.45;
+    overflow-wrap: anywhere;
+}
+
+.errorStyleError {
+    color: var(--color-error-text);
+    background: linear-gradient(
+        to bottom,
+        var(--color-error-background) 0 50%,
+        var(--color-surface) 50% 100%
+    );
+}
+
+.errorStyleStatus {
+    color: var(--color-status-text);
+    background: linear-gradient(
+        to bottom,
+        var(--color-status-background) 0 50%,
+        var(--color-surface) 50% 100%
+    );
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    padding: 1.25rem;
+}

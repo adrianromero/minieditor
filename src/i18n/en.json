@@ -13,6 +13,10 @@
         "loading": "Loading {{ path }}...",
         "empty": "This folder is empty"
     },
+    "dialog": {
+        "errorTitle": "Error",
+        "close": "Close"
+    },
     "errors": {
         "unknown": "Unknown error",
         "unsupportedPathType": "Unsupported path type: {{ filename }}",

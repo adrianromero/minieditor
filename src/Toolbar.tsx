@@ -31,7 +31,7 @@ export function Toolbar() {
             </div>
             <div class={styles.toolbarActions}>
                 <button
-                    class={styles.toolbarBtn}
+                    class="appButton"
                     disabled={!saveFile()}
                     onClick={() => {
                         saveFile()?.();

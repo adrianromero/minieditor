@@ -30,12 +30,6 @@
     box-shadow: var(--shadow-surface);
 }
 
-.errorIcon {
-    width: 1.25em;
-    height: 1.25em;
-    flex: 0 0 auto;
-}
-
 .errorStyleError {
     color: var(--color-error-text);
     background-color: var(--color-error-background);
@@ -46,4 +40,9 @@
     color: var(--color-status-text);
     background-color: var(--color-status-background);
     border: 1px solid var(--color-status-border);
+}
+
+.icon {
+    width: 1.5em;
+    height: 1.5em;
 }
