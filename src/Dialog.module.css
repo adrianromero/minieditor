@@ -26,7 +26,6 @@
     padding: 0 1.25rem;
     font-size: 1.1rem;
     font-weight: 600;
-    color: var(--color-error-text);
 }
 
 .iconRow {
@@ -50,7 +49,7 @@
     overflow-wrap: anywhere;
 }
 
-.errorStyleError {
+.errorStyleError > .iconRow {
     color: var(--color-error-text);
     background: linear-gradient(
         to bottom,
@@ -59,13 +58,21 @@
     );
 }
 
-.errorStyleStatus {
+.errorStyleError > .title {
+    color: var(--color-error-text);
+}
+
+.errorStyleStatus > .iconRow {
     color: var(--color-status-text);
     background: linear-gradient(
         to bottom,
         var(--color-status-background) 0 50%,
         var(--color-surface) 50% 100%
     );
+}
+
+.errorStyleStatus .title {
+    color: var(--color-status-text);
 }
 
 .actions {

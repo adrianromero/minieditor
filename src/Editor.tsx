@@ -72,13 +72,13 @@ export function Editor(): JSX.Element {
         event.preventDefault();
         event.stopPropagation();
 
+        const preview = link.closest<HTMLElement>(".milkdown-link-preview");
+        if (preview) {
+            preview.dataset.show = "false";
+        }
+
         if (href.startsWith("#")) {
-            if (navigateToAnchor(href)) {
-                const preview = link.closest<HTMLElement>(".milkdown-link-preview");
-                if (preview) {
-                    preview.dataset.show = "false";
-                }
-            } else {
+            if (!navigateToAnchor(href)) {
                 console.error("Heading anchor not found:", href);
             }
             return;

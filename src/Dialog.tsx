@@ -38,11 +38,11 @@ export function Dialog(props: DialogProps): JSX.Element {
     return (
         <dialog
             ref={dialogRef}
-            class={styles.dialog}
+            class={`${styles.dialog} ${styles[style()]}`}
             aria-labelledby={titleId}
             onClose={props.onClose}
         >
-            <div class={`${styles.iconRow} ${styles[style()]}`}>
+            <div class={styles.iconRow}>
                 <AppIcon icon={icon()} class={styles.icon} />
             </div>
             <h2 id={titleId} class={styles.title}>
