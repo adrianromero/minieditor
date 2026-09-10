@@ -122,6 +122,12 @@ cargo check --manifest-path src-tauri/Cargo.toml
 cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
 ```
 
+Regenerate all application icons from `minieditor-logo.png` with:
+
+```bash
+npm run tauri icon minieditor-logo.png
+```
+
 ## Security model
 
 MiniEditor treats `BASEPATH` as the root of the accessible file tree. Filenames exchanged with the frontend are relative to that directory. The Rust backend rejects absolute filenames, parent-directory traversal, and resolved paths outside the configured base directory.

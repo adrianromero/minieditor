@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { onCleanup, createSignal, Show, JSX, createEffect } from "solid-js";
+import { onCleanup, onMount, createSignal, Show, JSX, createEffect } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { Crepe } from "@milkdown/crepe";
 import { remarkStringifyOptionsCtx } from "@milkdown/kit/core";
@@ -21,11 +21,78 @@ export function Editor(): JSX.Element {
 
     const { t } = useI18N();
     const {
-        main: { basepath, filename },
+        main: { basepath, filename, setFilename },
         spinner: { showSpinner, hideSpinner, setSpinnerParams },
         editor: { setSaveFile, setFileModified },
     } = useAppContext();
     const [error, setError] = createSignal<string | null>(null);
+
+    const navigateToAnchor = (href: string): boolean => {
+        let anchor: string;
+        try {
+            anchor = decodeURIComponent(href.slice(1));
+        } catch (err: unknown) {
+            console.error("Unable to decode heading anchor:", err);
+            return false;
+        }
+
+        if (!anchor) {
+            return false;
+        }
+
+        const target = document.getElementById(anchor);
+        if (!target || !editorRef.contains(target)) {
+            return false;
+        }
+
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+        return true;
+    };
+
+    const handleLinkPreviewClick = async (event: MouseEvent): Promise<void> => {
+        const target = event.target;
+        if (!(target instanceof Element)) {
+            return;
+        }
+
+        const link = target.closest<HTMLAnchorElement>(
+            ".milkdown-link-preview a.link-display[href]"
+        );
+        if (!link || !editorRef.contains(link)) {
+            return;
+        }
+
+        const href = link.getAttribute("href");
+        if (!href) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if (href.startsWith("#")) {
+            if (navigateToAnchor(href)) {
+                const preview = link.closest<HTMLElement>(".milkdown-link-preview");
+                if (preview) {
+                    preview.dataset.show = "false";
+                }
+            } else {
+                console.error("Heading anchor not found:", href);
+            }
+            return;
+        }
+
+        try {
+            const resolvedFilename = await invoke<string>("resolve_link", {
+                basepath: basepath(),
+                filename: filename(),
+                href,
+            });
+            setFilename(resolvedFilename);
+        } catch (err: unknown) {
+            console.error("Unable to resolve editor link:", err);
+        }
+    };
 
     const saveCurrentFile = async (): Promise<void> => {
         if (!crepeInstance) {
@@ -115,7 +182,12 @@ export function Editor(): JSX.Element {
         }
     });
 
+    onMount(() => {
+        editorRef.addEventListener("click", handleLinkPreviewClick, { capture: true });
+    });
+
     onCleanup(() => {
+        editorRef.removeEventListener("click", handleLinkPreviewClick, { capture: true });
         setSaveFile(null);
         setFileModified(false);
         if (crepeInstance) {

@@ -111,6 +111,47 @@ fn validate_relative_filename(filename: &str) -> Result<&Path, AppError> {
     Ok(path)
 }
 
+fn normalize_link_filename(filename: &str, href: &str) -> Result<PathBuf, AppError> {
+    let current = validate_relative_filename(filename)?;
+    let link = Path::new(href);
+    if href.is_empty() || link.is_absolute() {
+        return Err(AppError::invalid_path(
+            href,
+            "link target must be a relative path",
+        ));
+    }
+
+    let mut normalized = PathBuf::new();
+    let target = current.parent().unwrap_or_else(|| Path::new("")).join(link);
+
+    for component in target.components() {
+        match component {
+            Component::CurDir => {}
+            Component::Normal(part) => normalized.push(part),
+            Component::ParentDir => {
+                if !normalized.pop() {
+                    return Err(AppError::invalid_path(
+                        href,
+                        "link target escapes the base path",
+                    ));
+                }
+            }
+            Component::RootDir | Component::Prefix(_) => {
+                return Err(AppError::invalid_path(
+                    href,
+                    "link target must be a relative path",
+                ));
+            }
+        }
+    }
+
+    if normalized.as_os_str().is_empty() {
+        return Err(AppError::invalid_path(href, "link target is empty"));
+    }
+
+    Ok(normalized)
+}
+
 async fn canonical_basepath(basepath: &str, filename: &str) -> Result<PathBuf, AppError> {
     let path = Path::new(basepath);
     if !path.is_absolute() {
@@ -234,6 +275,43 @@ async fn path_kind(basepath: String, filename: String) -> Result<PathKind, AppEr
 }
 
 #[tauri::command]
+async fn resolve_link(
+    basepath: String,
+    filename: String,
+    href: String,
+) -> Result<String, AppError> {
+    let normalized = normalize_link_filename(&filename, &href)?;
+    let normalized_filename = normalized.to_string_lossy().into_owned();
+    let (base, path) = resolve_existing_path(&basepath, &normalized_filename).await?;
+    let metadata = tokio::fs::metadata(&path).await.map_err(|error| {
+        AppError::io(
+            "inspect_link_target",
+            &normalized_filename,
+            error,
+            AppErrorCode::InspectPathFailed,
+        )
+    })?;
+
+    if !metadata.is_file() {
+        return Err(AppError::invalid_path(
+            &normalized_filename,
+            "link target must be a file",
+        ));
+    }
+
+    path.strip_prefix(base)
+        .map(|relative| relative.to_string_lossy().into_owned())
+        .map_err(|error| {
+            AppError::internal(
+                AppErrorCode::InvalidPath,
+                "make_link_target_relative",
+                &normalized_filename,
+                &error.to_string(),
+            )
+        })
+}
+
+#[tauri::command]
 async fn list_directory(
     basepath: String,
     filename: String,
@@ -351,6 +429,7 @@ pub fn run_with_path(basepath: PathBuf, filename: String) {
         .invoke_handler(tauri::generate_handler![
             initial_config,
             path_kind,
+            resolve_link,
             list_directory,
             read_file,
             write_file
@@ -367,7 +446,7 @@ pub fn run() {
 
 #[cfg(test)]
 mod tests {
-    use super::{AppError, AppErrorCode};
+    use super::{normalize_link_filename, AppError, AppErrorCode};
 
     #[test]
     fn app_error_serializes_only_safe_client_fields() {
@@ -386,5 +465,27 @@ mod tests {
 
         assert_eq!(value["code"], "read_directory_failed");
         assert!(value.get("path").is_none());
+    }
+
+    #[test]
+    fn link_is_resolved_relative_to_the_current_file() {
+        let result = normalize_link_filename("samples/index.md", "./reference.md").unwrap();
+
+        assert_eq!(result, std::path::Path::new("samples/reference.md"));
+    }
+
+    #[test]
+    fn link_can_move_to_a_parent_inside_the_base_path() {
+        let result =
+            normalize_link_filename("samples/guides/index.md", "../reference.md").unwrap();
+
+        assert_eq!(result, std::path::Path::new("samples/reference.md"));
+    }
+
+    #[test]
+    fn link_cannot_escape_the_base_path() {
+        let result = normalize_link_filename("samples/index.md", "../../other.md");
+
+        assert!(result.is_err());
     }
 }
