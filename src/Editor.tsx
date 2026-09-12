@@ -15,6 +15,7 @@ import "@milkdown/crepe/theme/frame.css";
 import ErrorView from "./ErrorView";
 import Dialog from "./Dialog";
 import { translateAppError } from "./AppError";
+import { UserMessageError } from "./UserMessageError";
 
 export function Editor(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -22,9 +23,9 @@ export function Editor(): JSX.Element {
 
     const { t } = useI18N();
     const {
-        main: { basepath, filename, setFilename },
+        main: { basepath, filename, loadFilename, setOnunload },
         spinner: { showSpinner, hideSpinner, setSpinnerParams },
-        editor: { setSaveFile, setFileModified },
+        editor: { fileModified, setSaveFile, setFileModified },
     } = useAppContext();
     const [error, setError] = createSignal<string | null>(null);
     const [dialogError, setDialogError] = createSignal<string | null>(null);
@@ -90,14 +91,14 @@ export function Editor(): JSX.Element {
                 filename: filename(),
                 href,
             });
-            setFilename(resolvedFilename);
+            await loadFilename(resolvedFilename);
         } catch (err: unknown) {
             console.error("Unable to resolve editor link:", err);
             setDialogError(translateAppError(err, t));
         }
     };
 
-    const saveCurrentFile = async (): Promise<void> => {
+    const writeCurrentFile = async (): Promise<void> => {
         if (!crepeInstance) {
             return;
         }
@@ -105,22 +106,40 @@ export function Editor(): JSX.Element {
         const currentBasepath = basepath();
         const currentFilename = filename();
 
+        setSpinnerParams(t("editor.saving", { filename: currentFilename }));
+        showSpinner();
         try {
-            setError(null);
-            setSpinnerParams(t("editor.saving", { filename: currentFilename }));
-            showSpinner();
-
             await invoke("write_file", {
                 basepath: currentBasepath,
                 filename: currentFilename,
                 content: crepeInstance.getMarkdown(),
             });
             setFileModified(false);
+        } finally {
+            hideSpinner();
+        }
+    };
+
+    const saveCurrentFile = async (): Promise<void> => {
+        try {
+            setError(null);
+            await writeCurrentFile();
         } catch (err: unknown) {
             console.error("Error saving file in Editor:", err);
             setError(translateAppError(err, t));
-        } finally {
-            hideSpinner();
+        }
+    };
+
+    const saveBeforeFilenameChange = async (): Promise<void> => {
+        if (!fileModified()) {
+            return;
+        }
+
+        try {
+            await writeCurrentFile();
+        } catch (err: unknown) {
+            console.error("Error automatically saving file in Editor:", err);
+            throw new UserMessageError(translateAppError(err, t), err);
         }
     };
 
@@ -173,6 +192,7 @@ export function Editor(): JSX.Element {
             await crepeInstance.create();
 
             setSaveFile(saveCurrentFile);
+            setOnunload(saveBeforeFilenameChange);
         } catch (err: unknown) {
             if (crepeInstance) {
                 crepeInstance.destroy();

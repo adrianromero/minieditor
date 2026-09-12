@@ -23,7 +23,7 @@ type DirectoryResult =
 export function FolderView(): JSX.Element {
     const { t } = useI18N();
     const {
-        main: { basepath, filename, setFilename },
+        main: { basepath, filename, loadFilename },
         spinner: { showSpinner, hideSpinner, setSpinnerParams },
     } = useAppContext();
     const [directoryResult] = createResource(
@@ -61,7 +61,7 @@ export function FolderView(): JSX.Element {
                                         <li>
                                             <button
                                                 class={styles.entryButton}
-                                                onClick={() => setFilename(entry.filename)}
+                                                onClick={() => void loadFilename(entry.filename)}
                                             >
                                                 <span class={styles.entryIcon} aria-hidden="true">
                                                     {entry.kind === "directory" ? "📁" : "📄"}

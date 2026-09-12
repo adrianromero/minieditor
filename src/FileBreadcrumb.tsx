@@ -16,7 +16,7 @@ type BreadcrumbSegment = {
 export function FileBreadcrumb(): JSX.Element {
     const { t } = useI18N();
     const {
-        main: { filename, setFilename },
+        main: { filename, loadFilename },
     } = useAppContext();
 
     const segments = createMemo<BreadcrumbSegment[]>(() => {
@@ -39,7 +39,7 @@ export function FileBreadcrumb(): JSX.Element {
                 <button
                     type="button"
                     class={styles.segmentLink}
-                    onClick={() => setFilename("")}
+                    onClick={() => void loadFilename("")}
                 >
                     {t("toolbar.basePath")}
                 </button>
@@ -58,7 +58,7 @@ export function FileBreadcrumb(): JSX.Element {
                                 <button
                                     type="button"
                                     class={styles.segmentLink}
-                                    onClick={() => setFilename(segment.filename)}
+                                    onClick={() => void loadFilename(segment.filename)}
                                 >
                                     {segment.name}
                                 </button>
