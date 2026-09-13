@@ -20,7 +20,9 @@ export function FileBreadcrumb(): JSX.Element {
     } = useAppContext();
 
     const segments = createMemo<BreadcrumbSegment[]>(() => {
-        const names = filename().split(/[\\/]+/).filter(Boolean);
+        const names = filename()
+            .split(/[\\/]+/)
+            .filter(Boolean);
         return names.map((name, index) => ({
             name,
             filename: names.slice(0, index + 1).join("/"),
@@ -29,9 +31,6 @@ export function FileBreadcrumb(): JSX.Element {
 
     return (
         <nav class={styles.breadcrumb} aria-label={t("toolbar.pathNavigation")}>
-            <span class={styles.fileIcon} aria-hidden="true">
-                📄
-            </span>
             <Show
                 when={segments().length > 0}
                 fallback={<span class={styles.currentSegment}>{t("toolbar.basePath")}</span>}
@@ -51,9 +50,7 @@ export function FileBreadcrumb(): JSX.Element {
                         <>
                             <Show
                                 when={index() < segments().length - 1}
-                                fallback={
-                                    <span class={styles.currentSegment}>{segment.name}</span>
-                                }
+                                fallback={<span class={styles.currentSegment}>{segment.name}</span>}
                             >
                                 <button
                                     type="button"

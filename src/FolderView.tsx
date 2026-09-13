@@ -5,10 +5,12 @@
 
 import { createResource, For, JSX, Match, Show, Switch } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
+import { faFile, faFolder } from "@fortawesome/free-solid-svg-icons";
 import { useAppContext } from "./AppContext";
 import { useI18N } from "./Localization";
 import styles from "./FolderView.module.css";
 import { translateAppError } from "./AppError";
+import AppIcon from "./AppIcon";
 
 type DirectoryEntry = {
     name: string;
@@ -63,9 +65,10 @@ export function FolderView(): JSX.Element {
                                                 class={styles.entryButton}
                                                 onClick={() => void loadFilename(entry.filename)}
                                             >
-                                                <span class={styles.entryIcon} aria-hidden="true">
-                                                    {entry.kind === "directory" ? "📁" : "📄"}
-                                                </span>
+                                                <AppIcon
+                                                    class={styles.entryIcon}
+                                                    icon={entry.kind === "directory" ? faFolder : faFile}
+                                                />
                                                 <span class={styles.entryName}>{entry.name}</span>
                                             </button>
                                         </li>
