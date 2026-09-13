@@ -121,3 +121,19 @@
     border-radius: var(--radius-medium);
     box-shadow: var(--shadow-surface);
 }
+
+.scrollingView > .milkdown {
+    --crepe-font-title: unset;
+    --crepe-font-default: unset;
+}
+
+[contenteditable] {
+    font-synthesis: none; /* Prevents both synthetic bold and italics */
+    /* OR strictly target weights: */
+    font-synthesis-weight: none;
+}
+
+[contenteditable] {
+    transform: translateZ(0); /* Forces a dedicated compositing layer */
+    -webkit-font-smoothing: subpixel-antialiased;
+}
