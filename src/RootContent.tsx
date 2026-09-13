@@ -16,7 +16,7 @@ type PathKind = "file" | "directory" | "other";
 
 type PathResult = { kind: PathKind; error?: never } | { kind: "error"; error: string };
 
-export function AppContent(): JSX.Element {
+export function RootContent(): JSX.Element {
     const { t } = useI18N();
     const {
         main: { basepath, filename },
@@ -62,4 +62,4 @@ export function AppContent(): JSX.Element {
     );
 }
 
-export default AppContent;
+export default RootContent;

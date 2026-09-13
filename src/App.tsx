@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import AppContent from "./AppContent";
+import RootContent from "./RootContent";
 import Toolbar from "./Toolbar";
 import styles from "./App.module.css";
 import { AppProvider } from "./AppContext";
@@ -23,7 +23,7 @@ function App(props: AppProps) {
             >
                 <main class={styles.appMain}>
                     <Toolbar />
-                    <AppContent />
+                    <RootContent />
                 </main>
             </AppProvider>
         </I18NProvider>
