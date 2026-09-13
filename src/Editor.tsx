@@ -13,7 +13,6 @@ import { useAppContext } from "./AppContext";
 import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
 import ErrorView from "./ErrorView";
-import Dialog from "./Dialog";
 import { translateAppError } from "./AppError";
 import { UserMessageError } from "./UserMessageError";
 
@@ -23,12 +22,11 @@ export function Editor(): JSX.Element {
 
     const { t } = useI18N();
     const {
-        main: { basepath, filename, loadFilename, setOnunload },
+        main: { basepath, filename, loadFilename, setOnunload, showAppMessage },
         spinner: { showSpinner, hideSpinner, setSpinnerParams },
         editor: { fileModified, setSaveFile, setFileModified },
     } = useAppContext();
     const [error, setError] = createSignal<string | null>(null);
-    const [dialogError, setDialogError] = createSignal<string | null>(null);
 
     const navigateToAnchor = (href: string): boolean => {
         let anchor: string;
@@ -94,7 +92,7 @@ export function Editor(): JSX.Element {
             await loadFilename(resolvedFilename);
         } catch (err: unknown) {
             console.error("Unable to resolve editor link:", err);
-            setDialogError(translateAppError(err, t));
+            showAppMessage(translateAppError(err, t), "error");
         }
     };
 
@@ -122,15 +120,14 @@ export function Editor(): JSX.Element {
 
     const saveCurrentFile = async (): Promise<void> => {
         try {
-            setError(null);
             await writeCurrentFile();
         } catch (err: unknown) {
             console.error("Error saving file in Editor:", err);
-            setError(translateAppError(err, t));
+            showAppMessage(translateAppError(err, t), "error");
         }
     };
 
-    const saveBeforeFilenameChange = async (): Promise<void> => {
+    const componentOnUnload = async (): Promise<void> => {
         if (!fileModified()) {
             return;
         }
@@ -192,7 +189,7 @@ export function Editor(): JSX.Element {
             await crepeInstance.create();
 
             setSaveFile(saveCurrentFile);
-            setOnunload(saveBeforeFilenameChange);
+            setOnunload(componentOnUnload);
         } catch (err: unknown) {
             if (crepeInstance) {
                 crepeInstance.destroy();
@@ -223,12 +220,6 @@ export function Editor(): JSX.Element {
             <Show when={error()}>
                 <ErrorView>{error() ?? t("errors.unknown")}</ErrorView>
             </Show>
-            <Dialog
-                open={dialogError() !== null}
-                message={dialogError() ?? ""}
-                closeLabel={t("dialog.close")}
-                onClose={() => setDialogError(null)}
-            />
             <div ref={editorRef} class="scrollingView" />
         </>
     );

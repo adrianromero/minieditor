@@ -13,8 +13,11 @@ type DialogProps = {
     open: boolean;
     message: JSX.Element;
     info?: MessageInfoKind;
-    closeLabel: string;
-    onClose: () => void;
+    onCancel: () => void;
+    cancelLabel?: string;
+    onConfirm?: () => void;
+    confirmLabel?: string;
+    onClose?: () => void;
 };
 
 export function Dialog(props: DialogProps): JSX.Element {
@@ -37,7 +40,13 @@ export function Dialog(props: DialogProps): JSX.Element {
             ref={dialogRef}
             class={`${styles.dialog} ${styles[info().class]}`}
             aria-labelledby={titleId}
-            onClose={props.onClose}
+            onCancel={(e) => {
+                e.preventDefault();
+                props.onCancel?.();
+            }}
+            onClose={() => {
+                props.onClose?.();
+            }}
         >
             <div class={styles.iconRow}>
                 <AppIcon icon={info().icon} class={styles.icon} />
@@ -47,9 +56,22 @@ export function Dialog(props: DialogProps): JSX.Element {
             </h2>
             <div class={styles.message}>{props.message}</div>
             <div class={styles.actions}>
-                <button class="appButton" type="button" onClick={() => dialogRef.close()}>
-                    {props.closeLabel}
-                </button>
+                {props.confirmLabel ? (
+                    <button
+                        class="appButton"
+                        type="button"
+                        onClick={() => {
+                            void props.onConfirm?.();
+                        }}
+                    >
+                        {props.confirmLabel ?? t("dialog.confirm")}
+                    </button>
+                ) : null}
+                {props.cancelLabel ? (
+                    <button class="appButton" type="button" onClick={() => void props.onCancel()}>
+                        {props.cancelLabel}
+                    </button>
+                ) : null}
             </div>
         </dialog>
     );

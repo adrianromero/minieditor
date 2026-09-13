@@ -14,7 +14,13 @@
         "empty": "Esta carpeta está vacía"
     },
     "dialog": {
-        "close": "Cerrar"
+        "close": "Cerrar",
+        "cancel": "Cancelar",
+        "confirm": "OK",
+        "continue": "Continuar",
+        "quitAnyway": "Salir de todos modos",
+        "navigationSaveFailed": "{{ error }} Si continúas, podrías perder tus datos.",
+        "closeSaveFailed": "{{ error }} Si sales, podrías perder tus datos."
     },
     "info": {
         "status": "Información",

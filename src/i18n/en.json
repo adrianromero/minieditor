@@ -14,7 +14,13 @@
         "empty": "This folder is empty"
     },
     "dialog": {
-        "close": "Close"
+        "close": "Close",
+        "cancel": "Cancel",
+        "confirm": "OK",
+        "continue": "Continue",
+        "quitAnyway": "Quit anyway",
+        "navigationSaveFailed": "{{ error }} If you continue, your data might be lost.",
+        "closeSaveFailed": "{{ error }} If you quit, your data might be lost."
     },
     "info": {
         "status": "Information",

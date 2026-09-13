@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./minieditor-logo.png" width="160" alt="MiniEditor logo">
+  <img src="./minieditor-logo-v2.png" width="160" alt="MiniEditor logo">
 </p>
 
 <h1 align="center">MiniEditor</h1>
@@ -23,12 +23,12 @@
 
 ## Technology
 
-| Area | Technology |
-| --- | --- |
-| Desktop runtime | [Tauri 2](https://v2.tauri.app/) |
-| Frontend | [SolidJS](https://www.solidjs.com/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vite.dev/) |
-| Editor | [Milkdown Crepe](https://milkdown.dev/) |
-| Backend | [Rust](https://www.rust-lang.org/), [Tokio](https://tokio.rs/) |
+| Area            | Technology                                                                                                    |
+| --------------- | ------------------------------------------------------------------------------------------------------------- |
+| Desktop runtime | [Tauri 2](https://v2.tauri.app/)                                                                              |
+| Frontend        | [SolidJS](https://www.solidjs.com/), [TypeScript](https://www.typescriptlang.org/), [Vite](https://vite.dev/) |
+| Editor          | [Milkdown Crepe](https://milkdown.dev/)                                                                       |
+| Backend         | [Rust](https://www.rust-lang.org/), [Tokio](https://tokio.rs/)                                                |
 
 ## Prerequisites
 
