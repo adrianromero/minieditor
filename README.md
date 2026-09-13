@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./minieditor-logo-v2.png" width="160" alt="MiniEditor logo">
+  <img src="./minieditor-logo.png" width="160" alt="MiniEditor logo">
 </p>
 
 <h1 align="center">MiniEditor</h1>
