@@ -16,6 +16,25 @@ type InitialConfig = {
     filename: string;
 };
 
+function isEditableTarget(target: EventTarget | null): boolean {
+    if (!(target instanceof Element)) {
+        return false;
+    }
+
+    return (
+        target.closest('[contenteditable="true"]') !== null ||
+        target.closest("input, textarea") !== null
+    );
+}
+
+if (import.meta.env.PROD) {
+    document.addEventListener("contextmenu", (event: MouseEvent) => {
+        if (!isEditableTarget(event.target)) {
+            event.preventDefault();
+        }
+    });
+}
+
 async function bootstrap(): Promise<void> {
     const config = await invoke<InitialConfig>("initial_config");
     render(
