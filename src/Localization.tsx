@@ -19,12 +19,17 @@ import en from "./i18n/en.json";
 import es from "./i18n/es.json";
 
 const dictionaries = { en, es };
+const englishDictionary = i18n.flatten(en) as Record<string, unknown>;
 export type Locale = keyof typeof dictionaries;
 
 type Dictionary = i18n.Flatten<typeof en>;
 export type TranslationKey = {
     [Key in keyof Dictionary]: Dictionary[Key] extends string ? Key : never;
 }[keyof Dictionary];
+
+export function hasTranslationKey(key: string): key is TranslationKey {
+    return typeof englishDictionary[key] === "string";
+}
 
 function getSystemLocale(): Locale {
     const systemLocale = navigator.languages[0] ?? navigator.language;

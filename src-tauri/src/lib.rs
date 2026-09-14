@@ -48,6 +48,7 @@ struct DirectoryEntry {
 #[serde(rename_all = "snake_case")]
 enum AppErrorCode {
     InvalidPath,
+    UnsupportedLink,
     PathNotFound,
     PermissionDenied,
     InspectPathFailed,
@@ -75,6 +76,11 @@ impl AppError {
     fn invalid_path(filename: &str, reason: &str) -> Self {
         error!(path = filename, reason, "Invalid path");
         Self::new(AppErrorCode::InvalidPath, filename)
+    }
+
+    fn unsupported_link(href: &str) -> Self {
+        error!(href, "Unsupported link");
+        Self::new(AppErrorCode::UnsupportedLink, href)
     }
 
     fn io(operation: &str, filename: &str, source: std::io::Error, fallback: AppErrorCode) -> Self {
@@ -111,9 +117,27 @@ fn validate_relative_filename(filename: &str) -> Result<&Path, AppError> {
     Ok(path)
 }
 
+fn has_uri_scheme(href: &str) -> bool {
+    let mut characters = href.chars();
+    if !characters
+        .next()
+        .is_some_and(|character| character.is_ascii_alphabetic())
+    {
+        return false;
+    }
+
+    characters
+        .take_while(|character| *character != ':')
+        .all(|character| character.is_ascii_alphanumeric() || matches!(character, '+' | '-' | '.'))
+        && href.contains(':')
+}
+
 fn normalize_link_filename(filename: &str, href: &str) -> Result<PathBuf, AppError> {
     let current = validate_relative_filename(filename)?;
     let link = Path::new(href);
+    if has_uri_scheme(href) || href.starts_with("//") {
+        return Err(AppError::unsupported_link(href));
+    }
     if href.is_empty() || link.is_absolute() {
         return Err(AppError::invalid_path(
             href,
@@ -476,8 +500,7 @@ mod tests {
 
     #[test]
     fn link_can_move_to_a_parent_inside_the_base_path() {
-        let result =
-            normalize_link_filename("samples/guides/index.md", "../reference.md").unwrap();
+        let result = normalize_link_filename("samples/guides/index.md", "../reference.md").unwrap();
 
         assert_eq!(result, std::path::Path::new("samples/reference.md"));
     }
@@ -487,5 +510,16 @@ mod tests {
         let result = normalize_link_filename("samples/index.md", "../../other.md");
 
         assert!(result.is_err());
+    }
+
+    #[test]
+    fn links_with_a_uri_scheme_are_not_resolved_as_files() {
+        for href in ["mailto:address@example.com", "http://www.example.com"] {
+            let error = normalize_link_filename("samples/index.md", href).unwrap_err();
+            let value = serde_json::to_value(error).unwrap();
+
+            assert_eq!(value["code"], "unsupported_link");
+            assert_eq!(value["path"], href);
+        }
     }
 }

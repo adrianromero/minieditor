@@ -28,13 +28,16 @@
     },
     "errors": {
         "unknown": "Unknown error",
-        "unsupportedPathType": "Unsupported path type: {{ filename }}",
-        "invalidPath": "The selected path {{ path }} is not valid.",
-        "pathNotFound": "{{ path }} could not be found. It may have been moved or deleted.",
-        "permissionDenied": "You do not have permission to access {{ path }}.",
-        "inspectPathFailed": "The path {{ path }} could not be inspected.",
-        "readDirectoryFailed": "The folder {{ path }} could not be opened.",
-        "readFileFailed": "The file {{ path }} could not be read.",
-        "writeFileFailed": "The file {{ path }} could not be saved. Check that it is writable."
+        "unsupportedPathType": "Unsupported path type: {{ filename }}"
+    },
+    "backendErrors": {
+        "unsupported_link": "The link {{ path }} cannot be opened because it is not a relative file path.",
+        "invalid_path": "The selected path {{ path }} is not valid.",
+        "path_not_found": "{{ path }} could not be found. It may have been moved or deleted.",
+        "permission_denied": "You do not have permission to access {{ path }}.",
+        "inspect_path_failed": "The path {{ path }} could not be inspected.",
+        "read_directory_failed": "The folder {{ path }} could not be opened.",
+        "read_file_failed": "The file {{ path }} could not be read.",
+        "write_file_failed": "The file {{ path }} could not be saved. Check that it is writable."
     }
 }
