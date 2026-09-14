@@ -72,7 +72,6 @@ export function AppProvider(props: {
     const [fileModified, setFileModified] = createSignal(false);
     const [spinnerVisible, setSpinnerVisible] = createSignal(false);
     const [spinnerText, setSpinnerText] = createSignal("");
-    const [closeError, setCloseError] = createSignal<string | null>(null);
 
     const [appConfirm, setAppConfirm] = createSignal<(() => void) | null>(null);
     const [appClose, setAppClose] = createSignal<(() => void) | null>(null);
@@ -183,11 +182,6 @@ export function AppProvider(props: {
         });
     });
 
-    const forceClose = async (): Promise<void> => {
-        setCloseError(null);
-        await getCurrentWindow().destroy();
-    };
-
     return (
         <AppContext.Provider
             value={{
@@ -218,14 +212,6 @@ export function AppProvider(props: {
             {props.children}
             <SpinnerPanel visible={spinnerVisible()} text={spinnerText()} />
 
-            <Dialog
-                open={closeError() !== null}
-                onCancel={() => setCloseError(null)}
-                message={t("dialog.closeSaveFailed", { error: closeError() ?? "" })}
-                cancelLabel={t("dialog.cancel")}
-                confirmLabel={t("dialog.quitAnyway")}
-                onConfirm={forceClose}
-            />
             <Dialog
                 open={appMessage() !== null}
                 info={appMessageInfo() ?? "status"}
