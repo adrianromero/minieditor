@@ -6,6 +6,7 @@
 import { Show } from "solid-js";
 import { useAppContext } from "./AppContext";
 import FileBreadcrumb from "./FileBreadcrumb";
+import FileNavigation from "./FileNavigation";
 import { useI18N } from "./Localization";
 import styles from "./Toolbar.module.css";
 
@@ -17,6 +18,7 @@ export function Toolbar() {
     return (
         <header class={styles.editorToolbar}>
             <div class={styles.toolbarLeft}>
+                <FileNavigation />
                 <FileBreadcrumb />
                 <Show when={fileModified()}>
                     <span

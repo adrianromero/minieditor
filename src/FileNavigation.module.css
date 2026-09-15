@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.backButton {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    color: var(--color-text-muted);
+    background: transparent;
+    border: none;
+    border-radius: var(--radius-small);
+    cursor: pointer;
+}
+
+.backButton:hover {
+    color: var(--color-text);
+    background: var(--color-secondary-hover);
+}
+
+.backButton:disabled {
+    color: var(--color-disabled);
+    background: transparent;
+    cursor: not-allowed;
+}
+
+.backIcon {
+    width: 1rem;
+    height: 1rem;
+}

@@ -4,6 +4,7 @@
         "saving": "Saving {{ filename }}..."
     },
     "toolbar": {
+        "back": "Back",
         "save": "Save",
         "unsavedChanges": "Unsaved changes",
         "basePath": "<base>",
