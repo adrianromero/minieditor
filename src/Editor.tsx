@@ -15,6 +15,7 @@ import "@milkdown/crepe/theme/frame.css";
 import ErrorView from "./ErrorView";
 import { translateAppError } from "./AppError";
 import { UserMessageError } from "./UserMessageError";
+import { Ctx } from "@milkdown/kit/ctx";
 
 export function Editor(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -175,13 +176,21 @@ export function Editor(): JSX.Element {
                 }));
             });
 
-            let ignoreFirstUpdate = true;
+            let firstUpdate = true;
             crepeInstance.on((listener) => {
-                listener.markdownUpdated(() => {
-                    if (ignoreFirstUpdate) {
-                        ignoreFirstUpdate = false;
-                        return;
+                listener.markdownUpdated((_: Ctx, markdown: string, prevMarkdown: string) => {
+                    // Mitigates Crepe load changes without user interaction
+                    if (firstUpdate) {
+                        firstUpdate = false;
+                        if (
+                            markdown.length === prevMarkdown.length + 1 &&
+                            markdown.charAt(markdown.length - 1) === "\u000a" &&
+                            markdown.substring(0, markdown.length - 1) === prevMarkdown
+                        ) {
+                            return;
+                        }
                     }
+
                     setFileModified(true);
                 });
             });

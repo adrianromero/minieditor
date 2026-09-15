@@ -127,12 +127,14 @@
     --crepe-font-default: unset;
 }
 
+/* Mitigates WEBKIT auful bold rendering in Windows */
 [contenteditable] {
     font-synthesis: none; /* Prevents both synthetic bold and italics */
     /* OR strictly target weights: */
     font-synthesis-weight: none;
 }
 
+/* Mitigates WEBKIT auful bold rendering in Linux */
 [contenteditable] {
     transform: translateZ(0); /* Forces a dedicated compositing layer */
     -webkit-font-smoothing: subpixel-antialiased;
