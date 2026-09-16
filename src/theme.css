@@ -109,9 +109,13 @@
     background-color: var(--color-view-background);
 }
 
-.scrollingView > .contentView,
-.scrollingView > .milkdown {
+.scrollingView.errorView {
+    display: none;
+}
+
+.scrollingView > .contentView {
     width: 100%;
+    padding: 0 0.5rem;
     max-width: var(--content-max-width);
     margin-inline: auto;
     box-sizing: border-box;
@@ -120,11 +124,6 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius-medium);
     box-shadow: var(--shadow-surface);
-}
-
-.scrollingView > .milkdown {
-    --crepe-font-title: unset;
-    --crepe-font-default: unset;
 }
 
 /* Mitigates WEBKIT auful bold rendering in Windows */

@@ -57,24 +57,34 @@ export function FolderView(): JSX.Element {
                             when={(directoryResult()?.entries?.length ?? 0) > 0}
                             fallback={<div class={styles.emptyFolder}>{t("folder.empty")}</div>}
                         >
-                            <ul class={`${styles.entryList} contentView`}>
-                                <For each={directoryResult()?.entries}>
-                                    {(entry) => (
-                                        <li>
-                                            <button
-                                                class={styles.entryButton}
-                                                onClick={() => void loadFilename(entry.filename)}
-                                            >
-                                                <AppIcon
-                                                    class={styles.entryIcon}
-                                                    icon={entry.kind === "directory" ? faFolder : faFile}
-                                                />
-                                                <span class={styles.entryName}>{entry.name}</span>
-                                            </button>
-                                        </li>
-                                    )}
-                                </For>
-                            </ul>
+                            <div class="contentView">
+                                <ul class={`${styles.entryList}`}>
+                                    <For each={directoryResult()?.entries}>
+                                        {(entry) => (
+                                            <li>
+                                                <button
+                                                    class={styles.entryButton}
+                                                    onClick={() =>
+                                                        void loadFilename(entry.filename)
+                                                    }
+                                                >
+                                                    <AppIcon
+                                                        class={styles.entryIcon}
+                                                        icon={
+                                                            entry.kind === "directory"
+                                                                ? faFolder
+                                                                : faFile
+                                                        }
+                                                    />
+                                                    <span class={styles.entryName}>
+                                                        {entry.name}
+                                                    </span>
+                                                </button>
+                                            </li>
+                                        )}
+                                    </For>
+                                </ul>
+                            </div>
                         </Show>
                     </Match>
                 </Switch>

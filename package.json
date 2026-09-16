@@ -13,6 +13,7 @@
     "author": "Adrián Romero",
     "license": "MIT",
     "dependencies": {
+        "@codemirror/view": "^6.43.12",
         "@fortawesome/fontawesome-svg-core": "^7.3.1",
         "@fortawesome/free-solid-svg-icons": "^7.3.1",
         "@milkdown/crepe": "^7.21.2",
@@ -20,6 +21,7 @@
         "@solid-primitives/i18n": "^2.2.1",
         "@tauri-apps/api": "^2",
         "@tauri-apps/plugin-opener": "^2",
+        "codemirror": "^6.0.2",
         "solid-js": "^1.9.3"
     },
     "devDependencies": {

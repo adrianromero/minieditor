@@ -1,0 +1,9 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.editorMarkdown > :global(.milkdown) {
+    --crepe-font-title: unset;
+    --crepe-font-default: unset;
+}

@@ -17,7 +17,9 @@ import { translateAppError } from "./AppError";
 import { UserMessageError } from "./UserMessageError";
 import { Ctx } from "@milkdown/kit/ctx";
 
-export function Editor(): JSX.Element {
+import styles from "./EditorMarkdown.module.css";
+
+export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
     let crepeInstance: Crepe | null = null;
 
@@ -123,7 +125,7 @@ export function Editor(): JSX.Element {
         try {
             await writeCurrentFile();
         } catch (err: unknown) {
-            console.error("Error saving file in Editor:", err);
+            console.error("Error saving file in EditorMarkdown:", err);
             showAppMessage(translateAppError(err, t), "error");
         }
     };
@@ -136,7 +138,7 @@ export function Editor(): JSX.Element {
         try {
             await writeCurrentFile();
         } catch (err: unknown) {
-            console.error("Error automatically saving file in Editor:", err);
+            console.error("Error automatically saving file in EditorMarkdown:", err);
             throw new UserMessageError(translateAppError(err, t), err);
         }
     };
@@ -146,10 +148,9 @@ export function Editor(): JSX.Element {
         const currentFilename = filename();
 
         try {
-            if (crepeInstance) {
-                crepeInstance.destroy();
-                crepeInstance = null;
-            }
+            crepeInstance?.destroy();
+            crepeInstance = null;
+
             setSaveFile(null);
             setFileModified(false);
 
@@ -200,11 +201,9 @@ export function Editor(): JSX.Element {
             setSaveFile(saveCurrentFile);
             setOnunload(componentOnUnload);
         } catch (err: unknown) {
-            if (crepeInstance) {
-                crepeInstance.destroy();
-                crepeInstance = null;
-            }
-            console.error("Error loading file in Editor:", err);
+            crepeInstance?.destroy();
+            crepeInstance = null;
+            console.error("Error loading file in EditorMarkdown:", err);
             setError(translateAppError(err, t));
         } finally {
             hideSpinner();
@@ -219,9 +218,8 @@ export function Editor(): JSX.Element {
         editorRef.removeEventListener("click", handleLinkPreviewClick, { capture: true });
         setSaveFile(null);
         setFileModified(false);
-        if (crepeInstance) {
-            crepeInstance.destroy();
-        }
+        crepeInstance?.destroy();
+        crepeInstance = null;
     });
 
     return (
@@ -229,9 +227,11 @@ export function Editor(): JSX.Element {
             <Show when={error()}>
                 <ErrorView>{error() ?? t("errors.unknown")}</ErrorView>
             </Show>
-            <div ref={editorRef} class="scrollingView" />
+            <div class={`scrollingView ${error() ? "errorView" : ""}`}>
+                <div ref={editorRef} class={`contentView ${styles.editorMarkdown}`} />
+            </div>
         </>
     );
 }
 
-export default Editor;
+export default EditorMarkdown;

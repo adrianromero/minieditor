@@ -5,12 +5,13 @@
 
 import { createResource, JSX, Match, Show, Switch } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
-import Editor from "./Editor";
 import FolderView from "./FolderView";
 import { useAppContext } from "./AppContext";
 import ErrorView from "./ErrorView";
 import { useI18N } from "./Localization";
 import { translateAppError } from "./AppError";
+import EditorText from "./EditorText";
+import EditorMarkdown from "./EditorMarkdown";
 
 type PathKind = "file" | "directory" | "other";
 
@@ -44,7 +45,11 @@ export function RootContent(): JSX.Element {
         <Show when={!pathResult.loading}>
             <Switch>
                 <Match when={pathResult()?.kind === "file"}>
-                    <Editor />
+                    <Switch fallback={<EditorText />}>
+                        <Match when={filename().endsWith(".md")}>
+                            <EditorMarkdown />
+                        </Match>
+                    </Switch>
                 </Match>
                 <Match when={pathResult()?.kind === "directory"}>
                     <FolderView />

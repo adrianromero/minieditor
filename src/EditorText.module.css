@@ -1,0 +1,28 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.editorText > :global(.cm-editor) {
+    color: var(--color-text);
+}
+
+.editorText :global(.cm-content) {
+    padding: 1rem 0;
+    font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
+.editorText :global(.cm-gutters) {
+    color: var(--color-text-subtle);
+    background: var(--color-surface);
+    border-right-color: var(--color-border-subtle);
+}
+
+.editorText :global(.cm-activeLine),
+.editorText :global(.cm-activeLineGutter) {
+    background: var(--color-primary-soft);
+}
+
+.editorText :global(.cm-editor.cm-focused) {
+    outline: none;
+}
