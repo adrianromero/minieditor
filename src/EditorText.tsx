@@ -9,6 +9,7 @@ import { EditorView } from "@codemirror/view";
 import { createEffect, createSignal, JSX, onCleanup, Show } from "solid-js";
 import { translateAppError } from "./AppError";
 import { useAppContext } from "./AppContext";
+import { languageForFilename } from "./EditorLanguage";
 import ErrorView from "./ErrorView";
 import { useI18N } from "./Localization";
 import { UserMessageError } from "./UserMessageError";
@@ -89,12 +90,14 @@ export function EditorText(): JSX.Element {
                 basepath: currentBasepath,
                 filename: currentFilename,
             });
+            const language = languageForFilename(currentFilename);
 
             editorView = new EditorView({
                 doc: content,
                 extensions: [
                     basicSetup,
                     EditorView.lineWrapping,
+                    ...(language ? [language] : []),
                     EditorView.updateListener.of((update) => {
                         if (update.docChanged) {
                             setFileModified(true);
