@@ -32,8 +32,20 @@ export function Toolbar() {
                 </Show>
             </div>
             <div class={styles.toolbarActions}>
+                <button class="stdButton">
+                    <span>Test1</span>
+                </button>
+                <button class="stdButton secondary">
+                    <span>Test2</span>
+                </button>
+                <button class="stdButton" disabled>
+                    <span>Test3</span>
+                </button>
+                <button class="stdButton secondary">
+                    <span>Test3</span>
+                </button>
                 <button
-                    class="appButton"
+                    class="stdButton"
                     disabled={!saveFile()}
                     onClick={() => {
                         saveFile()?.();

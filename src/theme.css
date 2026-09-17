@@ -8,17 +8,36 @@
 [data-theme="light"] {
     color-scheme: light;
 
+    /* Primary */
+    --color-primary: hsl(215 80% 42%);
+    --color-primary-hover: hsl(215 82% 36%);
+    --color-primary-active: hsl(215 84% 30%);
+    --color-on-primary: hsl(0 0% 100%);
+    --color-border-primary: hsl(215 85% 28%);
+
+    /* Secondary */
+    --color-secondary: hsl(210 14% 93%);
+    --color-secondary-hover: hsl(210 14% 87%);
+    --color-secondary-active: hsl(210 14% 80%);
+    --color-on-secondary: hsl(215 25% 22%);
+    --color-border-secondary: hsl(210 14% 65%);
+
+    /* Disabled */
+    --color-disabled: hsl(210 12% 70%);
+    --color-on-disabled: hsl(210 12% 95%);
+    --color-border-disabled: hsl(210 12% 80%);
+
+    /* Button */
+    --color-button-inner-border: hsl(0 0% 100%);
+    --color-focus: hsl(215 90% 55%);
+
     --color-background: #ffffff;
     --color-view-background: #fafafa;
     --color-surface: #ffffff;
     --color-text: #2c3e50;
     --color-text-muted: #607080;
     --color-text-subtle: #8a96a3;
-    --color-primary: #007aff;
-    --color-primary-hover: #0063cc;
-    --color-primary-active: #0051a8;
-    --color-primary-soft: rgba(0, 122, 255, 0.07);
-    --color-primary-focus: rgba(0, 122, 255, 0.45);
+
     --color-warning: #e67e22;
     --color-error: hsl(6, 78%, 47%);
     --color-error-text: hsl(6, 78%, 57%);
@@ -29,11 +48,7 @@
     --color-status-border: hsl(0, 0%, 84%);
     --color-border: rgba(0, 0, 0, 0.25);
     --color-border-subtle: rgba(0, 0, 0, 0.06);
-    --color-secondary: rgba(0, 0, 0, 0.05);
-    --color-secondary-hover: rgba(0, 0, 0, 0.08);
-    --color-secondary-active: rgba(0, 0, 0, 0.12);
-    --color-disabled: #b8c2cc;
-    --color-on-primary: #ffffff;
+
     --color-overlay: rgba(248, 250, 252, 0.58);
 
     --view-padding: 1rem;
@@ -43,57 +58,67 @@
     --shadow-surface: 0 8px 24px rgba(0, 0, 0, 0.04);
 }
 
-/* Shared application buttons. */
-.appButton {
+.stdButton {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 1rem;
+
+    font: inherit;
+    font-weight: 500;
+    line-height: 1.25;
+
     background: var(--color-primary);
     color: var(--color-on-primary);
-    border: none;
-    padding: 0.4rem 1rem;
-    border-radius: 6px;
-    font-size: 0.85rem;
-    font-weight: 500;
+    border: 1px solid var(--color-border-primary);
+
+    border-radius: var(--radius-small);
+    box-shadow: inset 0 0 0 2px var(--color-button-inner-border);
     cursor: pointer;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-    box-shadow: 0 2px 5px rgba(0, 122, 255, 0.15);
 }
 
-.appButton:hover {
+.stdButton:hover {
     background: var(--color-primary-hover);
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(0, 122, 255, 0.25);
 }
 
-.appButton:active {
-    transform: translateY(0);
+.stdButton:active {
     background: var(--color-primary-active);
+    box-shadow: none;
 }
 
-.appButton.secondary {
+.stdButton.secondary {
     background: var(--color-secondary);
-    color: var(--color-text);
-    box-shadow: none;
+    color: var(--color-on-secondary);
+    border-color: var(--color-border-secondary);
 }
 
-.appButton.secondary:hover {
+.stdButton.secondary:hover {
     background: var(--color-secondary-hover);
-    color: var(--color-text);
-    transform: translateY(-1px);
 }
 
-.appButton.secondary:active {
+.stdButton.secondary:active {
     background: var(--color-secondary-active);
-    transform: translateY(0);
+    box-shadow: none;
 }
 
-.appButton:disabled,
-.appButton:disabled:hover,
-.appButton:disabled:active {
+.stdButton:focus {
+    outline: none;
+}
+
+.stdButton:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 0px;
+}
+
+.stdButton:disabled,
+.stdButton:disabled:hover,
+.stdButton:disabled:active {
     background: var(--color-disabled);
-    color: var(--color-on-primary);
-    cursor: not-allowed;
-    opacity: 0.65;
-    transform: none;
+    color: var(--color-on-disabled);
+    border-color: var(--color-border-disabled);
     box-shadow: none;
+    cursor: not-allowed;
 }
 
 /* Shared structure for full-height, independently scrolling application views. */
@@ -124,6 +149,10 @@
     border: 1px solid var(--color-border);
     border-radius: var(--radius-medium);
     box-shadow: var(--shadow-surface);
+}
+
+dialog {
+    outline: none;
 }
 
 /* Mitigates WEBKIT auful bold rendering in Windows */

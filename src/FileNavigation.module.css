@@ -3,41 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-.backButton {
-    display: inline-flex;
-    flex: 0 0 auto;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    padding: 0;
-    color: var(--color-text-muted);
-    background: transparent;
-    background-clip: padding-box;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-small);
-    box-shadow: inset 0 0 0 2px white;
-    cursor: pointer;
-}
-
-.backButton:hover {
-    color: var(--color-text);
-    background: var(--color-secondary-hover);
-}
-
-.backButton:active {
-    background: var(--color-secondary-active);
-    box-shadow: unset;
-}
-
-.backButton:disabled {
-    border: 1px solid var(--color-border-subtle);
-    color: var(--color-disabled);
-    background: transparent;
-    cursor: not-allowed;
-}
-
 .backIcon {
-    width: 1rem;
-    height: 1rem;
+    width: 1.2rem;
+    height: 1.2rem;
 }

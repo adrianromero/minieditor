@@ -58,7 +58,7 @@ export function FileNavigation(): JSX.Element {
     return (
         <button
             type="button"
-            class={styles.backButton}
+            class="stdButton secondary"
             disabled={filenameHistory().length <= 1}
             aria-label={t("toolbar.back")}
             title={t("toolbar.back")}

@@ -58,7 +58,7 @@ export function Dialog(props: DialogProps): JSX.Element {
             <div class={styles.actions}>
                 {props.confirmLabel ? (
                     <button
-                        class="appButton"
+                        class="stdButton"
                         type="button"
                         onClick={() => {
                             void props.onConfirm?.();
@@ -68,7 +68,7 @@ export function Dialog(props: DialogProps): JSX.Element {
                     </button>
                 ) : null}
                 {props.cancelLabel ? (
-                    <button class="appButton" type="button" onClick={() => void props.onCancel()}>
+                    <button class="stdButton" type="button" onClick={() => void props.onCancel()}>
                         {props.cancelLabel}
                     </button>
                 ) : null}
