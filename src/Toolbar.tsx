@@ -20,7 +20,7 @@ export function Toolbar() {
             <div class={styles.toolbarLeft}>
                 <FileNavigation />
                 <FileBreadcrumb />
-                <Show when={fileModified()}>
+                <Show when={saveFile() && fileModified()}>
                     <span
                         class={styles.modifiedIndicator}
                         role="img"
@@ -32,27 +32,17 @@ export function Toolbar() {
                 </Show>
             </div>
             <div class={styles.toolbarActions}>
-                <button class="stdButton">
-                    <span>Test1</span>
-                </button>
-                <button class="stdButton secondary">
-                    <span>Test2</span>
-                </button>
-                <button class="stdButton" disabled>
-                    <span>Test3</span>
-                </button>
-                <button class="stdButton secondary">
-                    <span>Test3</span>
-                </button>
-                <button
-                    class="stdButton"
-                    disabled={!saveFile()}
-                    onClick={() => {
-                        saveFile()?.();
-                    }}
-                >
-                    <span>{t("toolbar.save")}</span>
-                </button>
+                <Show when={saveFile()}>
+                    <button
+                        class="stdButton"
+                        disabled={!fileModified()}
+                        onClick={() => {
+                            saveFile()?.();
+                        }}
+                    >
+                        <span>{t("toolbar.save")}</span>
+                    </button>
+                </Show>
             </div>
         </header>
     );
