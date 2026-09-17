@@ -52,33 +52,47 @@ Start the application in development mode using the process working directory as
 npm run tauri dev
 ```
 
-To select a base directory explicitly, pass it as the application's first positional argument. An absolute path is recommended:
+To select a base directory explicitly, pass it with `--base-path`:
 
 ```bash
-npm run tauri -- dev -- -- /absolute/path/to/markdown/files
+npm run tauri -- dev -- -- --base-path /absolute/path/to/markdown/files
 ```
 
 The extra separators are required because npm and the Tauri CLI each process their own arguments.
 
 ## Command-line usage
 
-The packaged executable accepts one optional positional argument:
+The packaged executable accepts an optional relative filename and an optional base path:
 
 ```text
-minieditor [BASEPATH]
+minieditor [FILENAME] [--base-path BASEPATH]
 ```
 
-- `BASEPATH` must identify an existing directory.
-- Relative paths are accepted and resolved against the process working directory.
-- When omitted, MiniEditor uses the process working directory.
-- The selected path is canonicalized before the application starts.
+- `FILENAME` is a file or folder path relative to the base path. Absolute paths and paths containing `..` are rejected.
+- `BASEPATH` must identify an existing directory. It may be absolute or relative; a relative base path is resolved against the process working directory.
+- When `FILENAME` is omitted, MiniEditor opens the base directory with no selected filename.
+- When `BASEPATH` is omitted, MiniEditor uses the process working directory.
+- When both are omitted, the filename is empty and the base path is the process working directory.
+- The selected base path is canonicalized before the application starts.
+
+The arguments resolve as follows:
+
+| Arguments provided | Filename | Base path |
+| --- | --- | --- |
+| Neither | Empty | Process working directory |
+| `FILENAME` only | Relative file or folder path | Process working directory |
+| `--base-path BASEPATH` only | Empty | `BASEPATH` |
+| Both, with an absolute `BASEPATH` | Relative file or folder path | Absolute `BASEPATH` |
+| Both, with a relative `BASEPATH` | Relative file or folder path | `BASEPATH` resolved from the process working directory |
 
 Examples:
 
 ```bash
-minieditor /home/user/Documents/notes
-minieditor ./notes
 minieditor
+minieditor README.md
+minieditor guides
+minieditor --base-path /home/user/Documents/notes
+minieditor daily/today.md --base-path ./notes
 ```
 
 Run `minieditor --help` to display the built-in command-line help.
