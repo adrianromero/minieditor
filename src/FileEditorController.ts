@@ -31,7 +31,7 @@ export function createFileEditorController(
 ): FileEditorController {
     const { t } = useI18N();
     const {
-        main: { basepath, filename, setOnunload, showAppMessage },
+        main: { basepath, filename, setOnunload, showAppMessage, showAppConfirmation },
         spinner: { showSpinner, hideSpinner, setSpinnerParams },
         editor: { fileModified, setSaveFile, setReloadFile, setFileModified },
     } = useAppContext();
@@ -106,6 +106,15 @@ export function createFileEditorController(
     };
 
     const reloadCurrentFile = async (): Promise<void> => {
+        const confirmed = await showAppConfirmation(
+            fileModified() ? t("dialog.reloadDiscardChanges") : t("dialog.reloadFile"),
+            "status",
+            "dialog.confirm"
+        );
+        if (!confirmed) {
+            return;
+        }
+
         try {
             await replaceContentFromDisk(basepath(), filename());
         } catch (err: unknown) {

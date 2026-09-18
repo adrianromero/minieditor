@@ -21,6 +21,7 @@
         "confirm": "OK",
         "continue": "Continuar",
         "quitAnyway": "Salir de todos modos",
+        "reloadFile": "¿Recargar el archivo desde el disco?",
         "reloadDiscardChanges": "¿Recargar el archivo y descartar los cambios sin guardar?",
         "navigationSaveFailed": "{{ error }} Si continúas, podrías perder tus datos.",
         "closeSaveFailed": "{{ error }} Si sales, podrías perder tus datos."
