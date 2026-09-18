@@ -100,7 +100,7 @@ export function EditorMarkdown(): JSX.Element {
         }
     };
 
-    const writeCurrentFile = async (): Promise<void> => {
+    const writeCurrentFile = async (createIfEmpty: boolean): Promise<void> => {
         if (!crepeInstance) {
             return;
         }
@@ -115,6 +115,7 @@ export function EditorMarkdown(): JSX.Element {
                 basepath: currentBasepath,
                 filename: currentFilename,
                 content: crepeInstance.getMarkdown(),
+                createIfEmpty,
             });
             setFileModified(false);
         } finally {
@@ -124,7 +125,7 @@ export function EditorMarkdown(): JSX.Element {
 
     const saveCurrentFile = async (): Promise<void> => {
         try {
-            await writeCurrentFile();
+            await writeCurrentFile(true);
         } catch (err: unknown) {
             console.error("Error saving file in EditorMarkdown:", err);
             showAppMessage(translateAppError(err, t), "error");
@@ -137,7 +138,7 @@ export function EditorMarkdown(): JSX.Element {
         }
 
         try {
-            await writeCurrentFile();
+            await writeCurrentFile(false);
         } catch (err: unknown) {
             console.error("Error automatically saving file in EditorMarkdown:", err);
             throw new UserMessageError(translateAppError(err, t), err);

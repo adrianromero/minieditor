@@ -70,7 +70,7 @@ minieditor [FILENAME] [--base-path BASEPATH]
 ```
 
 - `FILENAME` is a file or folder path relative to the base path. Absolute paths and paths containing `..` are rejected.
-- A missing `FILENAME` opens as an empty, unsaved document; no file is created until it is saved.
+- A missing `FILENAME` opens as an empty, unsaved document. An explicit save creates the file even while it is empty; navigating away from an untouched empty document does not create it.
 - `BASEPATH` must identify an existing directory. It may be absolute or relative; a relative base path is resolved against the process working directory.
 - When `FILENAME` is omitted, MiniEditor opens the base directory with no selected filename.
 - When `BASEPATH` is omitted, MiniEditor uses the process working directory.

@@ -227,9 +227,29 @@ pub(crate) async fn write_file(
     basepath: String,
     filename: String,
     content: String,
+    create_if_empty: bool,
 ) -> Result<(), AppError> {
     info!("Writing {}", &filename);
     let path = resolve_write_path(&basepath, &filename).await?;
+
+    if content.is_empty() && !create_if_empty {
+        return match tokio::fs::OpenOptions::new()
+            .write(true)
+            .truncate(true)
+            .open(path)
+            .await
+        {
+            Ok(_) => Ok(()),
+            Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(()),
+            Err(error) => Err(AppError::io(
+                "write_file",
+                &filename,
+                error,
+                AppErrorCode::WriteFileFailed,
+            )),
+        };
+    }
+
     tokio::fs::write(path, content).await.map_err(|error| {
         AppError::io(
             "write_file",

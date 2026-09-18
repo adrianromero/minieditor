@@ -28,7 +28,7 @@ export function EditorText(): JSX.Element {
     } = useAppContext();
     const [error, setError] = createSignal<string | null>(null);
 
-    const writeCurrentFile = async (): Promise<void> => {
+    const writeCurrentFile = async (createIfEmpty: boolean): Promise<void> => {
         if (!editorView) {
             return;
         }
@@ -43,6 +43,7 @@ export function EditorText(): JSX.Element {
                 basepath: currentBasepath,
                 filename: currentFilename,
                 content: editorView.state.doc.toString(),
+                createIfEmpty,
             });
             setFileModified(false);
         } finally {
@@ -52,7 +53,7 @@ export function EditorText(): JSX.Element {
 
     const saveCurrentFile = async (): Promise<void> => {
         try {
-            await writeCurrentFile();
+            await writeCurrentFile(true);
         } catch (err: unknown) {
             console.error("Error saving file in EditorText:", err);
             showAppMessage(translateAppError(err, t), "error");
@@ -65,7 +66,7 @@ export function EditorText(): JSX.Element {
         }
 
         try {
-            await writeCurrentFile();
+            await writeCurrentFile(false);
         } catch (err: unknown) {
             console.error("Error automatically saving file in EditorText:", err);
             throw new UserMessageError(translateAppError(err, t), err);
