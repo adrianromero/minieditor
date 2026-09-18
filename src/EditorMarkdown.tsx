@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { onCleanup, onMount, createSignal, Show, JSX, createEffect } from "solid-js";
+import { onCleanup, onMount, Show, JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { Crepe } from "@milkdown/crepe";
 import { remarkStringifyOptionsCtx } from "@milkdown/kit/core";
@@ -14,11 +14,13 @@ import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
 import ErrorView from "./ErrorView";
 import { translateAppError } from "./AppError";
-import { UserMessageError } from "./UserMessageError";
 import { Ctx } from "@milkdown/kit/ctx";
+import {
+    createFileEditorController,
+    type FileEditorAdapter,
+} from "./FileEditorController";
 
 import styles from "./EditorMarkdown.module.css";
-import type { ReadFileResult } from "./rusttypes";
 
 export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -26,11 +28,8 @@ export function EditorMarkdown(): JSX.Element {
 
     const { t } = useI18N();
     const {
-        main: { basepath, filename, loadFilename, setOnunload, showAppMessage },
-        spinner: { showSpinner, hideSpinner, setSpinnerParams },
-        editor: { fileModified, setSaveFile, setReloadFile, setFileModified },
+        main: { basepath, filename, loadFilename, showAppMessage },
     } = useAppContext();
-    const [error, setError] = createSignal<string | null>(null);
 
     const navigateToAnchor = (href: string): boolean => {
         let anchor: string;
@@ -100,67 +99,13 @@ export function EditorMarkdown(): JSX.Element {
         }
     };
 
-    const writeCurrentFile = async (createIfEmpty: boolean): Promise<void> => {
-        if (!crepeInstance) {
-            return;
-        }
-
-        const currentBasepath = basepath();
-        const currentFilename = filename();
-
-        setSpinnerParams(t("editor.saving", { filename: currentFilename }));
-        showSpinner();
-        try {
-            await invoke("write_file", {
-                basepath: currentBasepath,
-                filename: currentFilename,
-                content: crepeInstance.getMarkdown(),
-                createIfEmpty,
-            });
-            setFileModified(false);
-        } finally {
-            hideSpinner();
-        }
-    };
-
-    const saveCurrentFile = async (): Promise<void> => {
-        try {
-            await writeCurrentFile(true);
-        } catch (err: unknown) {
-            console.error("Error saving file in EditorMarkdown:", err);
-            showAppMessage(translateAppError(err, t), "error");
-        }
-    };
-
-    const componentOnUnload = async (): Promise<void> => {
-        if (!fileModified()) {
-            return;
-        }
-
-        try {
-            await writeCurrentFile(false);
-        } catch (err: unknown) {
-            console.error("Error automatically saving file in EditorMarkdown:", err);
-            throw new UserMessageError(translateAppError(err, t), err);
-        }
-    };
-
-    const replaceContentFromDisk = async (
-        currentBasepath: string,
-        currentFilename: string
-    ): Promise<void> => {
-        setSpinnerParams(t("editor.loading", { filename: currentFilename }));
-        showSpinner();
-        try {
-            const result = await invoke<ReadFileResult>("read_file", {
-                basepath: currentBasepath,
-                filename: currentFilename,
-            });
-
+    const adapter: FileEditorAdapter = {
+        getContent: () => crepeInstance?.getMarkdown() ?? null,
+        replaceContent: async (content, _currentFilename, onModified) => {
             crepeInstance?.destroy();
             crepeInstance = new Crepe({
                 root: editorRef,
-                defaultValue: result.content,
+                defaultValue: content,
             });
 
             crepeInstance.editor.config((ctx) => {
@@ -185,52 +130,18 @@ export function EditorMarkdown(): JSX.Element {
                         }
                     }
 
-                    setFileModified(true);
+                    onModified();
                 });
             });
 
             await crepeInstance.create();
-
-            setError(null);
-            setFileModified(result.isNew);
-        } finally {
-            hideSpinner();
-        }
-    };
-
-    const reloadCurrentFile = async (): Promise<void> => {
-        try {
-            await replaceContentFromDisk(basepath(), filename());
-        } catch (err: unknown) {
-            console.error("Error reloading file in EditorMarkdown:", err);
-            await showAppMessage(translateAppError(err, t), "error");
-        }
-    };
-
-    createEffect(async () => {
-        const currentBasepath = basepath();
-        const currentFilename = filename();
-
-        try {
+        },
+        destroy: () => {
             crepeInstance?.destroy();
             crepeInstance = null;
-
-            setSaveFile(null);
-            setReloadFile(null);
-            setFileModified(false);
-
-            setError(null);
-            await replaceContentFromDisk(currentBasepath, currentFilename);
-            setSaveFile(saveCurrentFile);
-            setReloadFile(reloadCurrentFile);
-            setOnunload(componentOnUnload);
-        } catch (err: unknown) {
-            crepeInstance?.destroy();
-            crepeInstance = null;
-            console.error("Error loading file in EditorMarkdown:", err);
-            setError(translateAppError(err, t));
-        }
-    });
+        },
+    };
+    const { error } = createFileEditorController("EditorMarkdown", adapter);
 
     onMount(() => {
         editorRef.addEventListener("click", handleLinkPreviewClick, { capture: true });
@@ -238,11 +149,6 @@ export function EditorMarkdown(): JSX.Element {
 
     onCleanup(() => {
         editorRef.removeEventListener("click", handleLinkPreviewClick, { capture: true });
-        setSaveFile(null);
-        setReloadFile(null);
-        setFileModified(false);
-        crepeInstance?.destroy();
-        crepeInstance = null;
     });
 
     return (
