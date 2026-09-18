@@ -14,6 +14,7 @@ import ErrorView from "./ErrorView";
 import { useI18N } from "./Localization";
 import { UserMessageError } from "./UserMessageError";
 import styles from "./EditorText.module.css";
+import type { ReadFileResult } from "./rusttypes";
 
 export function EditorText(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -86,14 +87,14 @@ export function EditorText(): JSX.Element {
             setSpinnerParams(t("editor.loading", { filename: currentFilename }));
             showSpinner();
 
-            const content = await invoke<string>("read_file", {
+            const result = await invoke<ReadFileResult>("read_file", {
                 basepath: currentBasepath,
                 filename: currentFilename,
             });
             const language = languageForFilename(currentFilename);
 
             editorView = new EditorView({
-                doc: content,
+                doc: result.content,
                 extensions: [
                     basicSetup,
                     EditorView.lineWrapping,
@@ -107,6 +108,7 @@ export function EditorText(): JSX.Element {
                 parent: editorRef,
             });
 
+            setFileModified(result.isNew);
             setSaveFile(saveCurrentFile);
             setOnunload(componentOnUnload);
         } catch (err: unknown) {

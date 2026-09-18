@@ -50,6 +50,13 @@ pub(crate) struct DirectoryEntry {
     kind: PathKind,
 }
 
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct ReadFileResult {
+    content: String,
+    is_new: bool,
+}
+
 #[tauri::command]
 pub(crate) fn initial_config(state: tauri::State<'_, AppState>) -> InitialConfig {
     InitialConfig {
@@ -60,15 +67,19 @@ pub(crate) fn initial_config(state: tauri::State<'_, AppState>) -> InitialConfig
 
 #[tauri::command]
 pub(crate) async fn path_kind(basepath: String, filename: String) -> Result<PathKind, AppError> {
-    let (_, path) = resolve_existing_path(&basepath, &filename).await?;
-    let metadata = tokio::fs::metadata(path).await.map_err(|error| {
-        AppError::io(
-            "inspect_path",
-            &filename,
-            error,
-            AppErrorCode::InspectPathFailed,
-        )
-    })?;
+    let path = resolve_write_path(&basepath, &filename).await?;
+    let metadata = match tokio::fs::metadata(path).await {
+        Ok(metadata) => metadata,
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => return Ok(PathKind::File),
+        Err(error) => {
+            return Err(AppError::io(
+                "inspect_path",
+                &filename,
+                error,
+                AppErrorCode::InspectPathFailed,
+            ));
+        }
+    };
 
     if metadata.is_file() {
         Ok(PathKind::File)
@@ -187,12 +198,28 @@ pub(crate) async fn list_directory(
 }
 
 #[tauri::command]
-pub(crate) async fn read_file(basepath: String, filename: String) -> Result<String, AppError> {
+pub(crate) async fn read_file(
+    basepath: String,
+    filename: String,
+) -> Result<ReadFileResult, AppError> {
     info!("Reading {}", &filename);
-    let (_, path) = resolve_existing_path(&basepath, &filename).await?;
-    tokio::fs::read_to_string(path)
-        .await
-        .map_err(|error| AppError::io("read_file", &filename, error, AppErrorCode::ReadFileFailed))
+    let path = resolve_write_path(&basepath, &filename).await?;
+    match tokio::fs::read_to_string(path).await {
+        Ok(content) => Ok(ReadFileResult {
+            content,
+            is_new: false,
+        }),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(ReadFileResult {
+            content: String::new(),
+            is_new: true,
+        }),
+        Err(error) => Err(AppError::io(
+            "read_file",
+            &filename,
+            error,
+            AppErrorCode::ReadFileFailed,
+        )),
+    }
 }
 
 #[tauri::command]
@@ -212,3 +239,6 @@ pub(crate) async fn write_file(
         )
     })
 }
+
+#[cfg(test)]
+mod tests;

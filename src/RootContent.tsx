@@ -12,8 +12,7 @@ import { useI18N } from "./Localization";
 import { translateAppError } from "./AppError";
 import EditorText from "./EditorText";
 import EditorMarkdown from "./EditorMarkdown";
-
-type PathKind = "file" | "directory" | "other";
+import type { PathKind } from "./rusttypes";
 
 type PathResult = { kind: PathKind; error?: never } | { kind: "error"; error: string };
 

@@ -11,12 +11,7 @@ import { useI18N } from "./Localization";
 import styles from "./FolderView.module.css";
 import { translateAppError } from "./AppError";
 import AppIcon from "./AppIcon";
-
-type DirectoryEntry = {
-    name: string;
-    filename: string;
-    kind: "directory" | "file";
-};
+import type { DirectoryEntry } from "./rusttypes";
 
 type DirectoryResult =
     | { entries: DirectoryEntry[]; error?: never }

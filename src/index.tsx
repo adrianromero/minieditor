@@ -7,14 +7,10 @@
 import { invoke } from "@tauri-apps/api/core";
 import { render } from "solid-js/web";
 import App from "./App";
+import type { InitialConfig } from "./rusttypes";
 import "./theme.css";
 
 document.documentElement.dataset.theme = "light";
-
-type InitialConfig = {
-    basepath: string;
-    filename: string;
-};
 
 function isEditableTarget(target: EventTarget | null): boolean {
     if (!(target instanceof Element)) {

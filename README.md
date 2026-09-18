@@ -17,6 +17,7 @@
 - Browse files and folders without leaving the application.
 - Breadcrumb navigation relative to a configurable base directory.
 - Unsaved-change indicator and in-place file saving.
+- Open a missing file as a new empty document and create it on first save.
 - Global loading feedback for asynchronous operations.
 - English and Spanish user interfaces selected from the system locale.
 - Base-directory boundary checks in the Rust backend.
@@ -69,6 +70,7 @@ minieditor [FILENAME] [--base-path BASEPATH]
 ```
 
 - `FILENAME` is a file or folder path relative to the base path. Absolute paths and paths containing `..` are rejected.
+- A missing `FILENAME` opens as an empty, unsaved document; no file is created until it is saved.
 - `BASEPATH` must identify an existing directory. It may be absolute or relative; a relative base path is resolved against the process working directory.
 - When `FILENAME` is omitted, MiniEditor opens the base directory with no selected filename.
 - When `BASEPATH` is omitted, MiniEditor uses the process working directory.

@@ -18,6 +18,7 @@ import { UserMessageError } from "./UserMessageError";
 import { Ctx } from "@milkdown/kit/ctx";
 
 import styles from "./EditorMarkdown.module.css";
+import type { ReadFileResult } from "./rusttypes";
 
 export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -159,7 +160,7 @@ export function EditorMarkdown(): JSX.Element {
             showSpinner();
 
             // Invoke Tauri command to read the file
-            const content = await invoke<string>("read_file", {
+            const result = await invoke<ReadFileResult>("read_file", {
                 basepath: currentBasepath,
                 filename: currentFilename,
             });
@@ -167,7 +168,7 @@ export function EditorMarkdown(): JSX.Element {
             // Initialize the Crepe editor
             crepeInstance = new Crepe({
                 root: editorRef,
-                defaultValue: content,
+                defaultValue: result.content,
             });
 
             crepeInstance.editor.config((ctx) => {
@@ -198,6 +199,7 @@ export function EditorMarkdown(): JSX.Element {
 
             await crepeInstance.create();
 
+            setFileModified(result.isNew);
             setSaveFile(saveCurrentFile);
             setOnunload(componentOnUnload);
         } catch (err: unknown) {
