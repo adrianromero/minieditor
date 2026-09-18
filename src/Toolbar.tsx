@@ -36,7 +36,6 @@ export function Toolbar() {
                 <Show when={reloadFile()}>
                     <button
                         class="stdButton"
-                        disabled={!fileModified()}
                         onClick={() => {
                             void (async () => {
                                 const confirmed = await showAppConfirmation(
