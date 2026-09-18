@@ -28,7 +28,7 @@ export function EditorMarkdown(): JSX.Element {
     const {
         main: { basepath, filename, loadFilename, setOnunload, showAppMessage },
         spinner: { showSpinner, hideSpinner, setSpinnerParams },
-        editor: { fileModified, setSaveFile, setFileModified },
+        editor: { fileModified, setSaveFile, setReloadFile, setFileModified },
     } = useAppContext();
     const [error, setError] = createSignal<string | null>(null);
 
@@ -145,28 +145,19 @@ export function EditorMarkdown(): JSX.Element {
         }
     };
 
-    createEffect(async () => {
-        const currentBasepath = basepath();
-        const currentFilename = filename();
-
+    const replaceContentFromDisk = async (
+        currentBasepath: string,
+        currentFilename: string
+    ): Promise<void> => {
+        setSpinnerParams(t("editor.loading", { filename: currentFilename }));
+        showSpinner();
         try {
-            crepeInstance?.destroy();
-            crepeInstance = null;
-
-            setSaveFile(null);
-            setFileModified(false);
-
-            setError(null);
-            setSpinnerParams(t("editor.loading", { filename: currentFilename }));
-            showSpinner();
-
-            // Invoke Tauri command to read the file
             const result = await invoke<ReadFileResult>("read_file", {
                 basepath: currentBasepath,
                 filename: currentFilename,
             });
 
-            // Initialize the Crepe editor
+            crepeInstance?.destroy();
             crepeInstance = new Crepe({
                 root: editorRef,
                 defaultValue: result.content,
@@ -200,16 +191,44 @@ export function EditorMarkdown(): JSX.Element {
 
             await crepeInstance.create();
 
+            setError(null);
             setFileModified(result.isNew);
+        } finally {
+            hideSpinner();
+        }
+    };
+
+    const reloadCurrentFile = async (): Promise<void> => {
+        try {
+            await replaceContentFromDisk(basepath(), filename());
+        } catch (err: unknown) {
+            console.error("Error reloading file in EditorMarkdown:", err);
+            await showAppMessage(translateAppError(err, t), "error");
+        }
+    };
+
+    createEffect(async () => {
+        const currentBasepath = basepath();
+        const currentFilename = filename();
+
+        try {
+            crepeInstance?.destroy();
+            crepeInstance = null;
+
+            setSaveFile(null);
+            setReloadFile(null);
+            setFileModified(false);
+
+            setError(null);
+            await replaceContentFromDisk(currentBasepath, currentFilename);
             setSaveFile(saveCurrentFile);
+            setReloadFile(reloadCurrentFile);
             setOnunload(componentOnUnload);
         } catch (err: unknown) {
             crepeInstance?.destroy();
             crepeInstance = null;
             console.error("Error loading file in EditorMarkdown:", err);
             setError(translateAppError(err, t));
-        } finally {
-            hideSpinner();
         }
     });
 
@@ -220,6 +239,7 @@ export function EditorMarkdown(): JSX.Element {
     onCleanup(() => {
         editorRef.removeEventListener("click", handleLinkPreviewClick, { capture: true });
         setSaveFile(null);
+        setReloadFile(null);
         setFileModified(false);
         crepeInstance?.destroy();
         crepeInstance = null;

@@ -21,6 +21,7 @@ import { UserMessageError } from "./UserMessageError";
 import { MessageInfoKind } from "./messagesinfo";
 
 export type SaveFileHandler = () => Promise<void>;
+export type ReloadFileHandler = () => Promise<void>;
 export type OnunloadHandler = () => Promise<void>;
 
 export type AppContextValues = {
@@ -33,7 +34,11 @@ export type AppContextValues = {
         onunload: Accessor<OnunloadHandler | null>;
         setOnunload: (handler: OnunloadHandler | null) => void;
         showAppMessage: (msg: string, info?: MessageInfoKind) => Promise<void>;
-        showAppConfirmation: (msg: string, info?: MessageInfoKind) => Promise<boolean>;
+        showAppConfirmation: (
+            msg: string,
+            info?: MessageInfoKind,
+            confirmKey?: TranslationKey
+        ) => Promise<boolean>;
     };
     spinner: {
         showSpinner: () => void;
@@ -43,6 +48,8 @@ export type AppContextValues = {
     editor: {
         saveFile: Accessor<SaveFileHandler | null>;
         setSaveFile: (handler: SaveFileHandler | null) => void;
+        reloadFile: Accessor<ReloadFileHandler | null>;
+        setReloadFile: (handler: ReloadFileHandler | null) => void;
         fileModified: Accessor<boolean>;
         setFileModified: Setter<boolean>;
     };
@@ -68,6 +75,7 @@ export function AppProvider(props: {
     const [filename, setFilename] = createSignal(props.initialFilename);
 
     const [saveFile, setSaveFileSignal] = createSignal<SaveFileHandler | null>(null);
+    const [reloadFile, setReloadFileSignal] = createSignal<ReloadFileHandler | null>(null);
     const [onunload, setOnunloadSignal] = createSignal<OnunloadHandler | null>(null);
     const [fileModified, setFileModified] = createSignal(false);
     const [spinnerVisible, setSpinnerVisible] = createSignal(false);
@@ -77,6 +85,7 @@ export function AppProvider(props: {
     const [appClose, setAppClose] = createSignal<(() => void) | null>(null);
     const [appMessage, setAppMessage] = createSignal<string | null>(null);
     const [appCancelKey, setAppCancelKey] = createSignal<TranslationKey>("dialog.cancel");
+    const [appConfirmKey, setAppConfirmKey] = createSignal<TranslationKey>("dialog.continue");
     const [appMessageInfo, setAppMessageInfo] = createSignal<MessageInfoKind>("status");
 
     const showSpinner = () => setSpinnerVisible(true);
@@ -84,6 +93,9 @@ export function AppProvider(props: {
     const setSpinnerParams = (text: string) => setSpinnerText(text);
     const setSaveFile = (handler: SaveFileHandler | null) => {
         setSaveFileSignal(() => handler);
+    };
+    const setReloadFile = (handler: ReloadFileHandler | null) => {
+        setReloadFileSignal(() => handler);
     };
 
     const showAppMessage: (msg: string, info?: MessageInfoKind) => Promise<void> = (msg, info) => {
@@ -96,10 +108,11 @@ export function AppProvider(props: {
         });
     };
 
-    const showAppConfirmation: (msg: string, info?: MessageInfoKind) => Promise<boolean> = (
-        msg,
-        info
-    ) => {
+    const showAppConfirmation: (
+        msg: string,
+        info?: MessageInfoKind,
+        confirmKey?: TranslationKey
+    ) => Promise<boolean> = (msg, info, confirmKey) => {
         let confirmed = false;
         return new Promise((resolve) => {
             const onConfirm = (): void => {
@@ -111,6 +124,7 @@ export function AppProvider(props: {
             };
             setAppMessageInfo(info ?? "status");
             setAppCancelKey("dialog.cancel");
+            setAppConfirmKey(confirmKey ?? "dialog.continue");
             setAppClose(() => onClose);
             setAppConfirm(() => onConfirm);
             setAppMessage(msg);
@@ -204,6 +218,8 @@ export function AppProvider(props: {
                 editor: {
                     saveFile,
                     setSaveFile,
+                    reloadFile,
+                    setReloadFile,
                     fileModified,
                     setFileModified,
                 },
@@ -218,7 +234,7 @@ export function AppProvider(props: {
                 onCancel={() => setAppMessage(null)}
                 message={appMessage() ?? ""}
                 cancelLabel={t(appCancelKey())}
-                confirmLabel={appConfirm() ? t("dialog.continue") : undefined}
+                confirmLabel={appConfirm() ? t(appConfirmKey()) : undefined}
                 onConfirm={() => appConfirm()?.()}
                 onClose={() => appClose()?.()}
             />

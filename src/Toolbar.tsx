@@ -13,7 +13,8 @@ import styles from "./Toolbar.module.css";
 export function Toolbar() {
     const { t } = useI18N();
     const {
-        editor: { saveFile, fileModified },
+        main: { showAppConfirmation },
+        editor: { saveFile, reloadFile, fileModified },
     } = useAppContext();
     return (
         <header class={styles.editorToolbar}>
@@ -32,6 +33,26 @@ export function Toolbar() {
                 </Show>
             </div>
             <div class={styles.toolbarActions}>
+                <Show when={reloadFile()}>
+                    <button
+                        class="stdButton"
+                        disabled={!fileModified()}
+                        onClick={() => {
+                            void (async () => {
+                                const confirmed = await showAppConfirmation(
+                                    t("dialog.reloadDiscardChanges"),
+                                    "status",
+                                    "dialog.confirm"
+                                );
+                                if (confirmed) {
+                                    await reloadFile()?.();
+                                }
+                            })();
+                        }}
+                    >
+                        <span>{t("toolbar.reload")}</span>
+                    </button>
+                </Show>
                 <Show when={saveFile()}>
                     <button
                         class="stdButton"

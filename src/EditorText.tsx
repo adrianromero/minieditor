@@ -24,7 +24,7 @@ export function EditorText(): JSX.Element {
     const {
         main: { basepath, filename, setOnunload, showAppMessage },
         spinner: { showSpinner, hideSpinner, setSpinnerParams },
-        editor: { fileModified, setSaveFile, setFileModified },
+        editor: { fileModified, setSaveFile, setReloadFile, setFileModified },
     } = useAppContext();
     const [error, setError] = createSignal<string | null>(null);
 
@@ -73,27 +73,20 @@ export function EditorText(): JSX.Element {
         }
     };
 
-    createEffect(async () => {
-        const currentBasepath = basepath();
-        const currentFilename = filename();
-
+    const replaceContentFromDisk = async (
+        currentBasepath: string,
+        currentFilename: string
+    ): Promise<void> => {
+        setSpinnerParams(t("editor.loading", { filename: currentFilename }));
+        showSpinner();
         try {
-            editorView?.destroy();
-            editorView = null;
-
-            setSaveFile(null);
-            setFileModified(false);
-
-            setError(null);
-            setSpinnerParams(t("editor.loading", { filename: currentFilename }));
-            showSpinner();
-
             const result = await invoke<ReadFileResult>("read_file", {
                 basepath: currentBasepath,
                 filename: currentFilename,
             });
             const language = languageForFilename(currentFilename);
 
+            editorView?.destroy();
             editorView = new EditorView({
                 doc: result.content,
                 extensions: [
@@ -109,21 +102,50 @@ export function EditorText(): JSX.Element {
                 parent: editorRef,
             });
 
+            setError(null);
             setFileModified(result.isNew);
+        } finally {
+            hideSpinner();
+        }
+    };
+
+    const reloadCurrentFile = async (): Promise<void> => {
+        try {
+            await replaceContentFromDisk(basepath(), filename());
+        } catch (err: unknown) {
+            console.error("Error reloading file in EditorText:", err);
+            await showAppMessage(translateAppError(err, t), "error");
+        }
+    };
+
+    createEffect(async () => {
+        const currentBasepath = basepath();
+        const currentFilename = filename();
+
+        try {
+            editorView?.destroy();
+            editorView = null;
+
+            setSaveFile(null);
+            setReloadFile(null);
+            setFileModified(false);
+
+            setError(null);
+            await replaceContentFromDisk(currentBasepath, currentFilename);
             setSaveFile(saveCurrentFile);
+            setReloadFile(reloadCurrentFile);
             setOnunload(componentOnUnload);
         } catch (err: unknown) {
             editorView?.destroy();
             editorView = null;
             console.error("Error loading file in EditorText:", err);
             setError(translateAppError(err, t));
-        } finally {
-            hideSpinner();
         }
     });
 
     onCleanup(() => {
         setSaveFile(null);
+        setReloadFile(null);
         setFileModified(false);
         editorView?.destroy();
         editorView = null;

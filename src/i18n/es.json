@@ -5,6 +5,7 @@
     },
     "toolbar": {
         "back": "Atrás",
+        "reload": "Recargar",
         "save": "Guardar",
         "unsavedChanges": "Cambios sin guardar",
         "basePath": "<base>",
@@ -20,6 +21,7 @@
         "confirm": "OK",
         "continue": "Continuar",
         "quitAnyway": "Salir de todos modos",
+        "reloadDiscardChanges": "¿Recargar el archivo y descartar los cambios sin guardar?",
         "navigationSaveFailed": "{{ error }} Si continúas, podrías perder tus datos.",
         "closeSaveFailed": "{{ error }} Si sales, podrías perder tus datos."
     },

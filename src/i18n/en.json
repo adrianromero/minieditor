@@ -5,6 +5,7 @@
     },
     "toolbar": {
         "back": "Back",
+        "reload": "Reload",
         "save": "Save",
         "unsavedChanges": "Unsaved changes",
         "basePath": "<base>",
@@ -20,6 +21,7 @@
         "confirm": "OK",
         "continue": "Continue",
         "quitAnyway": "Quit anyway",
+        "reloadDiscardChanges": "Reload the file and discard your unsaved changes?",
         "navigationSaveFailed": "{{ error }} If you continue, your data might be lost.",
         "closeSaveFailed": "{{ error }} If you quit, your data might be lost."
     },
