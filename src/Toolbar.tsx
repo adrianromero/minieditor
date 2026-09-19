@@ -4,7 +4,9 @@
  */
 
 import { Show } from "solid-js";
+import { faDownload, faRotate } from "@fortawesome/free-solid-svg-icons";
 import { useAppContext } from "./AppContext";
+import AppIcon from "./AppIcon";
 import FileBreadcrumb from "./FileBreadcrumb";
 import FileNavigation from "./FileNavigation";
 import { useI18N } from "./Localization";
@@ -35,22 +37,26 @@ export function Toolbar() {
                 <Show when={reloadFile()}>
                     <button
                         class="stdButton"
+                        aria-label={t("toolbar.reload")}
+                        title={t("toolbar.reload")}
                         onClick={() => {
                             void reloadFile()?.();
                         }}
                     >
-                        <span>{t("toolbar.reload")}</span>
+                        <AppIcon icon={faRotate} class="actionIcon" />
                     </button>
                 </Show>
                 <Show when={saveFile()}>
                     <button
                         class="stdButton"
+                        aria-label={t("toolbar.save")}
+                        title={t("toolbar.save")}
                         disabled={!fileModified()}
                         onClick={() => {
                             saveFile()?.();
                         }}
                     >
-                        <span>{t("toolbar.save")}</span>
+                        <AppIcon icon={faDownload} class="actionIcon" />
                     </button>
                 </Show>
             </div>

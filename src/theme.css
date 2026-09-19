@@ -121,6 +121,11 @@
     cursor: not-allowed;
 }
 
+.actionIcon {
+    width: 1.2rem;
+    height: 1.2rem;
+}
+
 /* Shared structure for full-height, independently scrolling application views. */
 .scrollingView {
     flex: 1 1 0;

@@ -8,7 +8,6 @@ import { createEffect, createSignal, JSX } from "solid-js";
 import AppIcon from "./AppIcon";
 import { useAppContext } from "./AppContext";
 import { useI18N } from "./Localization";
-import styles from "./FileNavigation.module.css";
 
 export function FileNavigation(): JSX.Element {
     const { t } = useI18N();
@@ -64,7 +63,7 @@ export function FileNavigation(): JSX.Element {
             title={t("toolbar.back")}
             onClick={() => void navigateBack()}
         >
-            <AppIcon icon={faArrowLeft} class={styles.backIcon} />
+            <AppIcon icon={faArrowLeft} class="actionIcon" />
         </button>
     );
 }
