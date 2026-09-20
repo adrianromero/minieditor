@@ -10,9 +10,9 @@ import { useAppContext } from "./AppContext";
 import ErrorView from "./ErrorView";
 import { useI18N } from "./Localization";
 import { translateAppError } from "./AppError";
-import EditorText from "./EditorText";
-import EditorMarkdown from "./EditorMarkdown";
 import type { PathKind } from "./rusttypes";
+import { Dynamic } from "solid-js/web";
+import { componentForFilename } from "./ComponentForFile";
 
 type PathResult = { kind: PathKind; error?: never } | { kind: "error"; error: string };
 
@@ -44,11 +44,7 @@ export function RootContent(): JSX.Element {
         <Show when={!pathResult.loading}>
             <Switch>
                 <Match when={pathResult()?.kind === "file"}>
-                    <Switch fallback={<EditorText />}>
-                        <Match when={filename().endsWith(".md")}>
-                            <EditorMarkdown />
-                        </Match>
-                    </Switch>
+                    <Dynamic {...componentForFilename(filename())} />
                 </Match>
                 <Match when={pathResult()?.kind === "directory"}>
                     <FolderView />

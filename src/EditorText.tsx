@@ -6,32 +6,31 @@
 import { basicSetup } from "codemirror";
 import { EditorView } from "@codemirror/view";
 import { JSX, Show } from "solid-js";
-import { languageForFilename } from "./EditorLanguage";
 import ErrorView from "./ErrorView";
-import {
-    createFileEditorController,
-    type FileEditorAdapter,
-} from "./FileEditorController";
+import { createFileEditorController, type FileEditorAdapter } from "./FileEditorController";
 import { useI18N } from "./Localization";
 import styles from "./EditorText.module.css";
+import type { LanguageSupport } from "@codemirror/language";
 
-export function EditorText(): JSX.Element {
+type EditorTextProps = {
+    extensions?: readonly LanguageSupport[];
+};
+
+export function EditorText(props: EditorTextProps): JSX.Element {
     let editorRef!: HTMLDivElement;
     let editorView: EditorView | null = null;
 
     const { t } = useI18N();
     const adapter: FileEditorAdapter = {
         getContent: () => editorView?.state.doc.toString() ?? null,
-        replaceContent: async (content, currentFilename, onModified) => {
-            const language = languageForFilename(currentFilename);
-
+        replaceContent: async (content, _currentFilename, onModified) => {
             editorView?.destroy();
             editorView = new EditorView({
                 doc: content,
                 extensions: [
                     basicSetup,
                     EditorView.lineWrapping,
-                    ...(language ? [language] : []),
+                    ...(props.extensions ?? []),
                     EditorView.updateListener.of((update) => {
                         if (update.docChanged) {
                             onModified();
