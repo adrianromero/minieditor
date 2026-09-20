@@ -7,8 +7,8 @@ import { basicSetup } from "codemirror";
 import { EditorView } from "@codemirror/view";
 import { JSX, Show } from "solid-js";
 import ErrorView from "./ErrorView";
-import { createFileEditorController, type FileEditorAdapter } from "./FileEditorController";
-import { useI18N } from "./Localization";
+import { createFileEditorController, type FileEditorAdapter } from "../FileEditorController";
+import { useI18N } from "../Localization";
 import styles from "./EditorText.module.css";
 import type { LanguageSupport } from "@codemirror/language";
 

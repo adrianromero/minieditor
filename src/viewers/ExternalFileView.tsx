@@ -6,10 +6,10 @@
 import { createSignal, type JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
-import { translateAppError } from "./AppError";
-import AppIcon from "./AppIcon";
-import { useAppContext } from "./AppContext";
-import { useI18N } from "./Localization";
+import { translateAppError } from "../AppError";
+import AppIcon from "../AppIcon";
+import { useAppContext } from "../AppContext";
+import { useI18N } from "../Localization";
 import styles from "./ExternalFileView.module.css";
 
 export function ExternalFileView(): JSX.Element {

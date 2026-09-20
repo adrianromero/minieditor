@@ -5,14 +5,14 @@
 
 import { createResource, JSX, Match, Show, Switch } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
-import FolderView from "./FolderView";
+import FolderView from "./viewers/FolderView";
 import { useAppContext } from "./AppContext";
-import ErrorView from "./ErrorView";
+import ErrorView from "./viewers/ErrorView";
 import { useI18N } from "./Localization";
 import { translateAppError } from "./AppError";
 import type { PathKind } from "./rusttypes";
 import { Dynamic } from "solid-js/web";
-import { componentForFilename } from "./ComponentForFile";
+import { componentForFilename } from "./viewers/ComponentForFile";
 
 type PathResult = { kind: PathKind; error?: never } | { kind: "error"; error: string };
 

@@ -7,18 +7,15 @@ import { onCleanup, onMount, Show, JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { Crepe } from "@milkdown/crepe";
 import { remarkStringifyOptionsCtx } from "@milkdown/kit/core";
-import { useI18N } from "./Localization";
-import { useAppContext } from "./AppContext";
+import { useI18N } from "../Localization";
+import { useAppContext } from "../AppContext";
 
 import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
 import ErrorView from "./ErrorView";
-import { translateAppError } from "./AppError";
+import { translateAppError } from "../AppError";
 import { Ctx } from "@milkdown/kit/ctx";
-import {
-    createFileEditorController,
-    type FileEditorAdapter,
-} from "./FileEditorController";
+import { createFileEditorController, type FileEditorAdapter } from "../FileEditorController";
 
 import styles from "./EditorMarkdown.module.css";
 

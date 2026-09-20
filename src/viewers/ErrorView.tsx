@@ -5,9 +5,9 @@
 
 import { JSX } from "solid-js";
 import styles from "./ErrorView.module.css";
-import AppIcon from "./AppIcon";
-import { messagesinfo, type MessageInfoKind, type MessageInfo } from "./messagesinfo";
-import { useI18N } from "./Localization";
+import AppIcon from "../AppIcon";
+import { messagesinfo, type MessageInfoKind, type MessageInfo } from "../messagesinfo";
+import { useI18N } from "../Localization";
 
 type ErrorViewProps = {
     children: JSX.Element;

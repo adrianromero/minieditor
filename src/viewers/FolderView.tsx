@@ -6,12 +6,12 @@
 import { createResource, For, JSX, Match, Show, Switch } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { faFile, faFolder } from "@fortawesome/free-solid-svg-icons";
-import { useAppContext } from "./AppContext";
-import { useI18N } from "./Localization";
+import { useAppContext } from "../AppContext";
+import { useI18N } from "../Localization";
 import styles from "./FolderView.module.css";
-import { translateAppError } from "./AppError";
-import AppIcon from "./AppIcon";
-import type { DirectoryEntry } from "./rusttypes";
+import { translateAppError } from "../AppError";
+import AppIcon from "../AppIcon";
+import type { DirectoryEntry } from "../rusttypes";
 
 type DirectoryResult =
     | { entries: DirectoryEntry[]; error?: never }
