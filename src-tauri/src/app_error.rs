@@ -13,6 +13,7 @@ pub(crate) enum AppErrorCode {
     InspectPathFailed,
     ReadDirectoryFailed,
     ReadFileFailed,
+    OpenFileFailed,
     WriteFileFailed,
 }
 

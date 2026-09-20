@@ -4,6 +4,7 @@
 use crate::app_error::{AppError, AppErrorCode};
 use crate::paths::{normalize_link_filename, resolve_existing_path, resolve_write_path};
 use std::path::PathBuf;
+use tauri_plugin_opener::OpenerExt;
 use tracing::info;
 
 pub(crate) struct AppState {
@@ -220,6 +221,27 @@ pub(crate) async fn read_file(
             AppErrorCode::ReadFileFailed,
         )),
     }
+}
+
+#[tauri::command]
+pub(crate) async fn open_file(
+    app: tauri::AppHandle,
+    basepath: String,
+    filename: String,
+) -> Result<(), AppError> {
+    let (_, path) = resolve_existing_path(&basepath, &filename).await?;
+    info!(path = %path.display(), "Opening file with its default application");
+
+    app.opener()
+        .open_path(path.to_string_lossy(), None::<&str>)
+        .map_err(|error| {
+            AppError::internal(
+                AppErrorCode::OpenFileFailed,
+                "open_file",
+                &filename,
+                &error.to_string(),
+            )
+        })
 }
 
 #[tauri::command]

@@ -15,6 +15,10 @@
         "loading": "Loading {{ path }}...",
         "empty": "This folder is empty"
     },
+    "externalFile": {
+        "open": "Open with the default application",
+        "opening": "Opening..."
+    },
     "dialog": {
         "close": "Close",
         "cancel": "Cancel",
@@ -42,6 +46,7 @@
         "inspect_path_failed": "The path {{ path }} could not be inspected.",
         "read_directory_failed": "The folder {{ path }} could not be opened.",
         "read_file_failed": "The file {{ path }} could not be read.",
+        "open_file_failed": "The file {{ path }} could not be opened with its default application.",
         "write_file_failed": "The file {{ path }} could not be saved. Check that it is writable."
     }
 }

@@ -27,6 +27,7 @@ pub fn run_with_path(basepath: PathBuf, filename: String) {
             commands::resolve_link,
             commands::list_directory,
             commands::read_file,
+            commands::open_file,
             commands::write_file
         ])
         .run(tauri::generate_context!())

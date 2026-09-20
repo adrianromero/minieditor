@@ -18,6 +18,7 @@ import type { LanguageSupport } from "@codemirror/language";
 import type { Component } from "solid-js";
 import EditorText from "./EditorText";
 import EditorMarkdown from "./EditorMarkdown";
+import ExternalFileView from "./ExternalFileView";
 
 type FileEditorProps = {
     extensions?: readonly LanguageSupport[];
@@ -85,7 +86,21 @@ export function componentForFilename(filename: string): FileEditorSelection {
         case ".xsl":
         case ".xslt":
             return { component: EditorText, extensions: [xml()] };
-        default:
+        case ".txt":
+        case ".text":
+        case ".log":
+        case ".csv":
+        case ".tsv":
+        case ".ini":
+        case ".cfg":
+        case ".conf":
+        case ".env":
+        case ".properties":
+        case ".toml":
+        case ".gitignore":
+        case ".editorconfig":
             return { component: EditorText };
+        default:
+            return { component: ExternalFileView };
     }
 }

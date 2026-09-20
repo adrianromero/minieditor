@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.externalFile {
+    display: flex;
+    min-height: 12rem;
+    align-items: center;
+    justify-content: center;
+}
+
+.externalFile button {
+    gap: 0.55rem;
+}

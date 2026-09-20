@@ -15,6 +15,10 @@
         "loading": "Cargando {{ path }}...",
         "empty": "Esta carpeta está vacía"
     },
+    "externalFile": {
+        "open": "Abrir con la aplicación predeterminada",
+        "opening": "Abriendo..."
+    },
     "dialog": {
         "close": "Cerrar",
         "cancel": "Cancelar",
@@ -42,6 +46,7 @@
         "inspect_path_failed": "No se ha podido examinar la ruta {{ path }}.",
         "read_directory_failed": "No se ha podido abrir la carpeta {{ path }}.",
         "read_file_failed": "No se ha podido leer el archivo {{ path }}.",
+        "open_file_failed": "No se ha podido abrir el archivo {{ path }} con su aplicación predeterminada.",
         "write_file_failed": "No se ha podido guardar el archivo {{ path }}. Comprueba que se puede modificar."
     }
 }
