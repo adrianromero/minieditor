@@ -31,6 +31,8 @@
         "actualSize": "Actual size",
         "grid": "Toggle grid",
         "rotation": "Rotation",
+        "rotateLeft": "-90° Left",
+        "rotateRight": "+90° Right",
         "horizontal": "Horizontal",
         "vertical": "Vertical",
         "center": "Center image",
@@ -44,7 +46,14 @@
         "resetFilters": "Reset filters",
         "resetAll": "Reset all",
         "unsupportedSaveFormat": "This image format can be viewed but cannot be saved after editing. Saving is supported for PNG, JPEG, and WebP.",
-        "preset": { "normal": "Normal", "monochrome": "B & W", "vintage": "Vintage", "vivid": "Vivid", "dramatic": "Dramatic", "negative": "Negative" }
+        "preset": {
+            "normal": "Normal",
+            "monochrome": "B & W",
+            "vintage": "Vintage",
+            "vivid": "Vivid",
+            "dramatic": "Dramatic",
+            "negative": "Negative"
+        }
     },
     "dialog": {
         "close": "Close",

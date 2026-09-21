@@ -10,10 +10,12 @@ import {
     type FileEditorAdapter,
 } from "../FileEditorController";
 import { useI18N } from "../Localization";
+import { faRotateLeft, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 
 import { UserMessageError } from "../UserMessageError";
 import ErrorView from "./ErrorView";
 import styles from "./ImageView.module.css";
+import AppIcon from "../AppIcon";
 
 type Tab = "transform" | "adjust" | "presets";
 type FilterName =
@@ -383,6 +385,7 @@ export function ImageView(): JSX.Element {
                     </div>
                     <div class={styles.viewportControls}>
                         <button
+                            class="stdButton actionView"
                             title={t("image.zoomOut")}
                             onClick={() => setZoom((value) => Math.max(0.1, value / 1.2))}
                         >
@@ -449,10 +452,16 @@ export function ImageView(): JSX.Element {
                                 />
                             </Control>
                             <div class={styles.buttonGrid}>
-                                <button onClick={() => rotateBy(-90)}>↶ −90°</button>
-                                <button onClick={() => rotateBy(90)}>↷ +90°</button>
+                                <button class="stdButton toolbar" onClick={() => rotateBy(-90)}>
+                                    <AppIcon icon={faRotateLeft} />
+                                    {t("image.rotateLeft")}
+                                </button>
+                                <button class="stdButton toolbar" onClick={() => rotateBy(90)}>
+                                    <AppIcon icon={faRotateRight} />
+                                    {t("image.rotateRight")}
+                                </button>
                                 <button
-                                    class={settings().flipHorizontal ? styles.activeButton : ""}
+                                    class="stdButton toolbar"
                                     onClick={() =>
                                         updateSettings({
                                             flipHorizontal: !settings().flipHorizontal,
@@ -462,7 +471,7 @@ export function ImageView(): JSX.Element {
                                     ↔ {t("image.horizontal")}
                                 </button>
                                 <button
-                                    class={settings().flipVertical ? styles.activeButton : ""}
+                                    class="stdButton toolbar"
                                     onClick={() =>
                                         updateSettings({ flipVertical: !settings().flipVertical })
                                     }
@@ -471,7 +480,7 @@ export function ImageView(): JSX.Element {
                                 </button>
                             </div>
                             <button
-                                class={styles.wideButton}
+                                class="stdButton toolbar"
                                 onClick={() => {
                                     setPanX(0);
                                     setPanY(0);
@@ -502,7 +511,7 @@ export function ImageView(): JSX.Element {
                                     </Control>
                                 )}
                             </For>
-                            <button class={styles.wideButton} onClick={() => resetFilters()}>
+                            <button class="stdButton toolbar" onClick={() => resetFilters()}>
                                 {t("image.resetFilters")}
                             </button>
                         </Show>
@@ -510,7 +519,10 @@ export function ImageView(): JSX.Element {
                             <div class={styles.presetGrid}>
                                 <For each={presetNames}>
                                     {(preset) => (
-                                        <button onClick={() => applyPreset(preset)}>
+                                        <button
+                                            class="stdButton toolbar"
+                                            onClick={() => applyPreset(preset)}
+                                        >
                                             {t(`image.preset.${preset}`)}
                                         </button>
                                     )}
@@ -518,7 +530,7 @@ export function ImageView(): JSX.Element {
                             </div>
                         </Show>
                         <button
-                            class={`${styles.wideButton} ${styles.resetButton}`}
+                            class={`stdButton toolbar ${styles.resetAll}`}
                             onClick={() => resetAll()}
                         >
                             {t("image.resetAll")}

@@ -79,10 +79,7 @@
     gap: 0.2rem;
 }
 .viewportControls button,
-.tabs button,
-.buttonGrid button,
-.wideButton,
-.presetGrid button {
+.tabs button {
     border: 1px solid transparent;
     border-radius: var(--radius-small);
     color: var(--color-text);
@@ -96,13 +93,10 @@
     padding: 0 0.45rem;
 }
 .viewportControls button:hover,
-.buttonGrid button:hover,
-.wideButton:hover,
-.presetGrid button:hover {
+.wideButton:hover {
     background: var(--color-secondary-hover);
 }
-.viewportControls button.activeButton,
-.buttonGrid button.activeButton {
+.viewportControls button.activeButton {
     color: var(--color-primary);
     border-color: var(--color-primary);
     background: color-mix(in srgb, var(--color-primary) 10%, transparent);
@@ -169,29 +163,15 @@
     width: 100%;
     accent-color: var(--color-primary);
 }
+
 .buttonGrid,
 .presetGrid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0.5rem;
 }
-.buttonGrid button,
-.presetGrid button,
-.wideButton {
-    min-height: 2.35rem;
-    padding: 0.45rem 0.55rem;
-    border-color: var(--color-border);
-    background: var(--color-view-background);
-    font-size: 0.75rem;
-}
-.presetGrid button {
-    min-height: 3rem;
-    text-transform: capitalize;
-}
-.wideButton {
-    width: 100%;
-}
-.resetButton {
+
+:global(.stdButton.toolbar).resetAll {
     margin-top: auto;
     color: var(--color-error-text);
 }

@@ -14,7 +14,7 @@ type AppIconProps = {
 export function AppIcon(props: AppIconProps): JSX.Element {
     return (
         <svg
-            class={props.class ?? ""}
+            class={`appIcon ${props.class ?? ""}`}
             viewBox={`0 0 ${props.icon.icon[0]} ${props.icon.icon[1]}`}
             aria-hidden="true"
         >
