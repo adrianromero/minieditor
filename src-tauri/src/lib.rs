@@ -27,6 +27,8 @@ pub fn run_with_path(basepath: PathBuf, filename: String) {
             commands::resolve_link,
             commands::list_directory,
             commands::read_file,
+            commands::read_binary_file,
+            commands::write_binary_file,
             commands::open_file,
             commands::write_file
         ])

@@ -8,26 +8,58 @@ import { createEffect, createSignal, onCleanup, type Accessor } from "solid-js";
 import { translateAppError } from "./AppError";
 import { useAppContext } from "./AppContext";
 import { useI18N } from "./Localization";
-import type { ReadFileResult } from "./rusttypes";
+import type { ReadFileResult, ReadBinaryFileResult } from "./rusttypes";
 import { UserMessageError } from "./UserMessageError";
 
-export type FileEditorAdapter = {
-    getContent: () => string | null;
-    replaceContent: (
-        content: string,
-        filename: string,
-        onModified: () => void
-    ) => Promise<void>;
+export type FileEditorAdapter<Content = string> = {
+    getContent: () => Promise<Content | null>;
+    replaceContent: (content: Content, filename: string, onModified: () => void) => Promise<void>;
     destroy: () => void;
+};
+
+export type FileEditorStorage<Content> = {
+    read: (basepath: string, filename: string) => Promise<{ content: Content; isNew: boolean }>;
+    write: (
+        basepath: string,
+        filename: string,
+        content: Content,
+        createIfEmpty: boolean
+    ) => Promise<void>;
 };
 
 export type FileEditorController = {
     error: Accessor<string | null>;
 };
 
-export function createFileEditorController(
+export const textFileStorage: FileEditorStorage<string> = {
+    read: (basepath, filename) => invoke<ReadFileResult>("read_file", { basepath, filename }),
+    write: (basepath, filename, content, createIfEmpty) =>
+        invoke("write_file", { basepath, filename, content, createIfEmpty }),
+};
+
+export const binaryFileStorage: FileEditorStorage<number[]> = {
+    read: async (basepath, filename) => ({
+        content: (
+            await invoke<ReadBinaryFileResult>("read_binary_file", {
+                basepath,
+                filename,
+            })
+        ).content,
+        isNew: false,
+    }),
+    write: (basepath, filename, content, createIfEmpty) =>
+        invoke("write_binary_file", {
+            basepath,
+            filename,
+            content,
+            createIfEmpty,
+        }),
+};
+
+export function createFileEditorController<Content = string>(
     editorName: string,
-    adapter: FileEditorAdapter
+    adapter: FileEditorAdapter<Content>,
+    storage: FileEditorStorage<Content>
 ): FileEditorController {
     const { t } = useI18N();
     const {
@@ -38,7 +70,7 @@ export function createFileEditorController(
     const [error, setError] = createSignal<string | null>(null);
 
     const writeCurrentFile = async (createIfEmpty: boolean): Promise<void> => {
-        const content = adapter.getContent();
+        const content = await adapter.getContent();
         if (content === null) {
             return;
         }
@@ -49,12 +81,7 @@ export function createFileEditorController(
         setSpinnerParams(t("editor.saving", { filename: currentFilename }));
         showSpinner();
         try {
-            await invoke("write_file", {
-                basepath: currentBasepath,
-                filename: currentFilename,
-                content,
-                createIfEmpty,
-            });
+            await storage.write(currentBasepath, currentFilename, content, createIfEmpty);
             setFileModified(false);
         } finally {
             hideSpinner();
@@ -66,7 +93,10 @@ export function createFileEditorController(
             await writeCurrentFile(true);
         } catch (err: unknown) {
             console.error(`Error saving file in ${editorName}:`, err);
-            await showAppMessage(translateAppError(err, t), "error");
+            await showAppMessage(
+                err instanceof UserMessageError ? err.message : translateAppError(err, t),
+                "error"
+            );
         }
     };
 
@@ -79,7 +109,10 @@ export function createFileEditorController(
             await writeCurrentFile(false);
         } catch (err: unknown) {
             console.error(`Error automatically saving file in ${editorName}:`, err);
-            throw new UserMessageError(translateAppError(err, t), err);
+            throw new UserMessageError(
+                err instanceof UserMessageError ? err.message : translateAppError(err, t),
+                err
+            );
         }
     };
 
@@ -90,10 +123,7 @@ export function createFileEditorController(
         setSpinnerParams(t("editor.loading", { filename: currentFilename }));
         showSpinner();
         try {
-            const result = await invoke<ReadFileResult>("read_file", {
-                basepath: currentBasepath,
-                filename: currentFilename,
-            });
+            const result = await storage.read(currentBasepath, currentFilename);
 
             await adapter.replaceContent(result.content, currentFilename, () => {
                 setFileModified(true);

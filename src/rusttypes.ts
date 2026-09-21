@@ -22,3 +22,7 @@ export type ReadFileResult = {
     content: string;
     isNew: boolean;
 };
+
+export type ReadBinaryFileResult = {
+    content: number[];
+};

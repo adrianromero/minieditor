@@ -58,6 +58,12 @@ pub(crate) struct ReadFileResult {
     is_new: bool,
 }
 
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct ReadBinaryFileResult {
+    content: Vec<u8>,
+}
+
 #[tauri::command]
 pub(crate) fn initial_config(state: tauri::State<'_, AppState>) -> InitialConfig {
     InitialConfig {
@@ -221,6 +227,50 @@ pub(crate) async fn read_file(
             AppErrorCode::ReadFileFailed,
         )),
     }
+}
+
+#[tauri::command]
+pub(crate) async fn read_binary_file(
+    basepath: String,
+    filename: String,
+) -> Result<ReadBinaryFileResult, AppError> {
+    info!("Reading binary file {}", &filename);
+    let (_, path) = resolve_existing_path(&basepath, &filename).await?;
+    tokio::fs::read(path)
+        .await
+        .map(|content| ReadBinaryFileResult { content })
+        .map_err(|error| {
+            AppError::io(
+                "read_binary_file",
+                &filename,
+                error,
+                AppErrorCode::ReadFileFailed,
+            )
+        })
+}
+
+#[tauri::command]
+pub(crate) async fn write_binary_file(
+    basepath: String,
+    filename: String,
+    content: Vec<u8>,
+    create_if_empty: bool,
+) -> Result<(), AppError> {
+    info!("Writing binary file {}", &filename);
+    let path = resolve_write_path(&basepath, &filename).await?;
+
+    if !create_if_empty && tokio::fs::metadata(&path).await.is_err() {
+        return Ok(());
+    }
+
+    tokio::fs::write(path, content).await.map_err(|error| {
+        AppError::io(
+            "write_binary_file",
+            &filename,
+            error,
+            AppErrorCode::WriteFileFailed,
+        )
+    })
 }
 
 #[tauri::command]

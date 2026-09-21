@@ -15,7 +15,11 @@ import "@milkdown/crepe/theme/frame.css";
 import ErrorView from "./ErrorView";
 import { translateAppError } from "../AppError";
 import { Ctx } from "@milkdown/kit/ctx";
-import { createFileEditorController, type FileEditorAdapter } from "../FileEditorController";
+import {
+    createFileEditorController,
+    textFileStorage,
+    type FileEditorAdapter,
+} from "../FileEditorController";
 
 import styles from "./EditorMarkdown.module.css";
 
@@ -97,7 +101,7 @@ export function EditorMarkdown(): JSX.Element {
     };
 
     const adapter: FileEditorAdapter = {
-        getContent: () => crepeInstance?.getMarkdown() ?? null,
+        getContent: () => Promise.resolve(crepeInstance?.getMarkdown() ?? null),
         replaceContent: async (content, _currentFilename, onModified) => {
             crepeInstance?.destroy();
             crepeInstance = new Crepe({
@@ -138,7 +142,7 @@ export function EditorMarkdown(): JSX.Element {
             crepeInstance = null;
         },
     };
-    const { error } = createFileEditorController("EditorMarkdown", adapter);
+    const { error } = createFileEditorController("EditorMarkdown", adapter, textFileStorage);
 
     onMount(() => {
         editorRef.addEventListener("click", handleLinkPreviewClick, { capture: true });

@@ -1,0 +1,212 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.studio {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--color-view-background);
+}
+.viewport {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    cursor: grab;
+    touch-action: none;
+    background-color: #d9dde2;
+    background-image:
+        linear-gradient(45deg, #c9ced4 25%, transparent 25%),
+        linear-gradient(-45deg, #c9ced4 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #c9ced4 75%),
+        linear-gradient(-45deg, transparent 75%, #c9ced4 75%);
+    background-position:
+        0 0,
+        0 10px,
+        10px -10px,
+        -10px 0;
+    background-size: 20px 20px;
+}
+.viewport:active {
+    cursor: grabbing;
+}
+.viewport.grid::after {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    content: "";
+    background-image:
+        linear-gradient(to right, rgb(255 255 255 / 35%) 1px, transparent 1px),
+        linear-gradient(to bottom, rgb(255 255 255 / 35%) 1px, transparent 1px);
+    background-size: 33.333% 33.333%;
+}
+.canvas {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    max-width: none;
+    max-height: none;
+    transform-origin: center;
+}
+.hud,
+.viewportControls {
+    position: absolute;
+    z-index: 3;
+    bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.4rem 0.6rem;
+    color: var(--color-text);
+    background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-surface);
+    font-size: 0.75rem;
+    backdrop-filter: blur(8px);
+}
+.hud {
+    left: 1rem;
+}
+.viewportControls {
+    right: 1rem;
+    gap: 0.2rem;
+}
+.viewportControls button,
+.tabs button,
+.buttonGrid button,
+.wideButton,
+.presetGrid button {
+    border: 1px solid transparent;
+    border-radius: var(--radius-small);
+    color: var(--color-text);
+    background: transparent;
+    font: inherit;
+    cursor: pointer;
+}
+.viewportControls button {
+    min-width: 2rem;
+    height: 2rem;
+    padding: 0 0.45rem;
+}
+.viewportControls button:hover,
+.buttonGrid button:hover,
+.wideButton:hover,
+.presetGrid button:hover {
+    background: var(--color-secondary-hover);
+}
+.viewportControls button.activeButton,
+.buttonGrid button.activeButton {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 10%, transparent);
+}
+.sidebar {
+    display: flex;
+    width: min(20rem, 38vw);
+    min-width: 16rem;
+    flex-direction: column;
+    overflow: hidden;
+    border-left: 1px solid var(--color-border);
+    background: var(--color-surface);
+}
+.tabs {
+    display: flex;
+    padding: 0.3rem 0.3rem 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+}
+.tabs button {
+    flex: 1;
+    padding: 0.65rem 0.3rem;
+    border-radius: var(--radius-small) var(--radius-small) 0 0;
+    color: var(--color-text-muted);
+    font-size: 0.78rem;
+    text-transform: capitalize;
+}
+.tabs button:hover {
+    color: var(--color-text);
+    background: var(--color-view-background);
+}
+.tabs .activeTab {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+}
+.panel {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 1.25rem;
+    overflow-y: auto;
+    padding: 1rem;
+}
+.control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.control > span {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--color-text-muted);
+    font-size: 0.76rem;
+}
+.control strong {
+    color: var(--color-text);
+    font-weight: 600;
+}
+.control output {
+    color: var(--color-primary);
+    font-variant-numeric: tabular-nums;
+}
+.control input {
+    width: 100%;
+    accent-color: var(--color-primary);
+}
+.buttonGrid,
+.presetGrid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+}
+.buttonGrid button,
+.presetGrid button,
+.wideButton {
+    min-height: 2.35rem;
+    padding: 0.45rem 0.55rem;
+    border-color: var(--color-border);
+    background: var(--color-view-background);
+    font-size: 0.75rem;
+}
+.presetGrid button {
+    min-height: 3rem;
+    text-transform: capitalize;
+}
+.wideButton {
+    width: 100%;
+}
+.resetButton {
+    margin-top: auto;
+    color: var(--color-error-text);
+}
+@media (max-width: 650px) {
+    .studio {
+        flex-direction: column;
+    }
+    .sidebar {
+        width: 100%;
+        min-width: 0;
+        height: 45%;
+        border-top: 1px solid var(--color-border);
+        border-left: 0;
+    }
+    .hud {
+        display: none;
+    }
+}

@@ -7,7 +7,11 @@ import { basicSetup } from "codemirror";
 import { EditorView } from "@codemirror/view";
 import { JSX, Show } from "solid-js";
 import ErrorView from "./ErrorView";
-import { createFileEditorController, type FileEditorAdapter } from "../FileEditorController";
+import {
+    createFileEditorController,
+    textFileStorage,
+    type FileEditorAdapter,
+} from "../FileEditorController";
 import { useI18N } from "../Localization";
 import styles from "./EditorText.module.css";
 import type { LanguageSupport } from "@codemirror/language";
@@ -22,7 +26,7 @@ export function EditorText(props: EditorTextProps): JSX.Element {
 
     const { t } = useI18N();
     const adapter: FileEditorAdapter = {
-        getContent: () => editorView?.state.doc.toString() ?? null,
+        getContent: () => Promise.resolve(editorView?.state.doc.toString() ?? null),
         replaceContent: async (content, _currentFilename, onModified) => {
             editorView?.destroy();
             editorView = new EditorView({
@@ -45,7 +49,7 @@ export function EditorText(props: EditorTextProps): JSX.Element {
             editorView = null;
         },
     };
-    const { error } = createFileEditorController("EditorText", adapter);
+    const { error } = createFileEditorController("EditorText", adapter, textFileStorage);
 
     return (
         <>

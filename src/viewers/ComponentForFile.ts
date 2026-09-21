@@ -19,6 +19,7 @@ import type { Component } from "solid-js";
 import EditorText from "./EditorText";
 import EditorMarkdown from "./EditorMarkdown";
 import ExternalFileView from "./ExternalFileView";
+import ImageView from "./ImageView";
 
 type FileEditorProps = {
     extensions?: readonly LanguageSupport[];
@@ -36,6 +37,15 @@ export function componentForFilename(filename: string): FileEditorSelection {
     switch (extension) {
         case ".md":
             return { component: EditorMarkdown };
+        case ".avif":
+        case ".bmp":
+        case ".gif":
+        case ".ico":
+        case ".jpeg":
+        case ".jpg":
+        case ".png":
+        case ".webp":
+            return { component: ImageView };
         case ".js":
         case ".mjs":
         case ".cjs":
@@ -98,7 +108,6 @@ export function componentForFilename(filename: string): FileEditorSelection {
         case ".properties":
         case ".toml":
         case ".gitignore":
-        case ".editorconfig":
             return { component: EditorText };
         default:
             return { component: ExternalFileView };
