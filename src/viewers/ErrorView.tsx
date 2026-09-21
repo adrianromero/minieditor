@@ -5,7 +5,7 @@
 
 import { JSX } from "solid-js";
 import styles from "./ErrorView.module.css";
-import AppIcon from "../AppIcon";
+import { Dynamic } from "solid-js/web";
 import { messagesinfo, type MessageInfoKind, type MessageInfo } from "../messagesinfo";
 import { useI18N } from "../Localization";
 
@@ -23,7 +23,7 @@ export function ErrorView(props: ErrorViewProps): JSX.Element {
     return (
         <section class={`${styles.errorView} ${styles[info().class]}`}>
             <div class={styles.errorContent}>
-                <AppIcon icon={info().icon} class={styles.icon} />
+                <Dynamic component={info().icon} class={styles.icon} aria-hidden="true" />
                 <div class={styles.title}>{t(info().literal)}</div>
                 <div class={styles.message}>{props.children}</div>
             </div>

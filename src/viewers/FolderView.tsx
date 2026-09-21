@@ -5,12 +5,12 @@
 
 import { createResource, For, JSX, Match, Show, Switch } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
-import { faFile, faFolder } from "@fortawesome/free-solid-svg-icons";
+import { File, Folder } from "lucide-solid";
 import { useAppContext } from "../AppContext";
 import { useI18N } from "../Localization";
 import styles from "./FolderView.module.css";
 import { translateAppError } from "../AppError";
-import AppIcon from "../AppIcon";
+import { Dynamic } from "solid-js/web";
 import type { DirectoryEntry } from "../rusttypes";
 
 type DirectoryResult =
@@ -63,12 +63,13 @@ export function FolderView(): JSX.Element {
                                                         void loadFilename(entry.filename)
                                                     }
                                                 >
-                                                    <AppIcon
+                                                    <Dynamic
                                                         class={styles.entryIcon}
-                                                        icon={
+                                                        aria-hidden="true"
+                                                        component={
                                                             entry.kind === "directory"
-                                                                ? faFolder
-                                                                : faFile
+                                                                ? Folder
+                                                                : File
                                                         }
                                                     />
                                                     <span class={styles.entryName}>

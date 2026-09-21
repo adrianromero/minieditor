@@ -5,7 +5,7 @@
 
 import { createEffect, createUniqueId, JSX } from "solid-js";
 import styles from "./Dialog.module.css";
-import AppIcon from "./AppIcon";
+import { Dynamic } from "solid-js/web";
 import { messagesinfo, type MessageInfo, type MessageInfoKind } from "./messagesinfo";
 import { useI18N } from "./Localization";
 
@@ -49,7 +49,7 @@ export function Dialog(props: DialogProps): JSX.Element {
             }}
         >
             <div class={styles.iconRow}>
-                <AppIcon icon={info().icon} class={styles.icon} />
+                <Dynamic component={info().icon} class={styles.icon} aria-hidden="true" />
             </div>
             <h2 id={titleId} class={styles.title}>
                 {t(info().literal)}

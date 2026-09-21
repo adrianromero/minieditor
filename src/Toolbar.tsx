@@ -4,9 +4,8 @@
  */
 
 import { Show } from "solid-js";
-import { faDownload, faRotate } from "@fortawesome/free-solid-svg-icons";
+import { Download, RefreshCw } from "lucide-solid";
 import { useAppContext } from "./AppContext";
-import AppIcon from "./AppIcon";
 import FileBreadcrumb from "./FileBreadcrumb";
 import FileNavigation from "./FileNavigation";
 import { useI18N } from "./Localization";
@@ -43,7 +42,7 @@ export function Toolbar() {
                             void reloadFile()?.();
                         }}
                     >
-                        <AppIcon icon={faRotate} class="actionIcon" />
+                        <RefreshCw class="actionIcon" aria-hidden="true" />
                     </button>
                 </Show>
                 <Show when={saveFile()}>
@@ -56,7 +55,7 @@ export function Toolbar() {
                             saveFile()?.();
                         }}
                     >
-                        <AppIcon icon={faDownload} class="actionIcon" />
+                        <Download class="actionIcon" aria-hidden="true" />
                     </button>
                 </Show>
             </div>
