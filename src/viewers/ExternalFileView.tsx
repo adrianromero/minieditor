@@ -5,9 +5,8 @@
 
 import { createSignal, type JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
-import { faArrowUpRightFromSquare } from "@fortawesome/free-solid-svg-icons";
+import { ExternalLink } from "lucide-solid";
 import { translateAppError } from "../AppError";
-import AppIcon from "../AppIcon";
 import { useAppContext } from "../AppContext";
 import { useI18N } from "../Localization";
 import styles from "./ExternalFileView.module.css";
@@ -47,7 +46,7 @@ export function ExternalFileView(): JSX.Element {
                     disabled={opening()}
                     onClick={() => void openFile()}
                 >
-                    <AppIcon class="actionIcon" icon={faArrowUpRightFromSquare} />
+                    <ExternalLink class="actionIcon" aria-hidden="true" />
                     <span>{t(opening() ? "externalFile.opening" : "externalFile.open")}</span>
                 </button>
             </div>

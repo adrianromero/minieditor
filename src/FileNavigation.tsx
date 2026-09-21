@@ -3,9 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { faArrowLeft } from "@fortawesome/free-solid-svg-icons";
+import { ArrowLeft } from "lucide-solid";
 import { createEffect, createSignal, JSX } from "solid-js";
-import AppIcon from "./AppIcon";
 import { useAppContext } from "./AppContext";
 import { useI18N } from "./Localization";
 
@@ -63,7 +62,7 @@ export function FileNavigation(): JSX.Element {
             title={t("toolbar.back")}
             onClick={() => void navigateBack()}
         >
-            <AppIcon icon={faArrowLeft} class="actionIcon" />
+            <ArrowLeft class="actionIcon" aria-hidden="true" />
         </button>
     );
 }

@@ -3,24 +3,24 @@
  * SPDX-License-Identifier: MIT
  */
 
-import type { IconDefinition } from "@fortawesome/fontawesome-svg-core";
-import { faCircleInfo, faCircleXmark } from "@fortawesome/free-solid-svg-icons";
+import type { LucideIcon } from "lucide-solid";
+import { Info, CircleX } from "lucide-solid";
 import type { TranslationKey } from "./Localization";
 
 export type MessageInfo = Readonly<{
-    icon: IconDefinition;
+    icon: LucideIcon;
     literal: TranslationKey;
     class: "styleError" | "styleStatus";
 }>;
 
 export const messagesinfo = {
     status: {
-        icon: faCircleInfo,
+        icon: Info,
         literal: "info.status",
         class: "styleStatus",
     },
     error: {
-        icon: faCircleXmark,
+        icon: CircleX,
         literal: "info.error",
         class: "styleError",
     },
