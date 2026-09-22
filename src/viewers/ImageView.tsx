@@ -10,22 +10,24 @@ import {
     type FileEditorAdapter,
 } from "../FileEditorController";
 import { useI18N } from "../Localization";
-import { faRotateLeft, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 
 import { UserMessageError } from "../UserMessageError";
 import ErrorView from "./ErrorView";
 import styles from "./ImageView.module.css";
-import AppIcon from "../AppIcon";
+import {
+    CircleDot,
+    Grid3x3,
+    Maximize2,
+    RotateCcw,
+    RotateCw,
+    SquareCenterlineDashedHorizontal,
+    SquareCenterlineDashedVertical,
+    ZoomIn,
+    ZoomOut,
+} from "lucide-solid";
 
 type Tab = "transform" | "adjust" | "presets";
-type FilterName =
-    | "brightness"
-    | "contrast"
-    | "saturation"
-    | "grayscale"
-    | "sepia"
-    | "invert"
-    | "blur";
+type FilterName = "brightness" | "contrast" | "saturation" | "grayscale" | "sepia" | "invert";
 type PresetName = "normal" | "monochrome" | "vintage" | "vivid" | "dramatic" | "negative";
 type ImageSettings = Record<FilterName, number> & {
     rotation: number;
@@ -44,7 +46,6 @@ const defaultSettings: ImageSettings = {
     grayscale: 0,
     sepia: 0,
     invert: 0,
-    blur: 0,
 };
 const filters: readonly FilterDefinition[] = [
     { name: "brightness", min: 0, max: 200, unit: "%" },
@@ -53,7 +54,6 @@ const filters: readonly FilterDefinition[] = [
     { name: "grayscale", min: 0, max: 100, unit: "%" },
     { name: "sepia", min: 0, max: 100, unit: "%" },
     { name: "invert", min: 0, max: 100, unit: "%" },
-    { name: "blur", min: 0, max: 20, unit: "px" },
 ];
 const presetNames = ["normal", "monochrome", "vintage", "vivid", "dramatic", "negative"] as const;
 const presets: Readonly<Record<PresetName, Partial<ImageSettings>>> = {
@@ -79,54 +79,6 @@ const normalizeRotation = (angle: number): number => {
     return normalized;
 };
 const clampChannel = (value: number): number => Math.min(255, Math.max(0, value));
-
-function boxBlur(data: Uint8ClampedArray, width: number, height: number, radius: number): void {
-    const size = radius * 2 + 1;
-    const horizontal = new Uint8ClampedArray(data.length);
-
-    for (let y = 0; y < height; y += 1) {
-        const sums = [0, 0, 0, 0];
-        for (let x = -radius; x <= radius; x += 1) {
-            const sourceX = Math.min(width - 1, Math.max(0, x));
-            const index = (y * width + sourceX) * 4;
-            for (let channel = 0; channel < 4; channel += 1) sums[channel] += data[index + channel];
-        }
-        for (let x = 0; x < width; x += 1) {
-            const index = (y * width + x) * 4;
-            for (let channel = 0; channel < 4; channel += 1)
-                horizontal[index + channel] = sums[channel] / size;
-            const removedX = Math.min(width - 1, Math.max(0, x - radius));
-            const addedX = Math.min(width - 1, Math.max(0, x + radius + 1));
-            for (let channel = 0; channel < 4; channel += 1) {
-                sums[channel] +=
-                    data[(y * width + addedX) * 4 + channel] -
-                    data[(y * width + removedX) * 4 + channel];
-            }
-        }
-    }
-
-    for (let x = 0; x < width; x += 1) {
-        const sums = [0, 0, 0, 0];
-        for (let y = -radius; y <= radius; y += 1) {
-            const sourceY = Math.min(height - 1, Math.max(0, y));
-            const index = (sourceY * width + x) * 4;
-            for (let channel = 0; channel < 4; channel += 1)
-                sums[channel] += horizontal[index + channel];
-        }
-        for (let y = 0; y < height; y += 1) {
-            const index = (y * width + x) * 4;
-            for (let channel = 0; channel < 4; channel += 1)
-                data[index + channel] = sums[channel] / size;
-            const removedY = Math.min(height - 1, Math.max(0, y - radius));
-            const addedY = Math.min(height - 1, Math.max(0, y + radius + 1));
-            for (let channel = 0; channel < 4; channel += 1) {
-                sums[channel] +=
-                    horizontal[(addedY * width + x) * 4 + channel] -
-                    horizontal[(removedY * width + x) * 4 + channel];
-            }
-        }
-    }
-}
 
 function applyAdjustments(
     context: CanvasRenderingContext2D,
@@ -171,7 +123,6 @@ function applyAdjustments(
         data[index + 2] = clampChannel(blue + (255 - blue * 2) * invert);
     }
 
-    if (settings.blur > 0) boxBlur(data, width, height, Math.round(settings.blur));
     context.putImageData(imageData, 0, 0);
 }
 
@@ -272,18 +223,10 @@ export function ImageView(): JSX.Element {
                 grayscale: 0,
                 sepia: 0,
                 invert: 0,
-                blur: 0,
             },
             modified
         );
-    const resetAll = (modified = true): void => {
-        setSettings({ ...defaultSettings });
-        queueMicrotask(() => {
-            renderCanvas();
-            fitImage();
-        });
-        if (modified) markModified();
-    };
+
     const destroyImage = (): void => {
         sourceImage = null;
         if (sourceUrl) URL.revokeObjectURL(sourceUrl);
@@ -383,41 +326,13 @@ export function ImageView(): JSX.Element {
                         <span>•</span>
                         <span>{settings().rotation}°</span>
                     </div>
-                    <div class={styles.viewportControls}>
-                        <button
-                            class="stdButton actionView"
-                            title={t("image.zoomOut")}
-                            onClick={() => setZoom((value) => Math.max(0.1, value / 1.2))}
-                        >
-                            −
-                        </button>
-                        <button title={t("image.fit")} onClick={fitImage}>
-                            Fit
-                        </button>
-                        <button title={t("image.actualSize")} onClick={() => setZoom(1)}>
-                            1:1
-                        </button>
-                        <button
-                            title={t("image.zoomIn")}
-                            onClick={() => setZoom((value) => Math.min(5, value * 1.2))}
-                        >
-                            +
-                        </button>
-                        <button
-                            class={showGrid() ? styles.activeButton : ""}
-                            title={t("image.grid")}
-                            onClick={() => setShowGrid((value) => !value)}
-                        >
-                            #
-                        </button>
-                    </div>
                 </div>
                 <aside class={styles.sidebar}>
-                    <div class={styles.tabs}>
+                    <div class="tabs">
                         <For each={["transform", "adjust", "presets"] as const}>
                             {(tab) => (
                                 <button
-                                    class={activeTab() === tab ? styles.activeTab : ""}
+                                    class={`stdButton tab ${activeTab() === tab ? "activeTab" : ""}`}
                                     onClick={() => setActiveTab(tab)}
                                 >
                                     {t(`image.${tab}`)}
@@ -438,6 +353,48 @@ export function ImageView(): JSX.Element {
                                     }
                                 />
                             </Control>
+
+                            <div class={styles.zoomGrid}>
+                                <button
+                                    class="stdButton toolbar"
+                                    title={t("image.zoomOut")}
+                                    onClick={() => setZoom((value) => Math.max(0.1, value / 1.2))}
+                                >
+                                    <ZoomOut aria-hidden="true" />
+                                </button>
+                                <button
+                                    class="stdButton toolbar"
+                                    title={t("image.fit")}
+                                    onClick={fitImage}
+                                >
+                                    <Maximize2 aria-hidden="true" />
+                                </button>
+                                <button
+                                    class="stdButton toolbar"
+                                    title={t("image.center")}
+                                    onClick={() => {
+                                        setPanX(0);
+                                        setPanY(0);
+                                    }}
+                                >
+                                    <CircleDot aria-hidden="true" />
+                                </button>
+                                <button
+                                    class="stdButton toolbar"
+                                    title={t("image.actualSize")}
+                                    onClick={() => setZoom(1)}
+                                >
+                                    1:1
+                                </button>
+                                <button
+                                    class="stdButton toolbar"
+                                    title={t("image.zoomIn")}
+                                    onClick={() => setZoom((value) => Math.min(5, value * 1.2))}
+                                >
+                                    <ZoomIn aria-hidden="true" />
+                                </button>
+                            </div>
+
                             <Control label={t("image.rotation")} value={`${settings().rotation}°`}>
                                 <input
                                     type="range"
@@ -453,40 +410,64 @@ export function ImageView(): JSX.Element {
                             </Control>
                             <div class={styles.buttonGrid}>
                                 <button class="stdButton toolbar" onClick={() => rotateBy(-90)}>
-                                    <AppIcon icon={faRotateLeft} />
+                                    <RotateCcw aria-hidden="true" />
                                     {t("image.rotateLeft")}
                                 </button>
                                 <button class="stdButton toolbar" onClick={() => rotateBy(90)}>
-                                    <AppIcon icon={faRotateRight} />
+                                    <RotateCw aria-hidden="true" />
                                     {t("image.rotateRight")}
                                 </button>
-                                <button
-                                    class="stdButton toolbar"
-                                    onClick={() =>
-                                        updateSettings({
-                                            flipHorizontal: !settings().flipHorizontal,
-                                        })
-                                    }
-                                >
-                                    ↔ {t("image.horizontal")}
-                                </button>
-                                <button
-                                    class="stdButton toolbar"
-                                    onClick={() =>
-                                        updateSettings({ flipVertical: !settings().flipVertical })
-                                    }
-                                >
-                                    ↕ {t("image.vertical")}
-                                </button>
                             </div>
+                            <div>
+                                <label class="controlLabel">
+                                    <div>{t("image.flipMirror")}</div>
+                                </label>
+                                <div class={styles.buttonGrid}>
+                                    <button
+                                        class="stdButton toolbar"
+                                        onClick={() =>
+                                            updateSettings({
+                                                flipHorizontal: !settings().flipHorizontal,
+                                            })
+                                        }
+                                    >
+                                        <SquareCenterlineDashedVertical aria-hidden="true" />
+                                        {t("image.horizontal")}
+                                    </button>
+                                    <button
+                                        class="stdButton toolbar"
+                                        onClick={() =>
+                                            updateSettings({
+                                                flipVertical: !settings().flipVertical,
+                                            })
+                                        }
+                                    >
+                                        <SquareCenterlineDashedHorizontal aria-hidden="true" />
+                                        {t("image.vertical")}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button
+                                class={`stdButton toolbar ${showGrid() ? styles.activeButton : ""}`}
+                                style={{ "grid-column": "span 5" }}
+                                onClick={() => setShowGrid((value) => !value)}
+                            >
+                                <Grid3x3 aria-hidden="true" />
+                                {t("image.grid")}
+                            </button>
                             <button
                                 class="stdButton toolbar"
                                 onClick={() => {
-                                    setPanX(0);
-                                    setPanY(0);
+                                    updateSettings({
+                                        flipHorizontal: false,
+                                        flipVertical: false,
+                                        rotation: 0,
+                                    });
+                                    queueMicrotask(fitImage);
                                 }}
                             >
-                                {t("image.center")}
+                                {t("image.resetTransform")}
                             </button>
                         </Show>
                         <Show when={activeTab() === "adjust"}>
@@ -529,12 +510,6 @@ export function ImageView(): JSX.Element {
                                 </For>
                             </div>
                         </Show>
-                        <button
-                            class={`stdButton toolbar ${styles.resetAll}`}
-                            onClick={() => resetAll()}
-                        >
-                            {t("image.resetAll")}
-                        </button>
                     </div>
                 </aside>
             </section>

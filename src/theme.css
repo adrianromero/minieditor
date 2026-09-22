@@ -88,45 +88,82 @@
 }
 
 .stdButton.secondary,
-.stdButton.toolbar {
+.stdButton.toolbar,
+.stdButton.actionView,
+.stdButton.tab {
     background: var(--color-secondary);
     color: var(--color-on-secondary);
     border-color: var(--color-border-secondary);
 }
 
 .stdButton.secondary:hover,
-.stdButton.toolbar:hover {
+.stdButton.toolbar:hover,
+.stdButton.actionView:hover,
+.stdButton.tab:hover {
     background: var(--color-secondary-hover);
 }
 
 .stdButton.secondary:active,
-.stdButton.toolbar:active {
+.stdButton.toolbar:active,
+.stdButton.actionView:active,
+.stdButton.tab:active {
     background: var(--color-secondary-active);
     /* box-shadow: none; */
 }
 
 .stdButton.toolbar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
     font-size: 0.75rem;
     font-weight: 300;
     padding: 0.55rem 0.55rem;
     background: var(--color-view-background);
 }
-.stdButton.toolbar > .appIcon {
-    width: 1rem;
-    height: 1rem;
-    margin-right: 0.4rem;
+
+.stdButton.toolbar > .lucide {
+    width: 0.75rem;
+    height: 0.75rem;
+    stroke-width: 1.5px;
 }
 
 .stdButton.actionView {
     font-size: 0.75rem;
     font-weight: 300;
-    padding: 0.55rem 0.55rem;
+    padding: 0.5rem 0.5rem;
     background: transparent;
     border: none;
 }
-.stdButton.actionView > .appIcon {
+
+.stdButton.actionView > .lucide {
     width: 1rem;
     height: 1rem;
+    stroke-width: 1.5px;
+}
+
+.tabs {
+    display: flex;
+    padding: 0.3rem 0.3rem 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.stdButton.tab {
+    flex: 1;
+    font-size: 0.8rem;
+    font-weight: 500;
+    padding: 0.5rem 0.5rem;
+    color: var(--color-text-muted);
+    background: transparent;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+    border-bottom: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-small) var(--radius-small) 0 0;
+}
+
+.stdButton.tab.activeTab {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
 }
 
 .stdButton:focus {
@@ -151,6 +188,12 @@
 .actionIcon {
     width: 1.2rem;
     height: 1.2rem;
+}
+
+.controlLabel > div {
+    font-size: 0.76rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
 }
 
 /* Shared structure for full-height, independently scrolling application views. */

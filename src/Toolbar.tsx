@@ -4,7 +4,7 @@
  */
 
 import { Show } from "solid-js";
-import { Download, RefreshCw } from "lucide-solid";
+import { Download, HardDriveDownload, HardDriveUpload, RefreshCw } from "lucide-solid";
 import { useAppContext } from "./AppContext";
 import FileBreadcrumb from "./FileBreadcrumb";
 import FileNavigation from "./FileNavigation";
@@ -42,7 +42,7 @@ export function Toolbar() {
                             void reloadFile()?.();
                         }}
                     >
-                        <RefreshCw class="actionIcon" aria-hidden="true" />
+                        <HardDriveUpload class="actionIcon" aria-hidden="true" />
                     </button>
                 </Show>
                 <Show when={saveFile()}>
@@ -55,7 +55,7 @@ export function Toolbar() {
                             saveFile()?.();
                         }}
                     >
-                        <Download class="actionIcon" aria-hidden="true" />
+                        <HardDriveDownload class="actionIcon" aria-hidden="true" />
                     </button>
                 </Show>
             </div>
