@@ -29,6 +29,8 @@ export function FileBreadcrumb(): JSX.Element {
         }));
     });
 
+    const visibleSegments = createMemo(() => segments().slice(-4));
+
     return (
         <div class={styles.container}>
             <div class={styles.basepath} title={basepath()}>
@@ -49,11 +51,17 @@ export function FileBreadcrumb(): JSX.Element {
                     <span class={styles.separator} aria-hidden="true">
                         /
                     </span>
-                    <For each={segments()}>
+                    <Show when={segments().length > visibleSegments().length}>
+                        <span>...</span>
+                        <span class={styles.separator} aria-hidden="true">
+                            /
+                        </span>
+                    </Show>
+                    <For each={visibleSegments()}>
                         {(segment, index) => (
                             <>
                                 <Show
-                                    when={index() < segments().length - 1}
+                                    when={index() < visibleSegments().length - 1}
                                     fallback={<span class={styles.currentSegment}>{segment.name}</span>}
                                 >
                                     <button
@@ -64,7 +72,7 @@ export function FileBreadcrumb(): JSX.Element {
                                         {segment.name}
                                     </button>
                                 </Show>
-                                <Show when={index() < segments().length - 1}>
+                                <Show when={index() < visibleSegments().length - 1}>
                                     <span class={styles.separator} aria-hidden="true">
                                         /
                                     </span>
