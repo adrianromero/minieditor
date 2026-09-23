@@ -4,7 +4,7 @@
  */
 
 import { Show } from "solid-js";
-import { Download, HardDriveDownload, HardDriveUpload, RefreshCw } from "lucide-solid";
+import { HardDriveDownload, HardDriveUpload } from "lucide-solid";
 import { useAppContext } from "./AppContext";
 import FileBreadcrumb from "./FileBreadcrumb";
 import FileNavigation from "./FileNavigation";

@@ -64,7 +64,11 @@ export function FolderView(): JSX.Element {
                                                     }
                                                 >
                                                     <Dynamic
-                                                        class={styles.entryIcon}
+                                                        class={`${styles.entryIcon} ${
+                                                            entry.kind === "directory"
+                                                                ? styles.directoryIcon
+                                                                : styles.fileIcon
+                                                        }`}
                                                         aria-hidden="true"
                                                         component={
                                                             entry.kind === "directory"

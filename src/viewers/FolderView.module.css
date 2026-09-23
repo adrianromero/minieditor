@@ -40,9 +40,18 @@
 
 .entryIcon {
     flex: 0 0 auto;
-    width: 1em;
-    height: 1em;
+    width: 1.25em;
+    height: 1.25em;
     font-size: 1.15rem;
+    fill: color-mix(in srgb, currentColor 25%, var(--color-surface));
+}
+
+.directoryIcon {
+    color: hsl(40 85% 45%);
+}
+
+.fileIcon {
+    color: hsl(215 70% 52%);
 }
 
 .entryName {

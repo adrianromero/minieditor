@@ -12,6 +12,7 @@
     --color-primary: hsl(215 80% 42%);
     --color-primary-hover: hsl(215 82% 36%);
     --color-primary-active: hsl(215 84% 30%);
+    --color-primary-soft: rgba(0, 122, 255, 0.07);
     --color-on-primary: hsl(0 0% 100%);
     --color-border-primary: hsl(215 85% 28%);
 
@@ -186,8 +187,8 @@
 }
 
 .actionIcon {
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 1rem;
+    height: 1rem;
 }
 
 .controlLabel > div {
