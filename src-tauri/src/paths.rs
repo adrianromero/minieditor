@@ -81,7 +81,10 @@ pub(crate) fn normalize_link_filename(filename: &str, href: &str) -> Result<Path
     Ok(normalized)
 }
 
-async fn canonical_basepath(basepath: &str, filename: &str) -> Result<PathBuf, AppError> {
+pub(crate) async fn canonical_basepath(
+    basepath: &str,
+    filename: &str,
+) -> Result<PathBuf, AppError> {
     let path = Path::new(basepath);
     if !path.is_absolute() {
         return Err(AppError::invalid_path(

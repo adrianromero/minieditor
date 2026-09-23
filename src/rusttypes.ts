@@ -25,4 +25,5 @@ export type ReadFileResult = {
 
 export type ReadBinaryFileResult = {
     content: number[];
+    isNew: boolean;
 };

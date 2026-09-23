@@ -148,6 +148,7 @@ export function ImageView(): JSX.Element {
     let viewportRef!: HTMLDivElement;
     let canvasRef!: HTMLCanvasElement;
     let sourceImage: HTMLImageElement | null = null;
+    let emptyImage = false;
     let sourceUrl: string | null = null;
     let dragging = false;
     let dragOriginX = 0;
@@ -229,6 +230,7 @@ export function ImageView(): JSX.Element {
 
     const destroyImage = (): void => {
         sourceImage = null;
+        emptyImage = false;
         if (sourceUrl) URL.revokeObjectURL(sourceUrl);
         sourceUrl = null;
         canvasRef?.getContext("2d")?.clearRect(0, 0, canvasRef.width, canvasRef.height);
@@ -237,6 +239,7 @@ export function ImageView(): JSX.Element {
 
     const adapter: FileEditorAdapter<number[]> = {
         getContent: async () => {
+            if (emptyImage) return [];
             if (!sourceImage) return null;
             const mimeType = writableMimeTypes[extensionOf(currentFilename)];
             if (!mimeType) throw new UserMessageError(t("image.unsupportedSaveFormat"));
@@ -246,6 +249,16 @@ export function ImageView(): JSX.Element {
             destroyImage();
             currentFilename = filename;
             markModified = onModified;
+            setSettings({ ...defaultSettings });
+            setZoom(1);
+            setPanX(0);
+            setPanY(0);
+            if (content.length === 0) {
+                emptyImage = true;
+                canvasRef.width = 0;
+                canvasRef.height = 0;
+                return;
+            }
             sourceUrl = URL.createObjectURL(new Blob([new Uint8Array(content)]));
             const image = new Image();
             await new Promise<void>((resolve, reject) => {
@@ -254,7 +267,6 @@ export function ImageView(): JSX.Element {
                 image.src = sourceUrl ?? "";
             });
             sourceImage = image;
-            setSettings({ ...defaultSettings });
             renderCanvas();
             fitImage();
         },

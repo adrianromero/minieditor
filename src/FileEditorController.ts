@@ -38,15 +38,8 @@ export const textFileStorage: FileEditorStorage<string> = {
 };
 
 export const binaryFileStorage: FileEditorStorage<number[]> = {
-    read: async (basepath, filename) => ({
-        content: (
-            await invoke<ReadBinaryFileResult>("read_binary_file", {
-                basepath,
-                filename,
-            })
-        ).content,
-        isNew: false,
-    }),
+    read: (basepath, filename) =>
+        invoke<ReadBinaryFileResult>("read_binary_file", { basepath, filename }),
     write: (basepath, filename, content, createIfEmpty) =>
         invoke("write_binary_file", {
             basepath,

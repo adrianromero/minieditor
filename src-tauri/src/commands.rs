@@ -2,7 +2,9 @@
 // SPDX-License-Identifier: MIT
 
 use crate::app_error::{AppError, AppErrorCode};
-use crate::paths::{normalize_link_filename, resolve_existing_path, resolve_write_path};
+use crate::paths::{
+    canonical_basepath, normalize_link_filename, resolve_existing_path, resolve_write_path,
+};
 use std::path::PathBuf;
 use tauri_plugin_opener::OpenerExt;
 use tracing::info;
@@ -62,6 +64,7 @@ pub(crate) struct ReadFileResult {
 #[serde(rename_all = "camelCase")]
 pub(crate) struct ReadBinaryFileResult {
     content: Vec<u8>,
+    is_new: bool,
 }
 
 #[tauri::command]
@@ -106,22 +109,8 @@ pub(crate) async fn resolve_link(
     let normalized_filename = normalize_link_filename(&filename, &href)?
         .to_string_lossy()
         .into_owned();
-    let (base, path) = resolve_existing_path(&basepath, &normalized_filename).await?;
-    let metadata = tokio::fs::metadata(&path).await.map_err(|error| {
-        AppError::io(
-            "inspect_link_target",
-            &normalized_filename,
-            error,
-            AppErrorCode::InspectPathFailed,
-        )
-    })?;
-
-    if !metadata.is_file() {
-        return Err(AppError::invalid_path(
-            &normalized_filename,
-            "link target must be a file",
-        ));
-    }
+    let path = resolve_write_path(&basepath, &normalized_filename).await?;
+    let base = canonical_basepath(&basepath, &normalized_filename).await?;
 
     path.strip_prefix(base)
         .map(|relative| relative.to_string_lossy().into_owned())
@@ -235,18 +224,23 @@ pub(crate) async fn read_binary_file(
     filename: String,
 ) -> Result<ReadBinaryFileResult, AppError> {
     info!("Reading binary file {}", &filename);
-    let (_, path) = resolve_existing_path(&basepath, &filename).await?;
-    tokio::fs::read(path)
-        .await
-        .map(|content| ReadBinaryFileResult { content })
-        .map_err(|error| {
-            AppError::io(
-                "read_binary_file",
-                &filename,
-                error,
-                AppErrorCode::ReadFileFailed,
-            )
-        })
+    let path = resolve_write_path(&basepath, &filename).await?;
+    match tokio::fs::read(path).await {
+        Ok(content) => Ok(ReadBinaryFileResult {
+            content,
+            is_new: false,
+        }),
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => Ok(ReadBinaryFileResult {
+            content: Vec::new(),
+            is_new: true,
+        }),
+        Err(error) => Err(AppError::io(
+            "read_binary_file",
+            &filename,
+            error,
+            AppErrorCode::ReadFileFailed,
+        )),
+    }
 }
 
 #[tauri::command]
