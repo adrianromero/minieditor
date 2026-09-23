@@ -88,12 +88,14 @@ export function EditorMarkdown(): JSX.Element {
         }
 
         try {
-            const resolvedFilename = await invoke<string>("resolve_link", {
+            const resolvedFilename = await invoke<string | null>("resolve_link", {
                 basepath: basepath(),
                 filename: filename(),
                 href,
             });
-            await loadFilename(resolvedFilename);
+            if (resolvedFilename !== null) {
+                await loadFilename(resolvedFilename);
+            }
         } catch (err: unknown) {
             console.error("Unable to resolve editor link:", err);
             showAppMessage(translateAppError(err, t), "error");

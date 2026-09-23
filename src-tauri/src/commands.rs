@@ -102,10 +102,29 @@ pub(crate) async fn path_kind(basepath: String, filename: String) -> Result<Path
 
 #[tauri::command]
 pub(crate) async fn resolve_link(
+    app: tauri::AppHandle,
     basepath: String,
     filename: String,
     href: String,
-) -> Result<String, AppError> {
+) -> Result<Option<String>, AppError> {
+    if href.split_once(':').is_some_and(|(scheme, _)| {
+        ["http", "https", "mailto"]
+            .iter()
+            .any(|allowed| scheme.eq_ignore_ascii_case(allowed))
+    }) {
+        app.opener()
+            .open_url(&href, None::<&str>)
+            .map_err(|error| {
+                AppError::internal(
+                    AppErrorCode::OpenFileFailed,
+                    "open_link",
+                    &href,
+                    &error.to_string(),
+                )
+            })?;
+        return Ok(None);
+    }
+
     let normalized_filename = normalize_link_filename(&filename, &href)?
         .to_string_lossy()
         .into_owned();
@@ -113,7 +132,7 @@ pub(crate) async fn resolve_link(
     let base = canonical_basepath(&basepath, &normalized_filename).await?;
 
     path.strip_prefix(base)
-        .map(|relative| relative.to_string_lossy().into_owned())
+        .map(|relative| Some(relative.to_string_lossy().into_owned()))
         .map_err(|error| {
             AppError::internal(
                 AppErrorCode::InvalidPath,

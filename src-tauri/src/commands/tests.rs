@@ -80,7 +80,7 @@ fn empty_missing_file_is_only_created_by_explicit_save() {
 }
 
 #[test]
-fn links_accept_new_files_and_directories_but_remain_inside_base() {
+fn link_paths_accept_new_files_and_directories_but_remain_inside_base() {
     tauri::async_runtime::block_on(async {
         let unique = SystemTime::now()
             .duration_since(UNIX_EPOCH)
@@ -98,7 +98,7 @@ fn links_accept_new_files_and_directories_but_remain_inside_base() {
             ("./docs/new.md", "docs/new.md"),
         ] {
             let resolved =
-                super::resolve_link(basepath.clone(), "index.md".to_owned(), href.to_owned())
+                resolve_local_link(basepath.clone(), "index.md".to_owned(), href.to_owned())
                     .await
                     .unwrap();
             assert_eq!(
@@ -124,7 +124,7 @@ fn links_accept_new_files_and_directories_but_remain_inside_base() {
         #[cfg(unix)]
         {
             std::os::unix::fs::symlink(std::env::temp_dir(), base.join("outside")).unwrap();
-            assert!(super::resolve_link(
+            assert!(resolve_local_link(
                 basepath.clone(),
                 "index.md".to_owned(),
                 "./outside/newfile.md".to_owned(),
@@ -133,7 +133,7 @@ fn links_accept_new_files_and_directories_but_remain_inside_base() {
             .is_err());
             std::os::unix::fs::symlink(base.join("docs"), base.join("alias")).unwrap();
             assert_eq!(
-                super::resolve_link(
+                resolve_local_link(
                     basepath.clone(),
                     "index.md".to_owned(),
                     "./alias/newfile.md".to_owned(),
@@ -194,4 +194,20 @@ fn missing_binary_file_is_empty_and_new_until_explicitly_saved() {
             .is_err());
         std::fs::remove_dir_all(base).unwrap();
     });
+}
+
+async fn resolve_local_link(
+    basepath: String,
+    filename: String,
+    href: String,
+) -> Result<String, crate::app_error::AppError> {
+    let normalized = crate::paths::normalize_link_filename(&filename, &href)?;
+    let normalized = normalized.to_string_lossy();
+    let path = crate::paths::resolve_write_path(&basepath, &normalized).await?;
+    let base = crate::paths::canonical_basepath(&basepath, &normalized).await?;
+    Ok(path
+        .strip_prefix(base)
+        .unwrap()
+        .to_string_lossy()
+        .into_owned())
 }
