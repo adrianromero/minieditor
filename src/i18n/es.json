@@ -8,7 +8,7 @@
         "reload": "Recargar",
         "save": "Guardar",
         "unsavedChanges": "Cambios sin guardar",
-        "basePath": "<base>",
+        "basePath": "[.]",
         "pathNavigation": "Ruta del archivo actual"
     },
     "folder": {

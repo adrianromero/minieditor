@@ -16,7 +16,7 @@ type BreadcrumbSegment = {
 export function FileBreadcrumb(): JSX.Element {
     const { t } = useI18N();
     const {
-        main: { filename, loadFilename },
+        main: { basepath, filename, loadFilename },
     } = useAppContext();
 
     const segments = createMemo<BreadcrumbSegment[]>(() => {
@@ -30,46 +30,51 @@ export function FileBreadcrumb(): JSX.Element {
     });
 
     return (
-        <nav class={styles.breadcrumb} aria-label={t("toolbar.pathNavigation")}>
-            <Show
-                when={segments().length > 0}
-                fallback={<span class={styles.currentSegment}>{t("toolbar.basePath")}</span>}
-            >
-                <button
-                    type="button"
-                    class={styles.segmentLink}
-                    onClick={() => void loadFilename("")}
+        <div class={styles.container}>
+            <div class={styles.basepath} title={basepath()}>
+                {basepath()}
+            </div>
+            <nav class={styles.breadcrumb} aria-label={t("toolbar.pathNavigation")}>
+                <Show
+                    when={segments().length > 0}
+                    fallback={<span class={styles.currentSegment}>{t("toolbar.basePath")}</span>}
                 >
-                    {t("toolbar.basePath")}
-                </button>
-                <span class={styles.separator} aria-hidden="true">
-                    /
-                </span>
-                <For each={segments()}>
-                    {(segment, index) => (
-                        <>
-                            <Show
-                                when={index() < segments().length - 1}
-                                fallback={<span class={styles.currentSegment}>{segment.name}</span>}
-                            >
-                                <button
-                                    type="button"
-                                    class={styles.segmentLink}
-                                    onClick={() => void loadFilename(segment.filename)}
+                    <button
+                        type="button"
+                        class={styles.segmentLink}
+                        onClick={() => void loadFilename("")}
+                    >
+                        {t("toolbar.basePath")}
+                    </button>
+                    <span class={styles.separator} aria-hidden="true">
+                        /
+                    </span>
+                    <For each={segments()}>
+                        {(segment, index) => (
+                            <>
+                                <Show
+                                    when={index() < segments().length - 1}
+                                    fallback={<span class={styles.currentSegment}>{segment.name}</span>}
                                 >
-                                    {segment.name}
-                                </button>
-                            </Show>
-                            <Show when={index() < segments().length - 1}>
-                                <span class={styles.separator} aria-hidden="true">
-                                    /
-                                </span>
-                            </Show>
-                        </>
-                    )}
-                </For>
-            </Show>
-        </nav>
+                                    <button
+                                        type="button"
+                                        class={styles.segmentLink}
+                                        onClick={() => void loadFilename(segment.filename)}
+                                    >
+                                        {segment.name}
+                                    </button>
+                                </Show>
+                                <Show when={index() < segments().length - 1}>
+                                    <span class={styles.separator} aria-hidden="true">
+                                        /
+                                    </span>
+                                </Show>
+                            </>
+                        )}
+                    </For>
+                </Show>
+            </nav>
+        </div>
     );
 }
 
