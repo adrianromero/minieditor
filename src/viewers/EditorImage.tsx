@@ -13,18 +13,16 @@ import { useI18N } from "../Localization";
 
 import { UserMessageError } from "../UserMessageError";
 import ErrorView from "./ErrorView";
-import styles from "./ImageView.module.css";
-import {
-    CircleDot,
-    Grid3x3,
-    Maximize2,
-    RotateCcw,
-    RotateCw,
-    SquareCenterlineDashedHorizontal,
-    SquareCenterlineDashedVertical,
-    ZoomIn,
-    ZoomOut,
-} from "lucide-solid";
+import styles from "./EditorImage.module.css";
+import CircleDot from "lucide-solid/icons/circle-dot";
+import Grid3x3 from "lucide-solid/icons/grid-3x3";
+import Maximize2 from "lucide-solid/icons/maximize-2";
+import RotateCcw from "lucide-solid/icons/rotate-ccw";
+import RotateCw from "lucide-solid/icons/rotate-cw";
+import SquareCenterlineDashedHorizontal from "lucide-solid/icons/square-centerline-dashed-horizontal";
+import SquareCenterlineDashedVertical from "lucide-solid/icons/square-centerline-dashed-vertical";
+import ZoomIn from "lucide-solid/icons/zoom-in";
+import ZoomOut from "lucide-solid/icons/zoom-out";
 
 type Tab = "transform" | "adjust" | "presets";
 type FilterName = "brightness" | "contrast" | "saturation" | "grayscale" | "sepia" | "invert";
@@ -461,7 +459,7 @@ export function EditorImage(): JSX.Element {
                             </div>
 
                             <button
-                                class={`stdButton toolbar ${showGrid() ? styles.activeButton : ""}`}
+                                class={`stdButton toolbar ${showGrid() ? "selected" : ""}`}
                                 style={{ "grid-column": "span 5" }}
                                 onClick={() => setShowGrid((value) => !value)}
                             >

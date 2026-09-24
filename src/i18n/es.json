@@ -15,6 +15,30 @@
         "loading": "Cargando {{ path }}...",
         "empty": "Esta carpeta está vacía"
     },
+    "markdownToolbar": {
+        "blockStyle": "Estilo de bloque",
+        "paragraph": "Párrafo",
+        "heading1": "Encabezado 1",
+        "heading2": "Encabezado 2",
+        "heading3": "Encabezado 3",
+        "heading4": "Encabezado 4",
+        "heading5": "Encabezado 5",
+        "heading6": "Encabezado 6",
+        "lists": "Listas",
+        "bulletList": "Lista con viñetas",
+        "orderedList": "Lista numerada",
+        "taskList": "Lista de tareas",
+        "insert": "Insertar",
+        "link": "Enlace",
+        "image": "Imagen",
+        "table": "Tabla",
+        "blocks": "Bloques",
+        "codeBlock": "Bloque de código",
+        "mathBlock": "Bloque matemático",
+        "more": "Más",
+        "quote": "Cita",
+        "divider": "Separador"
+    },
     "externalFile": {
         "open": "Abrir con la aplicación predeterminada",
         "opening": "Abriendo..."

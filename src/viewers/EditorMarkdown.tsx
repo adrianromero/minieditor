@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { onCleanup, onMount, Show, JSX } from "solid-js";
+import { createSignal, onCleanup, onMount, Show, JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { Crepe } from "@milkdown/crepe";
 import { remarkStringifyOptionsCtx } from "@milkdown/kit/core";
@@ -22,10 +22,12 @@ import {
 } from "../FileEditorController";
 
 import styles from "./EditorMarkdown.module.css";
+import EditorMarkdownToolbar from "./EditorMarkdownToolbar";
 
 export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
     let crepeInstance: Crepe | null = null;
+    const [editorReady, setEditorReady] = createSignal(false);
 
     const { t } = useI18N();
     const {
@@ -105,10 +107,14 @@ export function EditorMarkdown(): JSX.Element {
     const adapter: FileEditorAdapter = {
         getContent: () => Promise.resolve(crepeInstance?.getMarkdown() ?? null),
         replaceContent: async (content, _currentFilename, onModified) => {
+            setEditorReady(false);
             crepeInstance?.destroy();
             crepeInstance = new Crepe({
                 root: editorRef,
                 defaultValue: content,
+                // features: {
+                //     [Crepe.Feature.TopBar]: true,
+                // },
             });
 
             crepeInstance.editor.config((ctx) => {
@@ -138,8 +144,10 @@ export function EditorMarkdown(): JSX.Element {
             });
 
             await crepeInstance.create();
+            setEditorReady(true);
         },
         destroy: () => {
+            setEditorReady(false);
             crepeInstance?.destroy();
             crepeInstance = null;
         },
@@ -158,6 +166,11 @@ export function EditorMarkdown(): JSX.Element {
         <>
             <Show when={error()}>
                 <ErrorView>{error() ?? t("errors.unknown")}</ErrorView>
+            </Show>
+            <Show when={!error()}>
+                <EditorMarkdownToolbar
+                    getEditor={() => (editorReady() && crepeInstance ? crepeInstance.editor : null)}
+                />
             </Show>
             <div class={`scrollingView ${error() ? "errorView" : ""}`}>
                 <div ref={editorRef} class={`contentView ${styles.editorMarkdown}`} />

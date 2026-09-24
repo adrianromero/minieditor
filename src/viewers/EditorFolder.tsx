@@ -5,13 +5,17 @@
 
 import { createResource, For, JSX, Match, Show, Switch } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
-import { File, Folder } from "lucide-solid";
+import File from "lucide-solid/icons/file";
+import Folder from "lucide-solid/icons/folder";
+import ListPlus from "lucide-solid/icons/list-plus";
+import RefreshCw from "lucide-solid/icons/refresh-cw";
 import { useAppContext } from "../AppContext";
 import { useI18N } from "../Localization";
-import styles from "./FolderView.module.css";
+import styles from "./EditorFolder.module.css";
 import { translateAppError } from "../AppError";
 import { Dynamic } from "solid-js/web";
 import type { DirectoryEntry } from "../rusttypes";
+import ToolbarView from "./ToolbarView";
 
 type DirectoryResult =
     | { entries: DirectoryEntry[]; error?: never }
@@ -41,55 +45,66 @@ export function EditorFolder(): JSX.Element {
     );
 
     return (
-        <section class="scrollingView">
-            <Show when={!directoryResult.loading}>
-                <Switch>
-                    <Match when={directoryResult()?.error}>
-                        <div class={styles.folderError}>{directoryResult()?.error}</div>
-                    </Match>
-                    <Match when={directoryResult()?.entries}>
-                        <Show
-                            when={(directoryResult()?.entries?.length ?? 0) > 0}
-                            fallback={<div class={styles.emptyFolder}>{t("folder.empty")}</div>}
-                        >
-                            <div class="contentView">
-                                <ul class={`${styles.entryList}`}>
-                                    <For each={directoryResult()?.entries}>
-                                        {(entry) => (
-                                            <li>
-                                                <button
-                                                    class={styles.entryButton}
-                                                    onClick={() =>
-                                                        void loadFilename(entry.filename)
-                                                    }
-                                                >
-                                                    <Dynamic
-                                                        class={`${styles.entryIcon} ${
-                                                            entry.kind === "directory"
-                                                                ? styles.directoryIcon
-                                                                : styles.fileIcon
-                                                        }`}
-                                                        aria-hidden="true"
-                                                        component={
-                                                            entry.kind === "directory"
-                                                                ? Folder
-                                                                : File
+        <>
+            <ToolbarView>
+                <button class="stdButton small" type="button" aria-label="Add item">
+                    <ListPlus aria-hidden="true" />
+                </button>
+                <button class="stdButton small" type="button" aria-label="Refresh folder">
+                    <RefreshCw aria-hidden="true" />
+                    Refresh
+                </button>
+            </ToolbarView>
+            <section class="scrollingView">
+                <Show when={!directoryResult.loading}>
+                    <Switch>
+                        <Match when={directoryResult()?.error}>
+                            <div class={styles.folderError}>{directoryResult()?.error}</div>
+                        </Match>
+                        <Match when={directoryResult()?.entries}>
+                            <Show
+                                when={(directoryResult()?.entries?.length ?? 0) > 0}
+                                fallback={<div class={styles.emptyFolder}>{t("folder.empty")}</div>}
+                            >
+                                <div class="contentView">
+                                    <ul class={`${styles.entryList}`}>
+                                        <For each={directoryResult()?.entries}>
+                                            {(entry) => (
+                                                <li>
+                                                    <button
+                                                        class={styles.entryButton}
+                                                        onClick={() =>
+                                                            void loadFilename(entry.filename)
                                                         }
-                                                    />
-                                                    <span class={styles.entryName}>
-                                                        {entry.name}
-                                                    </span>
-                                                </button>
-                                            </li>
-                                        )}
-                                    </For>
-                                </ul>
-                            </div>
-                        </Show>
-                    </Match>
-                </Switch>
-            </Show>
-        </section>
+                                                    >
+                                                        <Dynamic
+                                                            class={`${styles.entryIcon} ${
+                                                                entry.kind === "directory"
+                                                                    ? styles.directoryIcon
+                                                                    : styles.fileIcon
+                                                            }`}
+                                                            aria-hidden="true"
+                                                            component={
+                                                                entry.kind === "directory"
+                                                                    ? Folder
+                                                                    : File
+                                                            }
+                                                        />
+                                                        <span class={styles.entryName}>
+                                                            {entry.name}
+                                                        </span>
+                                                    </button>
+                                                </li>
+                                            )}
+                                        </For>
+                                    </ul>
+                                </div>
+                            </Show>
+                        </Match>
+                    </Switch>
+                </Show>
+            </section>
+        </>
     );
 }
 

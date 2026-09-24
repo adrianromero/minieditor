@@ -141,11 +141,6 @@
     gap: 0.5rem;
 }
 
-:global(.stdButton.toolbar).activeButton {
-    color: var(--color-primary);
-    border-color: var(--color-primary);
-}
-
 @media (max-width: 650px) {
     .studio {
         flex-direction: column;

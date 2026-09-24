@@ -5,11 +5,11 @@
 
 import { createSignal, type JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
-import { ExternalLink } from "lucide-solid";
+import ExternalLink from "lucide-solid/icons/external-link";
 import { translateAppError } from "../AppError";
 import { useAppContext } from "../AppContext";
 import { useI18N } from "../Localization";
-import styles from "./ExternalFileView.module.css";
+import styles from "./EditorExternalFile.module.css";
 
 export function EditorExternalFile(): JSX.Element {
     const { t } = useI18N();

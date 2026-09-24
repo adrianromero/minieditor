@@ -4,7 +4,8 @@
  */
 
 import type { LucideIcon } from "lucide-solid";
-import { Info, CircleX } from "lucide-solid";
+import Info from "lucide-solid/icons/info";
+import CircleX from "lucide-solid/icons/circle-x";
 import type { TranslationKey } from "./Localization";
 
 export type MessageInfo = Readonly<{

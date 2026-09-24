@@ -15,6 +15,30 @@
         "loading": "Loading {{ path }}...",
         "empty": "This folder is empty"
     },
+    "markdownToolbar": {
+        "blockStyle": "Block style",
+        "paragraph": "Paragraph",
+        "heading1": "Heading 1",
+        "heading2": "Heading 2",
+        "heading3": "Heading 3",
+        "heading4": "Heading 4",
+        "heading5": "Heading 5",
+        "heading6": "Heading 6",
+        "lists": "Lists",
+        "bulletList": "Bullet list",
+        "orderedList": "Numbered list",
+        "taskList": "Task list",
+        "insert": "Insert",
+        "link": "Link",
+        "image": "Image",
+        "table": "Table",
+        "blocks": "Blocks",
+        "codeBlock": "Code block",
+        "mathBlock": "Math block",
+        "more": "More",
+        "quote": "Quote",
+        "divider": "Divider"
+    },
     "externalFile": {
         "open": "Open with the default application",
         "opening": "Opening..."

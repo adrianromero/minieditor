@@ -90,7 +90,7 @@
 
 .stdButton.secondary,
 .stdButton.toolbar,
-.stdButton.actionView,
+.stdButton.small,
 .stdButton.tab {
     background: var(--color-secondary);
     color: var(--color-on-secondary);
@@ -99,14 +99,14 @@
 
 .stdButton.secondary:hover,
 .stdButton.toolbar:hover,
-.stdButton.actionView:hover,
+.stdButton.small:hover,
 .stdButton.tab:hover {
     background: var(--color-secondary-hover);
 }
 
 .stdButton.secondary:active,
 .stdButton.toolbar:active,
-.stdButton.actionView:active,
+.stdButton.small:active,
 .stdButton.tab:active {
     background: var(--color-secondary-active);
     /* box-shadow: none; */
@@ -122,23 +122,36 @@
     background: var(--color-view-background);
 }
 
+.stdButton.toolbar.selected {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
 .stdButton.toolbar > .lucide {
-    width: 0.75rem;
-    height: 0.75rem;
-    stroke-width: 1.5px;
+    width: 16px;
+    height: 16px;
+    stroke-width: 1px;
 }
 
-.stdButton.actionView {
-    font-size: 0.75rem;
+.stdButton.small {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.6rem;
     font-weight: 300;
-    padding: 0.5rem 0.5rem;
-    background: transparent;
-    border: none;
+    padding: 0.2rem 0.55rem;
+    background: var(--color-view-background);
 }
 
-.stdButton.actionView > .lucide {
-    width: 1rem;
-    height: 1rem;
+.stdButton.small.selected,
+.stdButton.small.active {
+    color: var(--color-primary);
+    border-color: var(--color-primary);
+}
+
+.stdButton.small > .lucide {
+    width: 10px;
+    height: 10px;
     stroke-width: 1.5px;
 }
 

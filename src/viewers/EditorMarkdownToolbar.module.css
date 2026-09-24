@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.toolbarGroup {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.toolbarDivider {
+    align-self: stretch;
+    width: 1px;
+    min-height: 1.75rem;
+    background: var(--color-border-subtle);
+}

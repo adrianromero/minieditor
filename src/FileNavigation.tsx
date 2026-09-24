@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { ArrowLeft } from "lucide-solid";
+import ArrowLeft from "lucide-solid/icons/arrow-left";
 import { createEffect, createSignal, JSX } from "solid-js";
 import { useAppContext } from "./AppContext";
 import { useI18N } from "./Localization";
@@ -56,7 +56,7 @@ export function FileNavigation(): JSX.Element {
     return (
         <button
             type="button"
-            class="stdButton secondary"
+            class="stdButton toolbar"
             disabled={filenameHistory().length <= 1}
             aria-label={t("toolbar.back")}
             title={t("toolbar.back")}

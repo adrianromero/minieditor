@@ -4,7 +4,8 @@
  */
 
 import { Show } from "solid-js";
-import { HardDriveDownload, HardDriveUpload } from "lucide-solid";
+import HardDriveDownload from "lucide-solid/icons/hard-drive-download";
+import HardDriveUpload from "lucide-solid/icons/hard-drive-upload";
 import { useAppContext } from "./AppContext";
 import FileBreadcrumb from "./FileBreadcrumb";
 import FileNavigation from "./FileNavigation";
@@ -35,19 +36,19 @@ export function Toolbar() {
             <div class={styles.toolbarActions}>
                 <Show when={reloadFile()}>
                     <button
-                        class="stdButton"
+                        class="stdButton toolbar"
                         aria-label={t("toolbar.reload")}
                         title={t("toolbar.reload")}
                         onClick={() => {
                             void reloadFile()?.();
                         }}
                     >
-                        <HardDriveUpload class="actionIcon" aria-hidden="true" />
+                        <HardDriveUpload aria-hidden="true" />
                     </button>
                 </Show>
                 <Show when={saveFile()}>
                     <button
-                        class="stdButton"
+                        class="stdButton toolbar"
                         aria-label={t("toolbar.save")}
                         title={t("toolbar.save")}
                         disabled={!fileModified()}
@@ -55,7 +56,7 @@ export function Toolbar() {
                             saveFile()?.();
                         }}
                     >
-                        <HardDriveDownload class="actionIcon" aria-hidden="true" />
+                        <HardDriveDownload aria-hidden="true" />
                     </button>
                 </Show>
             </div>
