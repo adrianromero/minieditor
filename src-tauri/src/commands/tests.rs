@@ -116,7 +116,7 @@ fn link_paths_accept_new_files_and_directories_but_remain_inside_base() {
             .await
             .is_err());
         assert!(
-            super::list_directory(basepath.clone(), "missing".to_owned())
+            super::list_directory(basepath.clone(), "missing".to_owned(), false)
                 .await
                 .is_err()
         );
@@ -143,6 +143,45 @@ fn link_paths_accept_new_files_and_directories_but_remain_inside_base() {
                 "docs/newfile.md"
             );
         }
+
+        std::fs::remove_dir_all(base).unwrap();
+    });
+}
+
+#[test]
+fn list_directory_respects_show_hidden_flag() {
+    tauri::async_runtime::block_on(async {
+        let unique = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let base = std::env::temp_dir().join(format!("minieditor-list-directory-{unique}"));
+        std::fs::create_dir(&base).unwrap();
+        std::fs::write(base.join("visible.md"), "Visible").unwrap();
+        std::fs::write(base.join(".hidden.md"), "Hidden").unwrap();
+        let basepath = base.to_string_lossy().into_owned();
+
+        let visible_entries = super::list_directory(basepath.clone(), String::new(), false)
+            .await
+            .unwrap();
+        assert_eq!(
+            visible_entries
+                .iter()
+                .map(|entry| entry.name.as_str())
+                .collect::<Vec<_>>(),
+            vec!["visible.md"]
+        );
+
+        let all_entries = super::list_directory(basepath, String::new(), true)
+            .await
+            .unwrap();
+        assert_eq!(
+            all_entries
+                .iter()
+                .map(|entry| entry.name.as_str())
+                .collect::<Vec<_>>(),
+            vec![".hidden.md", "visible.md"]
+        );
 
         std::fs::remove_dir_all(base).unwrap();
     });

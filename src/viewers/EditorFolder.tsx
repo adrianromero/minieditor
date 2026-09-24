@@ -33,7 +33,10 @@ export function EditorFolder(): JSX.Element {
             setSpinnerParams(t("folder.loading", { path: path.filename }));
             showSpinner();
             try {
-                const entries = await invoke<DirectoryEntry[]>("list_directory", path);
+                const entries = await invoke<DirectoryEntry[]>("list_directory", {
+                    ...path,
+                    showHidden: false,
+                });
                 return { entries };
             } catch (error: unknown) {
                 console.error("Unable to list directory:", error);

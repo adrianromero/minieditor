@@ -147,6 +147,7 @@ pub(crate) async fn resolve_link(
 pub(crate) async fn list_directory(
     basepath: String,
     filename: String,
+    show_hidden: bool,
 ) -> Result<Vec<DirectoryEntry>, AppError> {
     let (base, path) = resolve_existing_path(&basepath, &filename).await?;
     let mut directory = tokio::fs::read_dir(&path).await.map_err(|error| {
@@ -167,6 +168,11 @@ pub(crate) async fn list_directory(
             AppErrorCode::ReadDirectoryFailed,
         )
     })? {
+        let entry_name = entry.file_name().to_string_lossy().into_owned();
+        if !show_hidden && entry_name.starts_with('.') {
+            continue;
+        }
+
         let entry_path = entry.path();
         let metadata = tokio::fs::metadata(&entry_path).await.map_err(|error| {
             AppError::io(
@@ -185,7 +191,7 @@ pub(crate) async fn list_directory(
         };
 
         entries.push(DirectoryEntry {
-            name: entry.file_name().to_string_lossy().into_owned(),
+            name: entry_name,
             filename: entry_path
                 .strip_prefix(&base)
                 .map_err(|error| {
