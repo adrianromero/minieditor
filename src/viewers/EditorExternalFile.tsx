@@ -11,7 +11,7 @@ import { useAppContext } from "../AppContext";
 import { useI18N } from "../Localization";
 import styles from "./ExternalFileView.module.css";
 
-export function ExternalFileView(): JSX.Element {
+export function EditorExternalFile(): JSX.Element {
     const { t } = useI18N();
     const {
         main: { basepath, filename, showAppMessage },
@@ -54,4 +54,4 @@ export function ExternalFileView(): JSX.Element {
     );
 }
 
-export default ExternalFileView;
+export default EditorExternalFile;

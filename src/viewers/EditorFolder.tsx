@@ -17,7 +17,7 @@ type DirectoryResult =
     | { entries: DirectoryEntry[]; error?: never }
     | { entries?: never; error: string };
 
-export function FolderView(): JSX.Element {
+export function EditorFolder(): JSX.Element {
     const { t } = useI18N();
     const {
         main: { basepath, filename, loadFilename },
@@ -93,4 +93,4 @@ export function FolderView(): JSX.Element {
     );
 }
 
-export default FolderView;
+export default EditorFolder;

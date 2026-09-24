@@ -18,8 +18,8 @@ import type { LanguageSupport } from "@codemirror/language";
 import type { Component } from "solid-js";
 import EditorText from "./EditorText";
 import EditorMarkdown from "./EditorMarkdown";
-import ExternalFileView from "./ExternalFileView";
-import ImageView from "./ImageView";
+import EditorExternalFile from "./EditorExternalFile";
+import EditorImage from "./EditorImage";
 
 type FileEditorProps = {
     extensions?: readonly LanguageSupport[];
@@ -45,7 +45,7 @@ export function componentForFilename(filename: string): FileEditorSelection {
         case ".jpg":
         case ".png":
         case ".webp":
-            return { component: ImageView };
+            return { component: EditorImage };
         case ".js":
         case ".mjs":
         case ".cjs":
@@ -110,6 +110,6 @@ export function componentForFilename(filename: string): FileEditorSelection {
         case ".gitignore":
             return { component: EditorText };
         default:
-            return { component: ExternalFileView };
+            return { component: EditorExternalFile };
     }
 }

@@ -144,7 +144,7 @@ function canvasToBytes(canvas: HTMLCanvasElement, mimeType: string): Promise<num
     );
 }
 
-export function ImageView(): JSX.Element {
+export function EditorImage(): JSX.Element {
     let viewportRef!: HTMLDivElement;
     let canvasRef!: HTMLCanvasElement;
     let sourceImage: HTMLImageElement | null = null;
@@ -277,7 +277,7 @@ export function ImageView(): JSX.Element {
         },
     };
 
-    const { error } = createFileEditorController("ImageView", adapter, binaryFileStorage);
+    const { error } = createFileEditorController("EditorImage", adapter, binaryFileStorage);
     const applyPreset = (name: PresetName): void => {
         setSettings({ ...defaultSettings, ...presets[name] });
         queueMicrotask(renderCanvas);
@@ -541,4 +541,4 @@ function Control(props: { label: string; value: string; children: JSX.Element })
     );
 }
 
-export default ImageView;
+export default EditorImage;

@@ -5,7 +5,7 @@
 
 import { createResource, JSX, Match, Show, Switch } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
-import FolderView from "./viewers/FolderView";
+import EditorFolder from "./viewers/EditorFolder";
 import { useAppContext } from "./AppContext";
 import ErrorView from "./viewers/ErrorView";
 import { useI18N } from "./Localization";
@@ -47,7 +47,7 @@ export function RootContent(): JSX.Element {
                     <Dynamic {...componentForFilename(filename())} />
                 </Match>
                 <Match when={pathResult()?.kind === "directory"}>
-                    <FolderView />
+                    <EditorFolder />
                 </Match>
                 <Match when={pathResult()?.kind === "other"}>
                     <ErrorView info="status">
