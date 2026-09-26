@@ -42,3 +42,21 @@ Object.defineProperty(HTMLElement.prototype, "scrollIntoView", {
     configurable: true,
     value: (): void => {},
 });
+
+Object.defineProperties(Range.prototype, {
+    getBoundingClientRect: {
+        configurable: true,
+        value: (): DOMRect => new DOMRect(),
+    },
+    getClientRects: {
+        configurable: true,
+        value: (): DOMRectList => {
+            const rectangles: DOMRect[] = [];
+            return {
+                length: 0,
+                item: (index: number): DOMRect | null => rectangles[index] ?? null,
+                [Symbol.iterator]: () => rectangles[Symbol.iterator](),
+            };
+        },
+    },
+});

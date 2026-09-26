@@ -28,7 +28,8 @@ import { createTable } from "@milkdown/kit/preset/gfm";
 import { listenerCtx } from "@milkdown/kit/plugin/listener";
 import { lift } from "@milkdown/kit/prose/commands";
 import type { NodeType } from "@milkdown/kit/prose/model";
-import type { Selection } from "@milkdown/kit/prose/state";
+import { wrapInList } from "@milkdown/kit/prose/schema-list";
+import type { Selection, Transaction } from "@milkdown/kit/prose/state";
 
 import type { LucideIcon } from "lucide-solid";
 import CodeXml from "lucide-solid/icons/code-xml";
@@ -157,22 +158,30 @@ function changeListType(ctx: Ctx, listContext: ListContext, nodeType: NodeType):
     view.dispatch(view.state.tr.setNodeMarkup(listPosition, nodeType, attrs));
 }
 
-function setCurrentTaskState(ctx: Ctx, checked: boolean | null): void {
-    const listContext = getListContext(ctx);
-    if (!listContext) {
-        return;
-    }
+function applySelectedTaskState(
+    transaction: Transaction,
+    listItem: NodeType,
+    checked: boolean | null
+): void {
+    const { from, to } = transaction.selection;
+    transaction.doc.nodesBetween(from, to, (node, position) => {
+        if (node.type === listItem) {
+            transaction.setNodeMarkup(position, undefined, {
+                ...node.attrs,
+                checked,
+            });
+        }
+    });
+}
 
+function setSelectedTaskState(ctx: Ctx, checked: boolean | null): void {
     const view = ctx.get(editorViewCtx);
-    const { $from } = view.state.selection;
-    const item = $from.node(listContext.itemDepth);
-    const itemPosition = $from.before(listContext.itemDepth);
-    view.dispatch(
-        view.state.tr.setNodeMarkup(itemPosition, undefined, {
-            ...item.attrs,
-            checked,
-        })
-    );
+    const transaction = view.state.tr;
+    applySelectedTaskState(transaction, listItemSchema.type(ctx), checked);
+
+    if (transaction.docChanged) {
+        view.dispatch(transaction);
+    }
 }
 
 export function toggleList(ctx: Ctx, requestedKind: ListKind): void {
@@ -181,19 +190,25 @@ export function toggleList(ctx: Ctx, requestedKind: ListKind): void {
 
     if (!listContext) {
         if (requestedKind === "task") {
-            commands.call(wrapInBlockTypeCommand.key, {
-                nodeType: listItemSchema.type(ctx),
-                attrs: { checked: false },
-            });
+            const view = ctx.get(editorViewCtx);
+            wrapInList(bulletListSchema.type(ctx), { spread: true })(
+                view.state,
+                (transaction) => {
+                    applySelectedTaskState(transaction, listItemSchema.type(ctx), false);
+                    view.dispatch(transaction);
+                }
+            );
             return;
         }
 
-        commands.call(wrapInBlockTypeCommand.key, {
-            nodeType:
-                requestedKind === "ordered"
-                    ? orderedListSchema.type(ctx)
-                    : bulletListSchema.type(ctx),
-        });
+        const view = ctx.get(editorViewCtx);
+        const listType =
+            requestedKind === "ordered"
+                ? orderedListSchema.type(ctx)
+                : bulletListSchema.type(ctx);
+        wrapInList(listType, { spread: true })(view.state, (transaction) =>
+            view.dispatch(transaction)
+        );
         return;
     }
 
@@ -206,7 +221,7 @@ export function toggleList(ctx: Ctx, requestedKind: ListKind): void {
         if (listContext.kind === "ordered") {
             changeListType(ctx, listContext, bulletListSchema.type(ctx));
         }
-        setCurrentTaskState(ctx, false);
+        setSelectedTaskState(ctx, false);
         return;
     }
 
@@ -221,7 +236,7 @@ export function toggleList(ctx: Ctx, requestedKind: ListKind): void {
         changeListType(ctx, listContext, targetType);
     }
     if (listContext.isTask) {
-        setCurrentTaskState(ctx, null);
+        setSelectedTaskState(ctx, null);
     }
 }
 

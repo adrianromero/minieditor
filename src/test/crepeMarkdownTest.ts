@@ -97,10 +97,16 @@ export async function runCrepeMarkdownAction(
     try {
         await crepe.create();
 
-        let result = "";
         crepe.editor.action((ctx) => {
             installSelection(ctx);
             action(ctx);
+            ctx.get(editorViewCtx).focus();
+        });
+
+        await new Promise<void>((resolve) => setTimeout(resolve, 0));
+
+        let result = "";
+        crepe.editor.action((ctx) => {
             result = serializeWithSelection(ctx, crepe);
         });
         return result;
