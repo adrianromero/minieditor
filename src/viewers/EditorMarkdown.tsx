@@ -9,7 +9,6 @@ import { Crepe } from "@milkdown/crepe";
 import { remarkStringifyOptionsCtx } from "@milkdown/kit/core";
 import { useI18N } from "../Localization";
 import { useAppContext } from "../AppContext";
-
 import "@milkdown/crepe/theme/common/style.css";
 import "@milkdown/crepe/theme/frame.css";
 import ErrorView from "./ErrorView";
@@ -120,7 +119,6 @@ export function EditorMarkdown(): JSX.Element {
             crepeInstance.editor.config((ctx) => {
                 ctx.update(remarkStringifyOptionsCtx, (options) => ({
                     ...options,
-                    bullet: "-" as const,
                 }));
             });
 
