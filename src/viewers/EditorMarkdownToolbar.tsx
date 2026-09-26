@@ -175,7 +175,7 @@ function setCurrentTaskState(ctx: Ctx, checked: boolean | null): void {
     );
 }
 
-function toggleList(ctx: Ctx, requestedKind: ListKind): void {
+export function toggleList(ctx: Ctx, requestedKind: ListKind): void {
     const commands = ctx.get(commandsCtx);
     const listContext = getListContext(ctx);
 

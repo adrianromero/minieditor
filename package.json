@@ -8,6 +8,7 @@
         "dev": "vite",
         "build": "vite build",
         "serve": "vite preview",
+        "test": "vitest run",
         "tauri": "tauri"
     },
     "author": "Adrián Romero",
@@ -37,8 +38,10 @@
     },
     "devDependencies": {
         "@tauri-apps/cli": "^2",
+        "jsdom": "^28.1.0",
         "typescript": "~5.6.2",
         "vite": "^6.0.3",
-        "vite-plugin-solid": "^2.11.0"
+        "vite-plugin-solid": "^2.11.0",
+        "vitest": "^5.0.2"
     }
 }
