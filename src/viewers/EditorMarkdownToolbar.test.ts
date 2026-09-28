@@ -101,4 +101,28 @@ Otra lista sencilla]]
 
         expect(result2.trim()).toBe(markdown);
     });
+
+    it("desactiva lista ordenada con sintaxis variada", async () => {
+        const markdown = `
+1. numeritos [[1
+2. otro elemento no aún
+3. numeritos 2 modificación
+
+4) Cuatro]] 4
+`.trim();
+
+        const expected = `
+numeritos [[1
+
+otro elemento no aún
+
+numeritos 2 modificación
+
+Cuatro]] 4
+`.trim();
+
+        const result = await runCrepeMarkdownAction(markdown, (ctx) => toggleList(ctx, "ordered"));
+
+        expect(result.trim()).toBe(expected);
+    });
 });

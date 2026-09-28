@@ -27,9 +27,9 @@ import {
 import { createTable } from "@milkdown/kit/preset/gfm";
 import { listenerCtx } from "@milkdown/kit/plugin/listener";
 import { lift } from "@milkdown/kit/prose/commands";
-import type { NodeType } from "@milkdown/kit/prose/model";
-import { wrapInList } from "@milkdown/kit/prose/schema-list";
-import type { Selection, Transaction } from "@milkdown/kit/prose/state";
+import type { Node as ProseMirrorNode, NodeType } from "@milkdown/kit/prose/model";
+import { liftListItem, wrapInList } from "@milkdown/kit/prose/schema-list";
+import { TextSelection, type Selection, type Transaction } from "@milkdown/kit/prose/state";
 
 import type { LucideIcon } from "lucide-solid";
 import CodeXml from "lucide-solid/icons/code-xml";
@@ -184,6 +184,72 @@ function setSelectedTaskState(ctx: Ctx, checked: boolean | null): void {
     }
 }
 
+type ListRange = {
+    node: ProseMirrorNode;
+    position: number;
+};
+
+function getTextBounds(node: ProseMirrorNode, position: number): [number, number] | null {
+    let first: number | null = null;
+    let last: number | null = null;
+
+    node.descendants((child, relativePosition) => {
+        if (!child.isText) {
+            return;
+        }
+
+        const textPosition = position + 1 + relativePosition;
+        first ??= textPosition;
+        last = textPosition + child.nodeSize;
+    });
+
+    return first === null || last === null ? null : [first, last];
+}
+
+function liftSelectedListItems(ctx: Ctx, listType: NodeType): void {
+    const view = ctx.get(editorViewCtx);
+    const listItem = listItemSchema.type(ctx);
+    const { from, to } = view.state.selection;
+    const lists: ListRange[] = [];
+
+    view.state.doc.nodesBetween(from, to, (node, position) => {
+        if (node.type === listType) {
+            lists.push({ node, position });
+            return false;
+        }
+    });
+
+    if (lists.length <= 1) {
+        ctx.get(commandsCtx).call(liftListItemCommand.key);
+        return;
+    }
+
+    let anchor = view.state.selection.anchor;
+    let head = view.state.selection.head;
+
+    for (const { node, position } of lists.reverse()) {
+        const bounds = getTextBounds(node, position);
+        if (!bounds) {
+            continue;
+        }
+
+        const selectionFrom = Math.max(Math.min(anchor, head), bounds[0]);
+        const selectionTo = Math.min(Math.max(anchor, head), bounds[1]);
+        const state = view.state.apply(
+            view.state.tr.setSelection(
+                TextSelection.create(view.state.doc, selectionFrom, selectionTo)
+            )
+        );
+
+        liftListItem(listItem)(state, (transaction) => {
+            anchor = transaction.mapping.map(anchor);
+            head = transaction.mapping.map(head);
+            transaction.setSelection(TextSelection.create(transaction.doc, anchor, head));
+            view.dispatch(transaction);
+        });
+    }
+}
+
 export function toggleList(ctx: Ctx, requestedKind: ListKind): void {
     const commands = ctx.get(commandsCtx);
     const listContext = getListContext(ctx);
@@ -226,7 +292,12 @@ export function toggleList(ctx: Ctx, requestedKind: ListKind): void {
     }
 
     if (requestedKind === listContext.kind && !listContext.isTask) {
-        commands.call(liftListItemCommand.key);
+        liftSelectedListItems(
+            ctx,
+            requestedKind === "ordered"
+                ? orderedListSchema.type(ctx)
+                : bulletListSchema.type(ctx)
+        );
         return;
     }
 
