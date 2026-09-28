@@ -111,9 +111,9 @@ export function EditorMarkdown(): JSX.Element {
             crepeInstance = new Crepe({
                 root: editorRef,
                 defaultValue: content,
-                // features: {
-                //     [Crepe.Feature.TopBar]: true,
-                // },
+                features: {
+                    [Crepe.Feature.Toolbar]: false,
+                },
             });
 
             crepeInstance.editor.config((ctx) => {

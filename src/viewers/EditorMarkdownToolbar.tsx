@@ -6,34 +6,55 @@
 import { createEffect, createSignal, Show, type JSX } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import type { Editor } from "@milkdown/kit/core";
-import { commandsCtx, editorViewCtx } from "@milkdown/kit/core";
+import { commandsCtx, editorViewCtx, schemaCtx } from "@milkdown/kit/core";
 import type { Ctx } from "@milkdown/kit/ctx";
 import { imageBlockSchema } from "@milkdown/kit/component/image-block";
+import { toggleLinkCommand } from "@milkdown/kit/component/link-tooltip";
 import {
     addBlockTypeCommand,
     blockquoteSchema,
     bulletListSchema,
     codeBlockSchema,
+    emphasisSchema,
     headingSchema,
     hrSchema,
+    inlineCodeSchema,
     liftListItemCommand,
+    linkSchema,
     listItemSchema,
     orderedListSchema,
     paragraphSchema,
     selectTextNearPosCommand,
     setBlockTypeCommand,
+    strongSchema,
+    toggleEmphasisCommand,
+    toggleInlineCodeCommand,
+    toggleStrongCommand,
     wrapInBlockTypeCommand,
 } from "@milkdown/kit/preset/commonmark";
-import { createTable } from "@milkdown/kit/preset/gfm";
+import {
+    createTable,
+    strikethroughSchema,
+    toggleStrikethroughCommand,
+} from "@milkdown/kit/preset/gfm";
 import { listenerCtx } from "@milkdown/kit/plugin/listener";
 import { lift } from "@milkdown/kit/prose/commands";
-import type { Node as ProseMirrorNode, NodeType } from "@milkdown/kit/prose/model";
+import type { MarkType, Node as ProseMirrorNode, NodeType } from "@milkdown/kit/prose/model";
 import { liftListItem, wrapInList } from "@milkdown/kit/prose/schema-list";
-import { TextSelection, type Selection, type Transaction } from "@milkdown/kit/prose/state";
+import {
+    NodeSelection,
+    TextSelection,
+    type Selection,
+    type Transaction,
+} from "@milkdown/kit/prose/state";
 
 import type { LucideIcon } from "lucide-solid";
+import Bold from "lucide-solid/icons/bold";
+import Code from "lucide-solid/icons/code";
 import CodeXml from "lucide-solid/icons/code-xml";
 import ImageIcon from "lucide-solid/icons/image";
+import Italic from "lucide-solid/icons/italic";
+import LinkIcon from "lucide-solid/icons/link";
 
 import List from "lucide-solid/icons/list";
 import ListOrdered from "lucide-solid/icons/list-ordered";
@@ -41,6 +62,8 @@ import ListTodo from "lucide-solid/icons/list-todo";
 import Minus from "lucide-solid/icons/minus";
 import Quote from "lucide-solid/icons/quote";
 import Sigma from "lucide-solid/icons/sigma";
+import SquareFunction from "lucide-solid/icons/square-function";
+import Strikethrough from "lucide-solid/icons/strikethrough";
 import Table2 from "lucide-solid/icons/table-2";
 import { useI18N } from "../Localization";
 import ToolbarView from "./ToolbarView";
@@ -57,6 +80,24 @@ type ListContext = {
     listDepth: number;
     kind: "bullet" | "ordered";
     isTask: boolean;
+};
+
+type InlineStyleState = {
+    bold: boolean;
+    italic: boolean;
+    strikethrough: boolean;
+    code: boolean;
+    math: boolean;
+    link: boolean;
+};
+
+const EMPTY_INLINE_STYLE_STATE: InlineStyleState = {
+    bold: false,
+    italic: false,
+    strikethrough: false,
+    code: false,
+    math: false,
+    link: false,
 };
 
 type MarkdownToolbarButtonProps = {
@@ -115,6 +156,70 @@ function getHeadingLevel(ctx: Ctx, selection?: Selection): number {
     const node = currentSelection.$from.parent;
 
     return node.type === headingSchema.type(ctx) ? (node.attrs.level as number) : 0;
+}
+
+function isMarkActive(ctx: Ctx, markType: MarkType, selection?: Selection): boolean {
+    const state = ctx.get(editorViewCtx).state;
+    const currentSelection = selection ?? state.selection;
+
+    if (!currentSelection.empty) {
+        return state.doc.rangeHasMark(currentSelection.from, currentSelection.to, markType);
+    }
+
+    if (state.storedMarks?.some((mark) => mark.type === markType)) {
+        return true;
+    }
+
+    return (
+        currentSelection instanceof TextSelection &&
+        Boolean(currentSelection.$cursor?.marks().some((mark) => mark.type === markType))
+    );
+}
+
+function getInlineStyleState(ctx: Ctx, selection?: Selection): InlineStyleState {
+    const currentSelection = selection ?? ctx.get(editorViewCtx).state.selection;
+    const mathInline = ctx.get(schemaCtx).nodes.math_inline;
+
+    return {
+        bold: isMarkActive(ctx, strongSchema.type(ctx), currentSelection),
+        italic: isMarkActive(ctx, emphasisSchema.type(ctx), currentSelection),
+        strikethrough: isMarkActive(ctx, strikethroughSchema.type(ctx), currentSelection),
+        code: isMarkActive(ctx, inlineCodeSchema.type(ctx), currentSelection),
+        math:
+            Boolean(mathInline) &&
+            currentSelection instanceof NodeSelection &&
+            currentSelection.node.type === mathInline,
+        link: isMarkActive(ctx, linkSchema.type(ctx), currentSelection),
+    };
+}
+
+function toggleInlineCode(ctx: Ctx): void {
+    const view = ctx.get(editorViewCtx);
+    const { state } = view;
+
+    if (!state.selection.empty) {
+        ctx.get(commandsCtx).call(toggleInlineCodeCommand.key);
+        return;
+    }
+
+    const markType = inlineCodeSchema.type(ctx);
+    view.dispatch(
+        isMarkActive(ctx, markType)
+            ? state.tr.removeStoredMark(markType)
+            : state.tr.addStoredMark(markType.create())
+    );
+}
+
+function toggleLink(ctx: Ctx): void {
+    const view = ctx.get(editorViewCtx);
+    const markType = linkSchema.type(ctx);
+
+    if (view.state.selection.empty && isMarkActive(ctx, markType)) {
+        view.dispatch(view.state.tr.removeStoredMark(markType));
+        return;
+    }
+
+    ctx.get(commandsCtx).call(toggleLinkCommand.key);
 }
 
 function getListContext(ctx: Ctx): ListContext | null {
@@ -257,21 +362,16 @@ export function toggleList(ctx: Ctx, requestedKind: ListKind): void {
     if (!listContext) {
         if (requestedKind === "task") {
             const view = ctx.get(editorViewCtx);
-            wrapInList(bulletListSchema.type(ctx), { spread: true })(
-                view.state,
-                (transaction) => {
-                    applySelectedTaskState(transaction, listItemSchema.type(ctx), false);
-                    view.dispatch(transaction);
-                }
-            );
+            wrapInList(bulletListSchema.type(ctx), { spread: true })(view.state, (transaction) => {
+                applySelectedTaskState(transaction, listItemSchema.type(ctx), false);
+                view.dispatch(transaction);
+            });
             return;
         }
 
         const view = ctx.get(editorViewCtx);
         const listType =
-            requestedKind === "ordered"
-                ? orderedListSchema.type(ctx)
-                : bulletListSchema.type(ctx);
+            requestedKind === "ordered" ? orderedListSchema.type(ctx) : bulletListSchema.type(ctx);
         wrapInList(listType, { spread: true })(view.state, (transaction) =>
             view.dispatch(transaction)
         );
@@ -294,9 +394,7 @@ export function toggleList(ctx: Ctx, requestedKind: ListKind): void {
     if (requestedKind === listContext.kind && !listContext.isTask) {
         liftSelectedListItems(
             ctx,
-            requestedKind === "ordered"
-                ? orderedListSchema.type(ctx)
-                : bulletListSchema.type(ctx)
+            requestedKind === "ordered" ? orderedListSchema.type(ctx) : bulletListSchema.type(ctx)
         );
         return;
     }
@@ -331,25 +429,29 @@ function toggleBlockquote(ctx: Ctx): void {
 export function EditorMarkdownToolbar(props: EditorMarkdownToolbarProps): JSX.Element {
     const { t } = useI18N();
     const [activeHeadingLevel, setActiveHeadingLevel] = createSignal(0);
+    const [activeInlineStyles, setActiveInlineStyles] =
+        createSignal<InlineStyleState>(EMPTY_INLINE_STYLE_STATE);
 
-    const updateActiveHeading = (ctx: Ctx): void => {
-        setActiveHeadingLevel(getHeadingLevel(ctx));
+    const updateActiveState = (ctx: Ctx, selection?: Selection): void => {
+        setActiveHeadingLevel(getHeadingLevel(ctx, selection));
+        setActiveInlineStyles(getInlineStyleState(ctx, selection));
     };
 
     createEffect(() => {
         const editor = props.getEditor();
         if (!editor) {
             setActiveHeadingLevel(0);
+            setActiveInlineStyles(EMPTY_INLINE_STYLE_STATE);
             return;
         }
 
         editor.action((ctx) => {
-            updateActiveHeading(ctx);
+            updateActiveState(ctx);
             ctx.get(listenerCtx)
                 .selectionUpdated((updatedCtx, selection) => {
-                    setActiveHeadingLevel(getHeadingLevel(updatedCtx, selection));
+                    updateActiveState(updatedCtx, selection);
                 })
-                .updated((updatedCtx) => updateActiveHeading(updatedCtx));
+                .updated((updatedCtx) => updateActiveState(updatedCtx));
         });
     });
 
@@ -363,7 +465,7 @@ export function EditorMarkdownToolbar(props: EditorMarkdownToolbarProps): JSX.El
                     label={t("markdownToolbar.paragraph")}
                     onRun={(ctx) => {
                         setHeading(ctx, 0);
-                        updateActiveHeading(ctx);
+                        updateActiveState(ctx);
                     }}
                 />
                 <MarkdownToolbarButton
@@ -373,7 +475,7 @@ export function EditorMarkdownToolbar(props: EditorMarkdownToolbarProps): JSX.El
                     label={t("markdownToolbar.heading1")}
                     onRun={(ctx) => {
                         setHeading(ctx, 1);
-                        updateActiveHeading(ctx);
+                        updateActiveState(ctx);
                     }}
                 />
                 <MarkdownToolbarButton
@@ -383,7 +485,7 @@ export function EditorMarkdownToolbar(props: EditorMarkdownToolbarProps): JSX.El
                     label={t("markdownToolbar.heading2")}
                     onRun={(ctx) => {
                         setHeading(ctx, 2);
-                        updateActiveHeading(ctx);
+                        updateActiveState(ctx);
                     }}
                 />
                 <MarkdownToolbarButton
@@ -393,7 +495,7 @@ export function EditorMarkdownToolbar(props: EditorMarkdownToolbarProps): JSX.El
                     label={t("markdownToolbar.heading3")}
                     onRun={(ctx) => {
                         setHeading(ctx, 3);
-                        updateActiveHeading(ctx);
+                        updateActiveState(ctx);
                     }}
                 />
                 <MarkdownToolbarButton
@@ -403,7 +505,7 @@ export function EditorMarkdownToolbar(props: EditorMarkdownToolbarProps): JSX.El
                     label={t("markdownToolbar.heading4")}
                     onRun={(ctx) => {
                         setHeading(ctx, 4);
-                        updateActiveHeading(ctx);
+                        updateActiveState(ctx);
                     }}
                 />
                 <MarkdownToolbarButton
@@ -413,7 +515,7 @@ export function EditorMarkdownToolbar(props: EditorMarkdownToolbarProps): JSX.El
                     label={t("markdownToolbar.heading5")}
                     onRun={(ctx) => {
                         setHeading(ctx, 5);
-                        updateActiveHeading(ctx);
+                        updateActiveState(ctx);
                     }}
                 />
                 <MarkdownToolbarButton
@@ -423,7 +525,26 @@ export function EditorMarkdownToolbar(props: EditorMarkdownToolbarProps): JSX.El
                     label={t("markdownToolbar.heading6")}
                     onRun={(ctx) => {
                         setHeading(ctx, 6);
-                        updateActiveHeading(ctx);
+                        updateActiveState(ctx);
+                    }}
+                />
+            </div>
+            <div class={styles.toolbarDivider} aria-hidden="true" />
+            <div class={styles.toolbarGroup} aria-label={t("markdownToolbar.more")}>
+                <MarkdownToolbarButton
+                    getEditor={props.getEditor}
+                    icon={Quote}
+                    label={t("markdownToolbar.quote")}
+                    onRun={toggleBlockquote}
+                />
+                <MarkdownToolbarButton
+                    getEditor={props.getEditor}
+                    icon={Minus}
+                    label={t("markdownToolbar.divider")}
+                    onRun={(ctx) => {
+                        ctx.get(commandsCtx).call(addBlockTypeCommand.key, {
+                            nodeType: hrSchema.type(ctx),
+                        });
                     }}
                 />
             </div>
@@ -499,21 +620,65 @@ export function EditorMarkdownToolbar(props: EditorMarkdownToolbarProps): JSX.El
                 />
             </div>
             <div class={styles.toolbarDivider} aria-hidden="true" />
-            <div class={styles.toolbarGroup} aria-label={t("markdownToolbar.more")}>
+            <div class={styles.toolbarGroup} aria-label={t("markdownToolbar.formatting")}>
                 <MarkdownToolbarButton
                     getEditor={props.getEditor}
-                    icon={Quote}
-                    label={t("markdownToolbar.quote")}
-                    onRun={toggleBlockquote}
+                    active={activeInlineStyles().bold}
+                    icon={Bold}
+                    label={t("markdownToolbar.bold")}
+                    onRun={(ctx) => {
+                        ctx.get(commandsCtx).call(toggleStrongCommand.key);
+                        updateActiveState(ctx);
+                    }}
                 />
                 <MarkdownToolbarButton
                     getEditor={props.getEditor}
-                    icon={Minus}
-                    label={t("markdownToolbar.divider")}
+                    active={activeInlineStyles().italic}
+                    icon={Italic}
+                    label={t("markdownToolbar.italic")}
                     onRun={(ctx) => {
-                        ctx.get(commandsCtx).call(addBlockTypeCommand.key, {
-                            nodeType: hrSchema.type(ctx),
-                        });
+                        ctx.get(commandsCtx).call(toggleEmphasisCommand.key);
+                        updateActiveState(ctx);
+                    }}
+                />
+                <MarkdownToolbarButton
+                    getEditor={props.getEditor}
+                    active={activeInlineStyles().strikethrough}
+                    icon={Strikethrough}
+                    label={t("markdownToolbar.strikethrough")}
+                    onRun={(ctx) => {
+                        ctx.get(commandsCtx).call(toggleStrikethroughCommand.key);
+                        updateActiveState(ctx);
+                    }}
+                />
+                <MarkdownToolbarButton
+                    getEditor={props.getEditor}
+                    active={activeInlineStyles().link}
+                    icon={LinkIcon}
+                    label={t("markdownToolbar.link")}
+                    onRun={(ctx) => {
+                        toggleLink(ctx);
+                        updateActiveState(ctx);
+                    }}
+                />
+                <MarkdownToolbarButton
+                    getEditor={props.getEditor}
+                    active={activeInlineStyles().code}
+                    icon={Code}
+                    label={t("markdownToolbar.inlineCode")}
+                    onRun={(ctx) => {
+                        toggleInlineCode(ctx);
+                        updateActiveState(ctx);
+                    }}
+                />
+                <MarkdownToolbarButton
+                    getEditor={props.getEditor}
+                    active={activeInlineStyles().math}
+                    icon={SquareFunction}
+                    label={t("markdownToolbar.inlineMath")}
+                    onRun={(ctx) => {
+                        ctx.get(commandsCtx).call("ToggleLatex");
+                        updateActiveState(ctx);
                     }}
                 />
             </div>

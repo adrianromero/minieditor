@@ -88,6 +88,9 @@ export async function runCrepeMarkdownAction(
     const crepe = new Crepe({
         root,
         defaultValue: enrichMarkdown(markdownWithSelection),
+        features: {
+            [Crepe.Feature.Toolbar]: false,
+        },
     });
 
     crepe.editor.config((ctx) => {
