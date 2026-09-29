@@ -244,15 +244,13 @@ dialog {
     outline: none;
 }
 
-/* Mitigates WEBKIT auful bold rendering in Windows */
+/* Fixes WEBKIT auwful bold rendering */
 [contenteditable] {
-    font-synthesis: none; /* Prevents both synthetic bold and italics */
-    /* OR strictly target weights: */
-    font-synthesis-weight: none;
-}
-
-/* Mitigates WEBKIT auful bold rendering in Linux */
-[contenteditable] {
-    transform: translateZ(0); /* Forces a dedicated compositing layer */
-    -webkit-font-smoothing: subpixel-antialiased;
+    /* Fuerza el renderizado subpixel o antialiased clásico */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Evita saltos visuales u optimizaciones agresivas al escribir */
+    text-rendering: optimizeLegibility;
+    /* Si el texto se deforma o parpadea al mutar el DOM */
+    transform: translateZ(0);
 }
