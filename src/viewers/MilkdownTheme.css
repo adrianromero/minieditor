@@ -1,0 +1,340 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ *
+ * Valores de referencia del tema Frame de Milkdown Crepe 7.21.2.
+ * Las reglas están agrupadas por formato para facilitar su personalización.
+ */
+
+/* Documento */
+.milkdowntheme > .milkdown .ProseMirror {
+    padding: 30px 60px;
+}
+
+.milkdowntheme > .milkdown .ProseMirror-focused {
+    outline: none;
+}
+
+.milkdowntheme > .milkdown .ProseMirror *::selection {
+    background: var(--crepe-color-selected);
+}
+
+/* Párrafos */
+.milkdowntheme > .milkdown .ProseMirror p {
+    font-size: 16px;
+    line-height: 24px;
+    padding: 4px 0;
+}
+
+/* Títulos */
+.milkdowntheme > .milkdown .ProseMirror h1,
+.milkdowntheme > .milkdown .ProseMirror h2,
+.milkdowntheme > .milkdown .ProseMirror h3,
+.milkdowntheme > .milkdown .ProseMirror h4,
+.milkdowntheme > .milkdown .ProseMirror h5,
+.milkdowntheme > .milkdown .ProseMirror h6 {
+    font-family: var(--crepe-font-title);
+    font-weight: 400;
+    padding: 2px 0;
+}
+
+.milkdowntheme > .milkdown .ProseMirror h1 {
+    font-size: 42px;
+    line-height: 50px;
+    margin-top: 32px;
+}
+
+.milkdowntheme > .milkdown .ProseMirror h2 {
+    font-size: 36px;
+    line-height: 44px;
+    margin-top: 28px;
+}
+
+.milkdowntheme > .milkdown .ProseMirror h3 {
+    font-size: 32px;
+    line-height: 40px;
+    margin-top: 24px;
+}
+
+.milkdowntheme > .milkdown .ProseMirror h4 {
+    font-size: 28px;
+    line-height: 36px;
+    margin-top: 20px;
+}
+
+.milkdowntheme > .milkdown .ProseMirror h5 {
+    font-size: 24px;
+    line-height: 32px;
+    margin-top: 16px;
+}
+
+.milkdowntheme > .milkdown .ProseMirror h6 {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 28px;
+    margin-top: 16px;
+}
+
+/* Formatos de texto en línea. Negrita, cursiva y tachado conservan los
+ * valores nativos que Milkdown no sobrescribe explícitamente. */
+.milkdowntheme > .milkdown .ProseMirror strong {
+    font-weight: bold;
+}
+
+.milkdowntheme > .milkdown .ProseMirror em {
+    font-style: italic;
+}
+
+.milkdowntheme > .milkdown .ProseMirror del,
+.milkdowntheme > .milkdown .ProseMirror s {
+    text-decoration: line-through;
+}
+
+/* Enlaces */
+.milkdowntheme > .milkdown .ProseMirror a {
+    color: var(--crepe-color-primary);
+    text-decoration: underline;
+}
+
+/* Código en línea */
+.milkdowntheme > .milkdown .ProseMirror code {
+    display: inline-block;
+    padding: 0 2px;
+    color: var(--crepe-color-inline-code);
+    background: color-mix(in srgb, var(--crepe-color-inline-area), transparent 40%);
+    border-radius: 4px;
+    font-family: var(--crepe-font-code);
+    font-size: 87.5%;
+    line-height: 1.4286;
+}
+
+/* Bloques de código */
+.milkdowntheme > .milkdown .ProseMirror pre {
+    padding: 10px;
+    background: color-mix(in srgb, var(--crepe-color-inline-area), transparent 40%);
+    border-radius: 4px;
+}
+
+.milkdowntheme > .milkdown .ProseMirror pre code {
+    padding: 0;
+    background: transparent;
+}
+
+.milkdowntheme > .milkdown .milkdown-code-block {
+    position: relative;
+    display: block;
+    margin: 4px 0;
+    padding: 8px 20px 20px;
+    background: var(--crepe-color-surface);
+}
+
+.milkdowntheme > .milkdown .milkdown-code-block .milkdown-code-block-placeholder {
+    margin: 0;
+    padding: 4px 0;
+    font-family: var(--crepe-font-code, monospace);
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.milkdowntheme > .milkdown .milkdown-code-block .cm-editor,
+.milkdowntheme > .milkdown .milkdown-code-block .cm-gutters {
+    background: var(--crepe-color-surface);
+}
+
+/* Citas */
+.milkdowntheme > .milkdown .ProseMirror blockquote {
+    position: relative;
+    box-sizing: content-box;
+    margin: 4px 0;
+    padding: 0 0 0 40px;
+}
+
+.milkdowntheme > .milkdown .ProseMirror blockquote::before {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0;
+    width: 4px;
+    background: var(--crepe-color-selected);
+    border-radius: 100px;
+    content: "";
+}
+
+.milkdowntheme > .milkdown .ProseMirror blockquote hr {
+    margin-bottom: 16px;
+}
+
+/* Separador horizontal (---) */
+.milkdowntheme > .milkdown .ProseMirror hr {
+    position: relative;
+    height: 13px;
+    padding: 6px 0;
+    border: none;
+    background-color: color-mix(in srgb, var(--crepe-color-outline), transparent 80%);
+    background-clip: content-box;
+}
+
+.milkdowntheme > .milkdown .ProseMirror hr.ProseMirror-selectednode {
+    outline: none;
+    background-color: color-mix(in srgb, var(--crepe-color-outline), transparent 20%);
+    background-clip: content-box;
+}
+
+.milkdowntheme > .milkdown .ProseMirror hr.ProseMirror-selectednode::before {
+    position: absolute;
+    inset: 0;
+    background-color: color-mix(in srgb, var(--crepe-color-outline), transparent 80%);
+    pointer-events: none;
+    content: "";
+}
+
+/* Listas con viñetas, ordenadas y de tareas */
+.milkdowntheme > .milkdown .ProseMirror ul,
+.milkdowntheme > .milkdown .ProseMirror ol {
+    padding: 0;
+}
+
+.milkdowntheme > .milkdown .milkdown-list-item-block {
+    display: block;
+    padding: 0;
+}
+
+.milkdowntheme > .milkdown .milkdown-list-item-block > .list-item {
+    display: flex;
+    align-items: flex-start;
+}
+
+.milkdowntheme > .milkdown .milkdown-list-item-block > .list-item > .children {
+    min-width: 0;
+    flex: 1;
+}
+
+.milkdowntheme > .milkdown .milkdown-list-item-block li {
+    gap: 10px;
+}
+
+.milkdowntheme > .milkdown .milkdown-list-item-block li .label-wrapper {
+    display: flex;
+    width: 24px;
+    height: 32px;
+    align-items: center;
+    justify-content: center;
+    color: var(--crepe-color-outline);
+}
+
+.milkdowntheme > .milkdown .milkdown-list-item-block li .label-wrapper svg {
+    fill: var(--crepe-color-outline);
+}
+
+.milkdowntheme > .milkdown .milkdown-list-item-block li .label-wrapper .label {
+    width: 24px;
+    height: 32px;
+    padding: 4px 0;
+    text-align: right;
+}
+
+.milkdowntheme > .milkdown .milkdown-list-item-block li .label-wrapper .checked,
+.milkdowntheme > .milkdown .milkdown-list-item-block li .label-wrapper .unchecked {
+    cursor: pointer;
+}
+
+.milkdowntheme > .milkdown .milkdown-list-item-block li .label-wrapper .readonly {
+    cursor: not-allowed;
+}
+
+/* Tablas */
+.milkdowntheme > .milkdown .milkdown-table-block {
+    display: block;
+    margin: 4px 0;
+}
+
+.milkdowntheme > .milkdown .ProseMirror .tableWrapper {
+    overflow-x: auto;
+}
+
+.milkdowntheme > .milkdown .ProseMirror table {
+    width: 100%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    overflow: hidden;
+}
+
+.milkdowntheme > .milkdown .milkdown-table-block th,
+.milkdowntheme > .milkdown .milkdown-table-block td {
+    position: relative;
+    box-sizing: border-box;
+    padding: 4px 16px;
+    border: 1px solid color-mix(in srgb, var(--crepe-color-outline), transparent 80%);
+    vertical-align: top;
+}
+
+.milkdowntheme
+    > .milkdown
+    .milkdown-table-block
+    th:not([data-colwidth]):not(.column-resize-dragging),
+.milkdowntheme
+    > .milkdown
+    .milkdown-table-block
+    td:not([data-colwidth]):not(.column-resize-dragging) {
+    min-width: var(--default-cell-min-width);
+}
+
+.milkdowntheme > .milkdown .milkdown-table-block .selectedCell::after {
+    position: absolute;
+    z-index: 2;
+    inset: 0;
+    background-color: var(--crepe-color-selected);
+    opacity: 0.4;
+    pointer-events: none;
+    content: "";
+}
+
+/* Imágenes y pies de imagen */
+.milkdowntheme > .milkdown .ProseMirror img {
+    max-width: 100%;
+    vertical-align: bottom;
+}
+
+.milkdowntheme > .milkdown .ProseMirror img.ProseMirror-selectednode {
+    outline: 2px solid var(--crepe-color-primary);
+    background: none;
+}
+
+.milkdowntheme > .milkdown .milkdown-image-block {
+    display: block;
+    margin: 4px 0;
+    outline: none;
+}
+
+.milkdowntheme > .milkdown .milkdown-image-block > .image-wrapper {
+    position: relative;
+    width: fit-content;
+    min-width: 100px;
+    margin: 0 auto;
+}
+
+.milkdowntheme > .milkdown .milkdown-image-block > .image-wrapper img {
+    display: block;
+    min-height: 100px;
+    max-width: 100%;
+    object-fit: cover;
+}
+
+.milkdowntheme > .milkdown .milkdown-image-block > .caption-input {
+    display: block;
+    width: 100%;
+    margin: 4px auto;
+    color: var(--crepe-color-on-background);
+    font-family: var(--crepe-font-default);
+    text-align: center;
+}
+
+/* Fórmulas matemáticas en línea */
+.milkdowntheme > .milkdown span[data-type="math_inline"] {
+    display: inline-block;
+    padding: 0 4px;
+    color: var(--crepe-color-primary);
+    vertical-align: bottom;
+}

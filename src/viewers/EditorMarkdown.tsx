@@ -21,6 +21,7 @@ import {
 } from "../FileEditorController";
 
 import styles from "./EditorMarkdown.module.css";
+import "./MilkdownTheme.css";
 import EditorMarkdownToolbar from "./EditorMarkdownToolbar";
 
 export function EditorMarkdown(): JSX.Element {
@@ -112,6 +113,7 @@ export function EditorMarkdown(): JSX.Element {
                 root: editorRef,
                 defaultValue: content,
                 features: {
+                    [Crepe.Feature.BlockEdit]: false,
                     [Crepe.Feature.Toolbar]: false,
                 },
             });
@@ -171,7 +173,7 @@ export function EditorMarkdown(): JSX.Element {
                 />
             </Show>
             <div class={`scrollingView ${error() ? "errorView" : ""}`}>
-                <div ref={editorRef} class={`contentView ${styles.editorMarkdown}`} />
+                <div ref={editorRef} class={`contentView milkdowntheme ${styles.editorMarkdown}`} />
             </div>
         </>
     );
