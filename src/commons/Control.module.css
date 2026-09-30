@@ -1,0 +1,33 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.control {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.control > span {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    color: var(--color-text-muted);
+    font-size: 0.76rem;
+}
+
+.control strong {
+    color: var(--color-text);
+    font-weight: 600;
+}
+
+.control output {
+    color: var(--color-primary);
+    font-variant-numeric: tabular-nums;
+}
+
+.control input {
+    width: 100%;
+    accent-color: var(--color-primary);
+}

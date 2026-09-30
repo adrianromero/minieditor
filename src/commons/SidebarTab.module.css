@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.tabbedSidebar {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    flex-direction: column;
+}
+
+.tabs {
+    display: flex;
+    padding: 0.3rem 0.3rem 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+}
+
+.tabs > div {
+    display: contents;
+}

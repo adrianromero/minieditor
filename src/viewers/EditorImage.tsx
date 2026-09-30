@@ -12,6 +12,10 @@ import {
 import { useI18N } from "../Localization";
 
 import { UserMessageError } from "../UserMessageError";
+import Control from "../commons/Control";
+import Sidebar from "../commons/Sidebar";
+import SidebarTab from "../commons/SidebarTab";
+import SidebarTabSection from "../commons/SidebarTabSection";
 import ErrorView from "./ErrorView";
 import styles from "./EditorImage.module.css";
 import CircleDot from "lucide-solid/icons/circle-dot";
@@ -24,7 +28,6 @@ import SquareCenterlineDashedVertical from "lucide-solid/icons/square-centerline
 import ZoomIn from "lucide-solid/icons/zoom-in";
 import ZoomOut from "lucide-solid/icons/zoom-out";
 
-type Tab = "transform" | "adjust" | "presets";
 type FilterName = "brightness" | "contrast" | "saturation" | "grayscale" | "sepia" | "invert";
 type PresetName = "normal" | "monochrome" | "vintage" | "vivid" | "dramatic" | "negative";
 type ImageSettings = Record<FilterName, number> & {
@@ -155,7 +158,6 @@ export function EditorImage(): JSX.Element {
     let markModified = (): void => undefined;
 
     const { t } = useI18N();
-    const [activeTab, setActiveTab] = createSignal<Tab>("transform");
     const [settings, setSettings] = createSignal<ImageSettings>({ ...defaultSettings });
     const [zoom, setZoom] = createSignal(1);
     const [panX, setPanX] = createSignal(0);
@@ -337,21 +339,9 @@ export function EditorImage(): JSX.Element {
                         <span>{settings().rotation}°</span>
                     </div>
                 </div>
-                <aside class={styles.sidebar}>
-                    <div class="tabs">
-                        <For each={["transform", "adjust", "presets"] as const}>
-                            {(tab) => (
-                                <button
-                                    class={`stdButton tab ${activeTab() === tab ? "activeTab" : ""}`}
-                                    onClick={() => setActiveTab(tab)}
-                                >
-                                    {t(`image.${tab}`)}
-                                </button>
-                            )}
-                        </For>
-                    </div>
-                    <div class={styles.panel}>
-                        <Show when={activeTab() === "transform"}>
+                <Sidebar>
+                    <SidebarTab defaultKey="transform">
+                        <SidebarTabSection key="transform" label={t("image.transform")}>
                             <Control label={t("image.zoom")} value={`${Math.round(zoom() * 100)}%`}>
                                 <input
                                     type="range"
@@ -479,8 +469,8 @@ export function EditorImage(): JSX.Element {
                             >
                                 {t("image.resetTransform")}
                             </button>
-                        </Show>
-                        <Show when={activeTab() === "adjust"}>
+                        </SidebarTabSection>
+                        <SidebarTabSection key="adjust" label={t("image.adjust")}>
                             <For each={filters}>
                                 {(filter) => (
                                     <Control
@@ -505,8 +495,8 @@ export function EditorImage(): JSX.Element {
                             <button class="stdButton toolbar" onClick={() => resetFilters()}>
                                 {t("image.resetFilters")}
                             </button>
-                        </Show>
-                        <Show when={activeTab() === "presets"}>
+                        </SidebarTabSection>
+                        <SidebarTabSection key="presets" label={t("image.presets")}>
                             <div class={styles.presetGrid}>
                                 <For each={presetNames}>
                                     {(preset) => (
@@ -519,23 +509,11 @@ export function EditorImage(): JSX.Element {
                                     )}
                                 </For>
                             </div>
-                        </Show>
-                    </div>
-                </aside>
+                        </SidebarTabSection>
+                    </SidebarTab>
+                </Sidebar>
             </section>
         </Show>
-    );
-}
-
-function Control(props: { label: string; value: string; children: JSX.Element }): JSX.Element {
-    return (
-        <label class={styles.control}>
-            <span>
-                <strong>{props.label}</strong>
-                <output>{props.value}</output>
-            </span>
-            {props.children}
-        </label>
     );
 }
 
