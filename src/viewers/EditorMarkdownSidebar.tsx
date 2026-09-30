@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { createEffect, createSignal, Show, type JSX } from "solid-js";
+import { createEffect, createSignal, type JSX } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import type { Editor } from "@milkdown/kit/core";
 import { commandsCtx, editorViewCtx, schemaCtx } from "@milkdown/kit/core";
@@ -52,6 +52,12 @@ import type { LucideIcon } from "lucide-solid";
 import Bold from "lucide-solid/icons/bold";
 import Code from "lucide-solid/icons/code";
 import CodeXml from "lucide-solid/icons/code-xml";
+import Heading1 from "lucide-solid/icons/heading-1";
+import Heading2 from "lucide-solid/icons/heading-2";
+import Heading3 from "lucide-solid/icons/heading-3";
+import Heading4 from "lucide-solid/icons/heading-4";
+import Heading5 from "lucide-solid/icons/heading-5";
+import Heading6 from "lucide-solid/icons/heading-6";
 import ImageIcon from "lucide-solid/icons/image";
 import Italic from "lucide-solid/icons/italic";
 import LinkIcon from "lucide-solid/icons/link";
@@ -60,16 +66,17 @@ import List from "lucide-solid/icons/list";
 import ListOrdered from "lucide-solid/icons/list-ordered";
 import ListTodo from "lucide-solid/icons/list-todo";
 import Minus from "lucide-solid/icons/minus";
+import Pilcrow from "lucide-solid/icons/pilcrow";
 import Quote from "lucide-solid/icons/quote";
 import Sigma from "lucide-solid/icons/sigma";
 import SquareFunction from "lucide-solid/icons/square-function";
 import Strikethrough from "lucide-solid/icons/strikethrough";
 import Table2 from "lucide-solid/icons/table-2";
 import { useI18N } from "../Localization";
-import ToolbarView from "./ToolbarView";
-import styles from "./EditorMarkdownToolbar.module.css";
+import Sidebar from "../commons/Sidebar";
+import styles from "./EditorMarkdownSidebar.module.css";
 
-type EditorMarkdownToolbarProps = {
+type EditorMarkdownSidebarProps = {
     getEditor: () => Editor | null;
 };
 
@@ -100,19 +107,18 @@ const EMPTY_INLINE_STYLE_STATE: InlineStyleState = {
     link: false,
 };
 
-type MarkdownToolbarButtonProps = {
+type SidebarButtonProps = {
     getEditor: () => Editor | null;
     active?: boolean;
-    icon?: LucideIcon;
-    text?: string;
+    icon: LucideIcon;
     label: string;
     onRun: (ctx: Ctx) => void;
 };
 
-function MarkdownToolbarButton(props: MarkdownToolbarButtonProps): JSX.Element {
+function SidebarButton(props: SidebarButtonProps): JSX.Element {
     return (
         <button
-            class={`stdButton small ${props.active ? "active" : ""}`}
+            class={`stdButton toolbar ${props.active ? "selected" : ""}`}
             type="button"
             aria-label={props.label}
             title={props.label}
@@ -130,10 +136,42 @@ function MarkdownToolbarButton(props: MarkdownToolbarButtonProps): JSX.Element {
                 });
             }}
         >
-            <Show when={props.icon}>
-                <Dynamic component={props.icon} aria-hidden="true" />
-            </Show>
-            {props.text}
+            <Dynamic component={props.icon} aria-hidden="true" />
+            {props.label}
+        </button>
+    );
+}
+
+type SidebarIconButtonProps = {
+    getEditor: () => Editor | null;
+    active?: boolean;
+    icon: LucideIcon;
+    label: string;
+    onRun: (ctx: Ctx) => void;
+};
+
+function SidebarIconButton(props: SidebarIconButtonProps): JSX.Element {
+    return (
+        <button
+            class={`stdButton toolbar ${props.active ? "selected" : ""}`}
+            type="button"
+            aria-label={props.label}
+            title={props.label}
+            disabled={!props.getEditor()}
+            onPointerDown={(event) => {
+                event.preventDefault();
+                const editor = props.getEditor();
+                if (!editor) {
+                    return;
+                }
+
+                editor.action((ctx) => {
+                    props.onRun(ctx);
+                    ctx.get(editorViewCtx).focus();
+                });
+            }}
+        >
+            <Dynamic component={props.icon} aria-hidden="true" />
         </button>
     );
 }
@@ -426,7 +464,7 @@ function toggleBlockquote(ctx: Ctx): void {
     });
 }
 
-export function EditorMarkdownToolbar(props: EditorMarkdownToolbarProps): JSX.Element {
+export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.Element {
     const { t } = useI18N();
     const [activeHeadingLevel, setActiveHeadingLevel] = createSignal(0);
     const [activeInlineStyles, setActiveInlineStyles] =
@@ -456,234 +494,242 @@ export function EditorMarkdownToolbar(props: EditorMarkdownToolbarProps): JSX.El
     });
 
     return (
-        <ToolbarView>
-            <div class={styles.toolbarGroup} aria-label={t("markdownToolbar.blockStyle")}>
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeHeadingLevel() === 0}
-                    text={t("markdownToolbar.paragraph")}
-                    label={t("markdownToolbar.paragraph")}
-                    onRun={(ctx) => {
-                        setHeading(ctx, 0);
-                        updateActiveState(ctx);
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeHeadingLevel() === 1}
-                    text="H1"
-                    label={t("markdownToolbar.heading1")}
-                    onRun={(ctx) => {
-                        setHeading(ctx, 1);
-                        updateActiveState(ctx);
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeHeadingLevel() === 2}
-                    text="H2"
-                    label={t("markdownToolbar.heading2")}
-                    onRun={(ctx) => {
-                        setHeading(ctx, 2);
-                        updateActiveState(ctx);
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeHeadingLevel() === 3}
-                    text="H3"
-                    label={t("markdownToolbar.heading3")}
-                    onRun={(ctx) => {
-                        setHeading(ctx, 3);
-                        updateActiveState(ctx);
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeHeadingLevel() === 4}
-                    text="H4"
-                    label={t("markdownToolbar.heading4")}
-                    onRun={(ctx) => {
-                        setHeading(ctx, 4);
-                        updateActiveState(ctx);
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeHeadingLevel() === 5}
-                    text="H5"
-                    label={t("markdownToolbar.heading5")}
-                    onRun={(ctx) => {
-                        setHeading(ctx, 5);
-                        updateActiveState(ctx);
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeHeadingLevel() === 6}
-                    text="H6"
-                    label={t("markdownToolbar.heading6")}
-                    onRun={(ctx) => {
-                        setHeading(ctx, 6);
-                        updateActiveState(ctx);
-                    }}
-                />
+        <Sidebar>
+            <div class={styles.panel}>
+                <section class={styles.section}>
+                    <h2 class={styles.sectionTitle}>{t("markdownToolbar.blockStyle")}</h2>
+                    <div class={styles.buttonGridLarge}>
+                        <SidebarIconButton
+                            getEditor={props.getEditor}
+                            active={activeHeadingLevel() === 1}
+                            icon={Heading1}
+                            label={t("markdownToolbar.heading1")}
+                            onRun={(ctx) => {
+                                setHeading(ctx, 1);
+                                updateActiveState(ctx);
+                            }}
+                        />
+                        <SidebarIconButton
+                            getEditor={props.getEditor}
+                            active={activeHeadingLevel() === 2}
+                            icon={Heading2}
+                            label={t("markdownToolbar.heading2")}
+                            onRun={(ctx) => {
+                                setHeading(ctx, 2);
+                                updateActiveState(ctx);
+                            }}
+                        />
+                        <SidebarIconButton
+                            getEditor={props.getEditor}
+                            active={activeHeadingLevel() === 3}
+                            icon={Heading3}
+                            label={t("markdownToolbar.heading3")}
+                            onRun={(ctx) => {
+                                setHeading(ctx, 3);
+                                updateActiveState(ctx);
+                            }}
+                        />
+                        <SidebarIconButton
+                            getEditor={props.getEditor}
+                            active={activeHeadingLevel() === 4}
+                            icon={Heading4}
+                            label={t("markdownToolbar.heading4")}
+                            onRun={(ctx) => {
+                                setHeading(ctx, 4);
+                                updateActiveState(ctx);
+                            }}
+                        />
+                        <SidebarIconButton
+                            getEditor={props.getEditor}
+                            active={activeHeadingLevel() === 5}
+                            icon={Heading5}
+                            label={t("markdownToolbar.heading5")}
+                            onRun={(ctx) => {
+                                setHeading(ctx, 5);
+                                updateActiveState(ctx);
+                            }}
+                        />
+                        <SidebarIconButton
+                            getEditor={props.getEditor}
+                            active={activeHeadingLevel() === 6}
+                            icon={Heading6}
+                            label={t("markdownToolbar.heading6")}
+                            onRun={(ctx) => {
+                                setHeading(ctx, 6);
+                                updateActiveState(ctx);
+                            }}
+                        />
+                    </div>
+                    <SidebarButton
+                        getEditor={props.getEditor}
+                        active={activeHeadingLevel() === 0}
+                        icon={Pilcrow}
+                        label={t("markdownToolbar.paragraph")}
+                        onRun={(ctx) => {
+                            setHeading(ctx, 0);
+                            updateActiveState(ctx);
+                        }}
+                    />
+
+                    <div class={styles.buttonGrid}>
+                        <SidebarButton
+                            getEditor={props.getEditor}
+                            icon={Quote}
+                            label={t("markdownToolbar.quote")}
+                            onRun={toggleBlockquote}
+                        />
+                        <SidebarButton
+                            getEditor={props.getEditor}
+                            icon={Minus}
+                            label={t("markdownToolbar.divider")}
+                            onRun={(ctx) => {
+                                ctx.get(commandsCtx).call(addBlockTypeCommand.key, {
+                                    nodeType: hrSchema.type(ctx),
+                                });
+                            }}
+                        />
+                    </div>
+                </section>
+
+                <section class={styles.section}>
+                    <h2 class={styles.sectionTitle}>{t("markdownToolbar.formatting")}</h2>
+                    <div class={styles.buttonGridLarge}>
+                        <SidebarIconButton
+                            getEditor={props.getEditor}
+                            active={activeInlineStyles().bold}
+                            icon={Bold}
+                            label={t("markdownToolbar.bold")}
+                            onRun={(ctx) => {
+                                ctx.get(commandsCtx).call(toggleStrongCommand.key);
+                                updateActiveState(ctx);
+                            }}
+                        />
+                        <SidebarIconButton
+                            getEditor={props.getEditor}
+                            active={activeInlineStyles().italic}
+                            icon={Italic}
+                            label={t("markdownToolbar.italic")}
+                            onRun={(ctx) => {
+                                ctx.get(commandsCtx).call(toggleEmphasisCommand.key);
+                                updateActiveState(ctx);
+                            }}
+                        />
+                        <SidebarIconButton
+                            getEditor={props.getEditor}
+                            active={activeInlineStyles().strikethrough}
+                            icon={Strikethrough}
+                            label={t("markdownToolbar.strikethrough")}
+                            onRun={(ctx) => {
+                                ctx.get(commandsCtx).call(toggleStrikethroughCommand.key);
+                                updateActiveState(ctx);
+                            }}
+                        />
+                        <SidebarIconButton
+                            getEditor={props.getEditor}
+                            active={activeInlineStyles().link}
+                            icon={LinkIcon}
+                            label={t("markdownToolbar.link")}
+                            onRun={(ctx) => {
+                                toggleLink(ctx);
+                                updateActiveState(ctx);
+                            }}
+                        />
+                        <SidebarIconButton
+                            getEditor={props.getEditor}
+                            active={activeInlineStyles().code}
+                            icon={Code}
+                            label={t("markdownToolbar.inlineCode")}
+                            onRun={(ctx) => {
+                                toggleInlineCode(ctx);
+                                updateActiveState(ctx);
+                            }}
+                        />
+                        <SidebarIconButton
+                            getEditor={props.getEditor}
+                            active={activeInlineStyles().math}
+                            icon={SquareFunction}
+                            label={t("markdownToolbar.inlineMath")}
+                            onRun={(ctx) => {
+                                ctx.get(commandsCtx).call("ToggleLatex");
+                                updateActiveState(ctx);
+                            }}
+                        />
+                    </div>
+                </section>
+                <section class={styles.section}>
+                    <h2 class={styles.sectionTitle}>{t("markdownToolbar.lists")}</h2>
+
+                    <SidebarButton
+                        getEditor={props.getEditor}
+                        icon={List}
+                        label={t("markdownToolbar.bulletList")}
+                        onRun={(ctx) => toggleList(ctx, "bullet")}
+                    />
+                    <SidebarButton
+                        getEditor={props.getEditor}
+                        icon={ListOrdered}
+                        label={t("markdownToolbar.orderedList")}
+                        onRun={(ctx) => toggleList(ctx, "ordered")}
+                    />
+                    <SidebarButton
+                        getEditor={props.getEditor}
+                        icon={ListTodo}
+                        label={t("markdownToolbar.taskList")}
+                        onRun={(ctx) => toggleList(ctx, "task")}
+                    />
+                </section>
+                <section class={styles.section}>
+                    <h2 class={styles.sectionTitle}>{t("markdownToolbar.blocks")}</h2>
+
+                    <SidebarButton
+                        getEditor={props.getEditor}
+                        icon={ImageIcon}
+                        label={t("markdownToolbar.image")}
+                        onRun={(ctx) => {
+                            ctx.get(commandsCtx).call(addBlockTypeCommand.key, {
+                                nodeType: imageBlockSchema.type(ctx),
+                            });
+                        }}
+                    />
+                    <SidebarButton
+                        getEditor={props.getEditor}
+                        icon={Table2}
+                        label={t("markdownToolbar.table")}
+                        onRun={(ctx) => {
+                            const commands = ctx.get(commandsCtx);
+                            const { from } = ctx.get(editorViewCtx).state.selection;
+                            commands.call(addBlockTypeCommand.key, {
+                                nodeType: createTable(ctx, 3, 3),
+                            });
+                            commands.call(selectTextNearPosCommand.key, { pos: from });
+                        }}
+                    />
+
+                    <SidebarButton
+                        getEditor={props.getEditor}
+                        icon={CodeXml}
+                        label={t("markdownToolbar.codeBlock")}
+                        onRun={(ctx) => {
+                            ctx.get(commandsCtx).call(setBlockTypeCommand.key, {
+                                nodeType: codeBlockSchema.type(ctx),
+                            });
+                        }}
+                    />
+                    <SidebarButton
+                        getEditor={props.getEditor}
+                        icon={Sigma}
+                        label={t("markdownToolbar.mathBlock")}
+                        onRun={(ctx) => {
+                            ctx.get(commandsCtx).call(addBlockTypeCommand.key, {
+                                nodeType: codeBlockSchema.type(ctx),
+                                attrs: { language: "LaTeX" },
+                            });
+                        }}
+                    />
+                </section>
             </div>
-            <div class={styles.toolbarDivider} aria-hidden="true" />
-            <div class={styles.toolbarGroup} aria-label={t("markdownToolbar.more")}>
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    icon={Quote}
-                    label={t("markdownToolbar.quote")}
-                    onRun={toggleBlockquote}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    icon={Minus}
-                    label={t("markdownToolbar.divider")}
-                    onRun={(ctx) => {
-                        ctx.get(commandsCtx).call(addBlockTypeCommand.key, {
-                            nodeType: hrSchema.type(ctx),
-                        });
-                    }}
-                />
-            </div>
-            <div class={styles.toolbarDivider} aria-hidden="true" />
-            <div class={styles.toolbarGroup} aria-label={t("markdownToolbar.lists")}>
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    icon={List}
-                    label={t("markdownToolbar.bulletList")}
-                    onRun={(ctx) => toggleList(ctx, "bullet")}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    icon={ListOrdered}
-                    label={t("markdownToolbar.orderedList")}
-                    onRun={(ctx) => toggleList(ctx, "ordered")}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    icon={ListTodo}
-                    label={t("markdownToolbar.taskList")}
-                    onRun={(ctx) => toggleList(ctx, "task")}
-                />
-            </div>
-            <div class={styles.toolbarDivider} aria-hidden="true" />
-            <div class={styles.toolbarGroup} aria-label={t("markdownToolbar.insert")}>
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    icon={ImageIcon}
-                    label={t("markdownToolbar.image")}
-                    onRun={(ctx) => {
-                        ctx.get(commandsCtx).call(addBlockTypeCommand.key, {
-                            nodeType: imageBlockSchema.type(ctx),
-                        });
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    icon={Table2}
-                    label={t("markdownToolbar.table")}
-                    onRun={(ctx) => {
-                        const commands = ctx.get(commandsCtx);
-                        const { from } = ctx.get(editorViewCtx).state.selection;
-                        commands.call(addBlockTypeCommand.key, {
-                            nodeType: createTable(ctx, 3, 3),
-                        });
-                        commands.call(selectTextNearPosCommand.key, { pos: from });
-                    }}
-                />
-            </div>
-            <div class={styles.toolbarDivider} aria-hidden="true" />
-            <div class={styles.toolbarGroup} aria-label={t("markdownToolbar.blocks")}>
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    icon={CodeXml}
-                    label={t("markdownToolbar.codeBlock")}
-                    onRun={(ctx) => {
-                        ctx.get(commandsCtx).call(setBlockTypeCommand.key, {
-                            nodeType: codeBlockSchema.type(ctx),
-                        });
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    icon={Sigma}
-                    label={t("markdownToolbar.mathBlock")}
-                    onRun={(ctx) => {
-                        ctx.get(commandsCtx).call(addBlockTypeCommand.key, {
-                            nodeType: codeBlockSchema.type(ctx),
-                            attrs: { language: "LaTeX" },
-                        });
-                    }}
-                />
-            </div>
-            <div class={styles.toolbarDivider} aria-hidden="true" />
-            <div class={styles.toolbarGroup} aria-label={t("markdownToolbar.formatting")}>
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeInlineStyles().bold}
-                    icon={Bold}
-                    label={t("markdownToolbar.bold")}
-                    onRun={(ctx) => {
-                        ctx.get(commandsCtx).call(toggleStrongCommand.key);
-                        updateActiveState(ctx);
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeInlineStyles().italic}
-                    icon={Italic}
-                    label={t("markdownToolbar.italic")}
-                    onRun={(ctx) => {
-                        ctx.get(commandsCtx).call(toggleEmphasisCommand.key);
-                        updateActiveState(ctx);
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeInlineStyles().strikethrough}
-                    icon={Strikethrough}
-                    label={t("markdownToolbar.strikethrough")}
-                    onRun={(ctx) => {
-                        ctx.get(commandsCtx).call(toggleStrikethroughCommand.key);
-                        updateActiveState(ctx);
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeInlineStyles().link}
-                    icon={LinkIcon}
-                    label={t("markdownToolbar.link")}
-                    onRun={(ctx) => {
-                        toggleLink(ctx);
-                        updateActiveState(ctx);
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeInlineStyles().code}
-                    icon={Code}
-                    label={t("markdownToolbar.inlineCode")}
-                    onRun={(ctx) => {
-                        toggleInlineCode(ctx);
-                        updateActiveState(ctx);
-                    }}
-                />
-                <MarkdownToolbarButton
-                    getEditor={props.getEditor}
-                    active={activeInlineStyles().math}
-                    icon={SquareFunction}
-                    label={t("markdownToolbar.inlineMath")}
-                    onRun={(ctx) => {
-                        ctx.get(commandsCtx).call("ToggleLatex");
-                        updateActiveState(ctx);
-                    }}
-                />
-            </div>
-        </ToolbarView>
+        </Sidebar>
     );
 }
 
-export default EditorMarkdownToolbar;
+export default EditorMarkdownSidebar;

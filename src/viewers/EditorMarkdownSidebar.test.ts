@@ -5,9 +5,9 @@
 
 import { describe, expect, it } from "vitest";
 import { runCrepeMarkdownAction } from "../test/crepeMarkdownTest";
-import { toggleList } from "./EditorMarkdownToolbar";
+import { toggleList } from "./EditorMarkdownSidebar";
 
-describe("acciones de EditorMarkdownToolbar", () => {
+describe("acciones de EditorMarkdownSidebar", () => {
     it("activa la lista de viñetas de todos los elementos seleccionados", async () => {
         const markdown = `
 lista [[sencilla

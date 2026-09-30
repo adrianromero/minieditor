@@ -22,7 +22,7 @@ import {
 
 import styles from "./EditorMarkdown.module.css";
 import "./MilkdownTheme.css";
-import EditorMarkdownToolbar from "./EditorMarkdownToolbar";
+import EditorMarkdownSidebar from "./EditorMarkdownSidebar";
 
 export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -167,14 +167,21 @@ export function EditorMarkdown(): JSX.Element {
             <Show when={error()}>
                 <ErrorView>{error() ?? t("errors.unknown")}</ErrorView>
             </Show>
-            <Show when={!error()}>
-                <EditorMarkdownToolbar
-                    getEditor={() => (editorReady() && crepeInstance ? crepeInstance.editor : null)}
-                />
-            </Show>
-            <div class={`scrollingView ${error() ? "errorView" : ""}`}>
-                <div ref={editorRef} class={`contentView milkdowntheme ${styles.editorMarkdown}`} />
-            </div>
+            <section class={`${styles.studio} ${error() ? styles.errorStudio : ""}`}>
+                <div class={`scrollingView ${error() ? "errorView" : ""}`}>
+                    <div
+                        ref={editorRef}
+                        class={`contentView milkdowntheme ${styles.editorMarkdown}`}
+                    />
+                </div>
+                <Show when={!error()}>
+                    <EditorMarkdownSidebar
+                        getEditor={() =>
+                            editorReady() && crepeInstance ? crepeInstance.editor : null
+                        }
+                    />
+                </Show>
+            </section>
         </>
     );
 }

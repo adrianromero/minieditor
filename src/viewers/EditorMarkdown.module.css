@@ -3,7 +3,26 @@
  * SPDX-License-Identifier: MIT
  */
 
+.studio {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--color-view-background);
+}
+
+.errorStudio {
+    display: none;
+}
+
 .editorMarkdown > :global(.milkdown) {
     --crepe-font-title: unset;
     --crepe-font-default: unset;
+}
+
+@media (max-width: 650px) {
+    .studio {
+        flex-direction: column;
+    }
 }
