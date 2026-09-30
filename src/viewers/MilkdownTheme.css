@@ -139,9 +139,30 @@
     word-break: break-all;
 }
 
-.milkdowntheme > .milkdown .milkdown-code-block .cm-editor,
+.milkdowntheme > .milkdown .milkdown-code-block .cm-editor {
+    color: var(--color-text);
+    font-size: 14px;
+    background: var(--color-surface);
+}
+
+.milkdowntheme > .milkdown .milkdown-code-block .cm-content {
+    padding: 1rem 0;
+    font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+}
+
 .milkdowntheme > .milkdown .milkdown-code-block .cm-gutters {
-    background: var(--crepe-color-surface);
+    color: var(--color-text-subtle);
+    background: var(--color-surface);
+    border-right: 1px solid var(--color-border-subtle);
+}
+
+.milkdowntheme > .milkdown .milkdown-code-block .cm-activeLine,
+.milkdowntheme > .milkdown .milkdown-code-block .cm-activeLineGutter {
+    background: var(--color-primary-soft);
+}
+
+.milkdowntheme > .milkdown .milkdown-code-block .cm-editor.cm-focused {
+    outline: none;
 }
 
 /* Citas */

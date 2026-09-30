@@ -7,6 +7,7 @@ import { createSignal, onCleanup, onMount, Show, JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { Crepe } from "@milkdown/crepe";
 import { remarkStringifyOptionsCtx } from "@milkdown/kit/core";
+import { EditorView as CodeMirrorEditorView } from "@codemirror/view";
 import { useI18N } from "../Localization";
 import { useAppContext } from "../AppContext";
 import "@milkdown/crepe/theme/common/style.css";
@@ -112,6 +113,13 @@ export function EditorMarkdown(): JSX.Element {
             crepeInstance = new Crepe({
                 root: editorRef,
                 defaultValue: content,
+                featureConfigs: {
+                    [Crepe.Feature.CodeMirror]: {
+                        // Crepe uses oneDark by default. A neutral view theme lets
+                        // basicSetup provide CodeMirror's default light highlighting.
+                        theme: CodeMirrorEditorView.theme({}),
+                    },
+                },
                 features: {
                     [Crepe.Feature.BlockEdit]: false,
                     [Crepe.Feature.Toolbar]: false,
