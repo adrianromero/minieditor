@@ -165,6 +165,20 @@
     outline: none;
 }
 
+.milkdowntheme > .milkdown .milkdown-code-block .tools {
+    padding-bottom: 8px;
+}
+
+.milkdowntheme > .milkdown .milkdown-code-block .tools .language-button,
+.milkdowntheme > .milkdown .milkdown-code-block .tools .tools-button-group > button {
+    box-sizing: border-box;
+    height: 24px;
+}
+
+.milkdowntheme > .milkdown .milkdown-code-block .tools .language-button {
+    margin-bottom: 0;
+}
+
 /* Citas */
 .milkdowntheme > .milkdown .ProseMirror blockquote {
     position: relative;
