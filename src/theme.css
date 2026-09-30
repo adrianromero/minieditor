@@ -59,6 +59,19 @@
     --shadow-surface: 0 8px 24px rgba(0, 0, 0, 0.04);
 }
 
+/* Fixes WEBKIT awful bold rendering */
+body {
+    -webkit-font-smoothing: antialiased;
+}
+/*
+[contenteditable] {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    transform: translateZ(0);
+}
+*/
+
 .stdButton {
     display: inline-flex;
     flex: 0 0 auto;
@@ -242,15 +255,4 @@
 
 dialog {
     outline: none;
-}
-
-/* Fixes WEBKIT auwful bold rendering */
-[contenteditable] {
-    /* Fuerza el renderizado subpixel o antialiased clásico */
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    /* Evita saltos visuales u optimizaciones agresivas al escribir */
-    text-rendering: optimizeLegibility;
-    /* Si el texto se deforma o parpadea al mutar el DOM */
-    transform: translateZ(0);
 }
