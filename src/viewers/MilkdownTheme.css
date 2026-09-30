@@ -8,7 +8,7 @@
 
 /* Documento */
 .milkdowntheme > .milkdown .ProseMirror {
-    padding: 30px 60px;
+    padding: 40px 60px;
 }
 
 .milkdowntheme > .milkdown .ProseMirror-focused {
@@ -39,40 +39,41 @@
 }
 
 .milkdowntheme > .milkdown .ProseMirror h1 {
-    font-size: 42px;
-    line-height: 50px;
-    margin-top: 32px;
+    font-size: 32px;
+    line-height: 40px;
+    margin-top: 12px;
+    font-weight: 600;
 }
 
 .milkdowntheme > .milkdown .ProseMirror h2 {
-    font-size: 36px;
-    line-height: 44px;
-    margin-top: 28px;
+    font-size: 28px;
+    line-height: 36px;
+    margin-top: 10px;
+    font-weight: 600;
 }
 
 .milkdowntheme > .milkdown .ProseMirror h3 {
-    font-size: 32px;
-    line-height: 40px;
-    margin-top: 24px;
+    font-size: 28px;
+    line-height: 36px;
+    margin-top: 10px;
 }
 
 .milkdowntheme > .milkdown .ProseMirror h4 {
-    font-size: 28px;
-    line-height: 36px;
-    margin-top: 20px;
+    font-size: 24px;
+    line-height: 32px;
+    margin-top: 10px;
 }
 
 .milkdowntheme > .milkdown .ProseMirror h5 {
-    font-size: 24px;
-    line-height: 32px;
-    margin-top: 16px;
+    font-size: 22px;
+    line-height: 28px;
+    margin-top: 10px;
 }
 
 .milkdowntheme > .milkdown .ProseMirror h6 {
     font-size: 18px;
-    font-weight: 700;
-    line-height: 28px;
-    margin-top: 16px;
+    line-height: 26px;
+    margin-top: 10px;
 }
 
 /* Formatos de texto en línea. Negrita, cursiva y tachado conservan los
@@ -92,7 +93,7 @@
 
 /* Enlaces */
 .milkdowntheme > .milkdown .ProseMirror a {
-    color: var(--crepe-color-primary);
+    color: var(--color-primary);
     text-decoration: underline;
 }
 
@@ -101,7 +102,7 @@
     display: inline-block;
     padding: 0 2px;
     color: var(--crepe-color-inline-code);
-    background: color-mix(in srgb, var(--crepe-color-inline-area), transparent 40%);
+    background: color-mix(in srgb, var(--crepe-color-inline-area), transparent 60%);
     border-radius: 4px;
     font-family: var(--crepe-font-code);
     font-size: 87.5%;
@@ -111,7 +112,7 @@
 /* Bloques de código */
 .milkdowntheme > .milkdown .ProseMirror pre {
     padding: 10px;
-    background: color-mix(in srgb, var(--crepe-color-inline-area), transparent 40%);
+    background: color-mix(in srgb, var(--crepe-color-inline-area), transparent 60%);
     border-radius: 4px;
 }
 
