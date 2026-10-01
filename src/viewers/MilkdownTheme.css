@@ -368,10 +368,6 @@
     object-fit: cover;
 }
 
-.milkdowntheme > .milkdown .milkdown-image-block.selected > .image-wrapper::before {
-    pointer-events: none;
-}
-
 .milkdowntheme > .milkdown .milkdown-image-block > .caption-input {
     display: block;
     width: 100%;

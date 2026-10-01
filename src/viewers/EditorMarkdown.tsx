@@ -6,7 +6,7 @@
 import { createSignal, onCleanup, onMount, Show, JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { Crepe } from "@milkdown/crepe";
-import { editorViewCtx, remarkStringifyOptionsCtx } from "@milkdown/kit/core";
+import { remarkStringifyOptionsCtx } from "@milkdown/kit/core";
 import { EditorView as CodeMirrorEditorView } from "@codemirror/view";
 import { useI18N } from "../Localization";
 import { useAppContext } from "../AppContext";
@@ -28,17 +28,14 @@ import {
     createMarkdownImageProxy,
     type MarkdownImageProxy,
 } from "../MarkdownImageProxy";
-import {
-    imageNavigationHref,
-    imageSourceFromDOM,
-    navigableImageFromTarget,
-} from "../MarkdownImageNavigation";
+import MarkdownImageActions from "./MarkdownImageActions";
 
 export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
     let crepeInstance: Crepe | null = null;
     let imageProxy: MarkdownImageProxy | null = null;
     const [editorReady, setEditorReady] = createSignal(false);
+    const [imageActionsCrepe, setImageActionsCrepe] = createSignal<Crepe | null>(null);
 
     const { t } = useI18N();
     const {
@@ -115,48 +112,11 @@ export function EditorMarkdown(): JSX.Element {
         }
     };
 
-    const handleImageDoubleClick = async (event: MouseEvent): Promise<void> => {
-        const target = event.target;
-        if (!(target instanceof Element)) {
-            return;
-        }
-
-        const image = navigableImageFromTarget(target, editorRef);
-        if (!image || !crepeInstance) {
-            return;
-        }
-
-        let source: string | null = null;
-        crepeInstance.editor.action((ctx) => {
-            source = imageSourceFromDOM(ctx.get(editorViewCtx), image);
-        });
-        if (!source) {
-            return;
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        try {
-            const resolvedFilename = await invoke<string | null>("resolve_link", {
-                basepath: basepath(),
-                filename: filename(),
-                href: imageNavigationHref(source),
-                mustExist: true,
-            });
-            if (resolvedFilename !== null) {
-                await loadFilename(resolvedFilename);
-            }
-        } catch (err: unknown) {
-            console.error("Unable to resolve editor image:", err);
-            showAppMessage(translateAppError(err, t), "error");
-        }
-    };
-
     const adapter: FileEditorAdapter = {
         getContent: () => Promise.resolve(crepeInstance?.getMarkdown() ?? null),
         replaceContent: async (content, currentFilename, onModified) => {
             setEditorReady(false);
+            setImageActionsCrepe(null);
             crepeInstance?.destroy();
             imageProxy?.dispose();
             imageProxy = createMarkdownImageProxy(basepath(), currentFilename);
@@ -199,6 +159,7 @@ export function EditorMarkdown(): JSX.Element {
                     [Crepe.Feature.Toolbar]: false,
                 },
             });
+            setImageActionsCrepe(crepeInstance);
 
             crepeInstance.editor.config((ctx) => {
                 ctx.update(remarkStringifyOptionsCtx, (options) => ({
@@ -230,6 +191,7 @@ export function EditorMarkdown(): JSX.Element {
         },
         destroy: () => {
             setEditorReady(false);
+            setImageActionsCrepe(null);
             crepeInstance?.destroy();
             crepeInstance = null;
             imageProxy?.dispose();
@@ -240,12 +202,10 @@ export function EditorMarkdown(): JSX.Element {
 
     onMount(() => {
         editorRef.addEventListener("click", handleLinkPreviewClick, { capture: true });
-        editorRef.addEventListener("dblclick", handleImageDoubleClick, { capture: true });
     });
 
     onCleanup(() => {
         editorRef.removeEventListener("click", handleLinkPreviewClick, { capture: true });
-        editorRef.removeEventListener("dblclick", handleImageDoubleClick, { capture: true });
     });
 
     return (
@@ -258,6 +218,10 @@ export function EditorMarkdown(): JSX.Element {
                     <div
                         ref={editorRef}
                         class={`contentView milkdowntheme ${styles.editorMarkdown}`}
+                    />
+                    <MarkdownImageActions
+                        editorRoot={() => editorRef}
+                        crepe={imageActionsCrepe}
                     />
                 </div>
                 <Show when={!error()}>

@@ -38,6 +38,8 @@
         "decreaseIndent": "Decrease",
         "link": "Link",
         "image": "Image",
+        "openImage": "Open image",
+        "toggleImageCaption": "Show or hide image caption",
         "imageLinkPlaceholder": "Type or paste the image link",
         "imageLinkConfirm": "Confirm",
         "imageCaptionPlaceholder": "Write the image caption",

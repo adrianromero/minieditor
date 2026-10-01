@@ -1,0 +1,77 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.actions {
+    position: relative;
+    z-index: 4;
+    height: 0;
+    pointer-events: none;
+}
+
+/* .actions > .fltButton {
+    position: absolute;
+    display: flex;
+    width: 2rem;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    padding: 0.25rem;
+    border: 0;
+    border-radius: 50%;
+    background: var(--crepe-color-inverse, var(--color-primary));
+    color: var(--crepe-color-on-inverse, var(--color-on-primary));
+    cursor: pointer;
+    opacity: 0.75;
+    pointer-events: auto;
+} */
+
+.actions > .fltButton {
+    position: absolute;
+    pointer-events: auto;
+}
+
+.actions > .fltButton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    justify-content: center;
+    padding: 0.55rem 0.55rem;
+
+    font: inherit;
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.25;
+
+    background: var(--color-view-background);
+    color: var(--color-on-secondary);
+    border: 1px solid var(--color-border-secondary);
+
+    border-radius: var(--radius-small);
+    /* box-shadow: inset 0 0 0 2px var(--color-button-inner-border); */
+    cursor: pointer;
+}
+
+.actions > .fltButton[hidden] {
+    display: none;
+}
+
+.actions > .fltButton:hover {
+    background: var(--color-secondary-hover);
+}
+
+.actions > .fltButton:active {
+    background: var(--color-secondary-active);
+    /* box-shadow: none; */
+}
+
+.actions > .fltButton > :global(.lucide) {
+    width: 16px;
+    height: 16px;
+    stroke-width: 1.6px;
+}
+
+:global(.milkdowntheme > .milkdown .milkdown-image-block > .image-wrapper > .operation) {
+    display: none;
+}
