@@ -133,9 +133,8 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
         (navigationButtonRef.contains(target) || captionButtonRef.contains(target));
 
     const handleImagePointerOut = (event: PointerEvent): void => {
-        if (!(event.target instanceof Element)) return;
-        const image = navigableImageFromTarget(event.target, props.editorRoot());
-        if (!image || image !== hoveredImage) return;
+        const image = hoveredImage;
+        if (!image) return;
 
         const relatedTarget = event.relatedTarget;
         if (
@@ -149,6 +148,19 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
         }
 
         hoveredImage = null;
+        syncActiveImage();
+    };
+
+    const handleEditorPointerDown = (event: PointerEvent): void => {
+        if (
+            event.target instanceof Element &&
+            event.target.closest(".milkdown-image-block, .milkdown-image-inline")
+        ) {
+            return;
+        }
+
+        hoveredImage = null;
+        selectedImage = null;
         syncActiveImage();
     };
 
@@ -192,6 +204,9 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
         editorRoot.addEventListener("pointerout", handleImagePointerOut, {
             capture: true,
         });
+        editorRoot.addEventListener("pointerdown", handleEditorPointerDown, {
+            capture: true,
+        });
         resizeObserver.observe(editorRoot);
         window.addEventListener("resize", positionButtons);
     });
@@ -202,6 +217,9 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
             capture: true,
         });
         editorRoot.removeEventListener("pointerout", handleImagePointerOut, {
+            capture: true,
+        });
+        editorRoot.removeEventListener("pointerdown", handleEditorPointerDown, {
             capture: true,
         });
         window.removeEventListener("resize", positionButtons);
