@@ -14,7 +14,7 @@
     justify-content: space-between;
     gap: 1rem;
     color: var(--color-text-muted);
-    font-size: 0.76rem;
+    font-size: 0.8rem;
 }
 
 .control strong {

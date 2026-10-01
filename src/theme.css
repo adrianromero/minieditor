@@ -129,8 +129,8 @@ body {
     display: inline-flex;
     align-items: center;
     gap: 0.4rem;
-    font-size: 0.75rem;
-    font-weight: 300;
+    font-size: 0.8rem;
+    font-weight: 500;
     padding: 0.55rem 0.55rem;
     background: var(--color-view-background);
 }
@@ -143,7 +143,7 @@ body {
 .stdButton.toolbar > .lucide {
     width: 16px;
     height: 16px;
-    stroke-width: 1px;
+    stroke-width: 1.6px;
 }
 
 .stdButton.small {
@@ -218,7 +218,7 @@ body {
 }
 
 .controlLabel > div {
-    font-size: 0.76rem;
+    font-size: 0.8rem;
     font-weight: 600;
     margin-bottom: 0.5rem;
 }
