@@ -27,6 +27,7 @@ import {
     paragraphSchema,
     selectTextNearPosCommand,
     setBlockTypeCommand,
+    sinkListItemCommand,
     strongSchema,
     toggleEmphasisCommand,
     toggleInlineCodeCommand,
@@ -60,6 +61,8 @@ import Heading4 from "lucide-solid/icons/heading-4";
 import Heading5 from "lucide-solid/icons/heading-5";
 import Heading6 from "lucide-solid/icons/heading-6";
 import ImageIcon from "lucide-solid/icons/image";
+import IndentDecrease from "lucide-solid/icons/indent-decrease";
+import IndentIncrease from "lucide-solid/icons/indent-increase";
 import Italic from "lucide-solid/icons/italic";
 import LinkIcon from "lucide-solid/icons/link";
 
@@ -709,6 +712,24 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                         label={t("markdownToolbar.taskList")}
                         onRun={(ctx) => toggleList(ctx, "task")}
                     />
+                    <div class={styles.buttonGrid}>
+                        <SidebarButton
+                            getEditor={props.getEditor}
+                            icon={IndentIncrease}
+                            label={t("markdownToolbar.increaseIndent")}
+                            onRun={(ctx) =>
+                                ctx.get(commandsCtx).call(sinkListItemCommand.key)
+                            }
+                        />
+                        <SidebarButton
+                            getEditor={props.getEditor}
+                            icon={IndentDecrease}
+                            label={t("markdownToolbar.decreaseIndent")}
+                            onRun={(ctx) =>
+                                ctx.get(commandsCtx).call(liftListItemCommand.key)
+                            }
+                        />
+                    </div>
                 </section>
                 <section class={styles.section}>
                     <h2 class={styles.sectionTitle}>{t("markdownToolbar.blocks")}</h2>

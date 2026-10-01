@@ -34,6 +34,8 @@
         "bulletList": "Lista con viñetas",
         "orderedList": "Lista numerada",
         "taskList": "Lista de tareas",
+        "increaseIndent": "Aumentar",
+        "decreaseIndent": "Reducir",
         "link": "Enlace",
         "image": "Imagen",
         "imageLinkPlaceholder": "Escribe o pega el enlace a la imagen",
