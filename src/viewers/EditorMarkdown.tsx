@@ -24,10 +24,15 @@ import {
 import styles from "./EditorMarkdown.module.css";
 import "./MilkdownTheme.css";
 import EditorMarkdownSidebar from "./EditorMarkdownSidebar";
+import {
+    createMarkdownImageProxy,
+    type MarkdownImageProxy,
+} from "../MarkdownImageProxy";
 
 export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
     let crepeInstance: Crepe | null = null;
+    let imageProxy: MarkdownImageProxy | null = null;
     const [editorReady, setEditorReady] = createSignal(false);
 
     const { t } = useI18N();
@@ -107,9 +112,11 @@ export function EditorMarkdown(): JSX.Element {
 
     const adapter: FileEditorAdapter = {
         getContent: () => Promise.resolve(crepeInstance?.getMarkdown() ?? null),
-        replaceContent: async (content, _currentFilename, onModified) => {
+        replaceContent: async (content, currentFilename, onModified) => {
             setEditorReady(false);
             crepeInstance?.destroy();
+            imageProxy?.dispose();
+            imageProxy = createMarkdownImageProxy(basepath(), currentFilename);
             crepeInstance = new Crepe({
                 root: editorRef,
                 defaultValue: content,
@@ -118,6 +125,9 @@ export function EditorMarkdown(): JSX.Element {
                         // Crepe uses oneDark by default. A neutral view theme lets
                         // basicSetup provide CodeMirror's default light highlighting.
                         theme: CodeMirrorEditorView.theme({}),
+                    },
+                    [Crepe.Feature.ImageBlock]: {
+                        proxyDomURL: imageProxy.proxyDomURL,
                     },
                 },
                 features: {
@@ -158,6 +168,8 @@ export function EditorMarkdown(): JSX.Element {
             setEditorReady(false);
             crepeInstance?.destroy();
             crepeInstance = null;
+            imageProxy?.dispose();
+            imageProxy = null;
         },
     };
     const { error } = createFileEditorController("EditorMarkdown", adapter, textFileStorage);

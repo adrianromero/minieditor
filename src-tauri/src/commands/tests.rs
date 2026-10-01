@@ -235,6 +235,40 @@ fn missing_binary_file_is_empty_and_new_until_explicitly_saved() {
     });
 }
 
+#[test]
+fn linked_binary_file_is_read_relative_to_the_markdown_document() {
+    tauri::async_runtime::block_on(async {
+        let unique = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let base = std::env::temp_dir().join(format!("minieditor-linked-file-{unique}"));
+        std::fs::create_dir_all(base.join("docs")).unwrap();
+        std::fs::create_dir_all(base.join("images")).unwrap();
+        std::fs::write(base.join("images/logo.png"), [0_u8, 128, 255]).unwrap();
+        let basepath = base.to_string_lossy().into_owned();
+
+        let content = super::read_linked_binary_file(
+            basepath.clone(),
+            "docs/readme.md".to_owned(),
+            "../images/logo.png".to_owned(),
+        )
+        .await
+        .unwrap();
+        assert_eq!(content, vec![0, 128, 255]);
+
+        assert!(super::read_linked_binary_file(
+            basepath,
+            "docs/readme.md".to_owned(),
+            "../../outside.png".to_owned(),
+        )
+        .await
+        .is_err());
+
+        std::fs::remove_dir_all(base).unwrap();
+    });
+}
+
 async fn resolve_local_link(
     basepath: String,
     filename: String,

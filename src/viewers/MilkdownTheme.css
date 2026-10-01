@@ -328,6 +328,14 @@
 }
 
 /* Imágenes y pies de imagen */
+.milkdowntheme > .milkdown .image-edit .link-importer .placeholder .uploader {
+    display: none;
+}
+
+.milkdowntheme > .milkdown .image-edit .link-importer .placeholder .text {
+    margin-left: 0;
+}
+
 .milkdowntheme > .milkdown .ProseMirror img {
     max-width: 100%;
     vertical-align: bottom;

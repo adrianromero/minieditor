@@ -269,6 +269,32 @@ pub(crate) async fn read_binary_file(
 }
 
 #[tauri::command]
+pub(crate) async fn read_linked_binary_file(
+    basepath: String,
+    filename: String,
+    href: String,
+) -> Result<Vec<u8>, AppError> {
+    let linked_filename = normalize_link_filename(&filename, &href)?
+        .to_string_lossy()
+        .into_owned();
+    let (_, path) = resolve_existing_path(&basepath, &linked_filename).await?;
+    info!(
+        source = %filename,
+        target = %linked_filename,
+        "Reading linked binary file"
+    );
+
+    tokio::fs::read(path).await.map_err(|error| {
+        AppError::io(
+            "read_linked_binary_file",
+            &linked_filename,
+            error,
+            AppErrorCode::ReadFileFailed,
+        )
+    })
+}
+
+#[tauri::command]
 pub(crate) async fn write_binary_file(
     basepath: String,
     filename: String,
