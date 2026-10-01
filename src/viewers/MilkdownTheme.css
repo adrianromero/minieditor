@@ -328,11 +328,13 @@
 }
 
 /* Imágenes y pies de imagen */
-.milkdowntheme > .milkdown .image-edit .link-importer .placeholder .uploader {
+.milkdowntheme > .milkdown .image-edit .link-importer .placeholder .uploader,
+.milkdowntheme > .milkdown .empty-image-inline .link-importer .placeholder .uploader {
     display: none;
 }
 
-.milkdowntheme > .milkdown .image-edit .link-importer .placeholder .text {
+.milkdowntheme > .milkdown .image-edit .link-importer .placeholder .text,
+.milkdowntheme > .milkdown .empty-image-inline .link-importer .placeholder .text {
     margin-left: 0;
 }
 

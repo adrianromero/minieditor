@@ -5,9 +5,34 @@
 
 import { describe, expect, it } from "vitest";
 import { runCrepeMarkdownAction } from "../test/crepeMarkdownTest";
-import { toggleList } from "./EditorMarkdownSidebar";
+import { insertImage, toggleList } from "./EditorMarkdownSidebar";
 
 describe("acciones de EditorMarkdownSidebar", () => {
+    it("inserta una imagen de bloque en un párrafo nuevo vacío", async () => {
+        const result = await runCrepeMarkdownAction("Antes\n\n[[]]\n\nDespués", insertImage);
+
+        expect(result).toContain("![1.00]()");
+    });
+
+    it("inserta una imagen en línea dentro de un párrafo con contenido", async () => {
+        const result = await runCrepeMarkdownAction("Antes [[texto]] después", insertImage);
+
+        expect(result).toContain("Antes ![]()");
+        expect(result).not.toContain("![1.00]()");
+    });
+
+    it("inserta una imagen en línea dentro de una celda vacía", async () => {
+        const markdown = `
+| Columna |
+| ------- |
+| [[]]    |
+`.trim();
+        const result = await runCrepeMarkdownAction(markdown, insertImage);
+
+        expect(result).toContain("| ![]()");
+        expect(result).not.toContain("![1.00]()");
+    });
+
     it("activa la lista de viñetas de todos los elementos seleccionados", async () => {
         const markdown = `
 lista [[sencilla

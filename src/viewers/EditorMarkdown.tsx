@@ -125,9 +125,30 @@ export function EditorMarkdown(): JSX.Element {
                         // Crepe uses oneDark by default. A neutral view theme lets
                         // basicSetup provide CodeMirror's default light highlighting.
                         theme: CodeMirrorEditorView.theme({}),
+                        copyText: t("markdownToolbar.codeCopy"),
+                        searchPlaceholder: t("markdownToolbar.codeLanguageSearch"),
+                        noResultText: t("markdownToolbar.codeLanguageNoResult"),
+                        previewToggleText: (previewOnlyMode) =>
+                            t(
+                                previewOnlyMode
+                                    ? "markdownToolbar.codePreviewEdit"
+                                    : "markdownToolbar.codePreviewHide"
+                            ),
+                        previewLabel: t("markdownToolbar.codePreviewLabel"),
+                        previewLoading: t("markdownToolbar.codePreviewLoading"),
                     },
                     [Crepe.Feature.ImageBlock]: {
                         proxyDomURL: imageProxy.proxyDomURL,
+                        blockUploadPlaceholderText: t(
+                            "markdownToolbar.imageLinkPlaceholder"
+                        ),
+                        inlineUploadPlaceholderText: t(
+                            "markdownToolbar.imageLinkPlaceholder"
+                        ),
+                        blockConfirmButton: t("markdownToolbar.imageLinkConfirm"),
+                        blockCaptionPlaceholderText: t(
+                            "markdownToolbar.imageCaptionPlaceholder"
+                        ),
                     },
                 },
                 features: {

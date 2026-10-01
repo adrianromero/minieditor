@@ -19,6 +19,7 @@ import {
     headingSchema,
     hrSchema,
     inlineCodeSchema,
+    insertImageCommand,
     liftListItemCommand,
     linkSchema,
     listItemSchema,
@@ -464,6 +465,37 @@ function toggleBlockquote(ctx: Ctx): void {
     });
 }
 
+export function insertImage(ctx: Ctx): void {
+    const view = ctx.get(editorViewCtx);
+    const { selection } = view.state;
+    const { $from } = selection;
+    const imageBlock = imageBlockSchema.type(ctx);
+    const containerDepth = $from.depth - 1;
+    const paragraphIndex = containerDepth >= 0 ? $from.index(containerDepth) : -1;
+    const isEmptyParagraph =
+        selection.empty &&
+        $from.parent.type === paragraphSchema.type(ctx) &&
+        $from.parent.content.size === 0;
+    const canReplaceParagraphWithBlock =
+        isEmptyParagraph &&
+        containerDepth >= 0 &&
+        $from
+            .node(containerDepth)
+            .canReplaceWith(paragraphIndex, paragraphIndex + 1, imageBlock);
+    const commands = ctx.get(commandsCtx);
+
+    if (
+        canReplaceParagraphWithBlock &&
+        commands.call(addBlockTypeCommand.key, {
+            nodeType: imageBlock,
+        })
+    ) {
+        return;
+    }
+
+    commands.call(insertImageCommand.key);
+}
+
 export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.Element {
     const { t } = useI18N();
     const [activeHeadingLevel, setActiveHeadingLevel] = createSignal(0);
@@ -685,11 +717,7 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                         getEditor={props.getEditor}
                         icon={ImageIcon}
                         label={t("markdownToolbar.image")}
-                        onRun={(ctx) => {
-                            ctx.get(commandsCtx).call(addBlockTypeCommand.key, {
-                                nodeType: imageBlockSchema.type(ctx),
-                            });
-                        }}
+                        onRun={insertImage}
                     />
                     <SidebarButton
                         getEditor={props.getEditor}
