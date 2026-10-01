@@ -106,6 +106,7 @@ pub(crate) async fn resolve_link(
     basepath: String,
     filename: String,
     href: String,
+    must_exist: Option<bool>,
 ) -> Result<Option<String>, AppError> {
     if href.split_once(':').is_some_and(|(scheme, _)| {
         ["http", "https", "mailto"]
@@ -128,8 +129,14 @@ pub(crate) async fn resolve_link(
     let normalized_filename = normalize_link_filename(&filename, &href)?
         .to_string_lossy()
         .into_owned();
-    let path = resolve_write_path(&basepath, &normalized_filename).await?;
-    let base = canonical_basepath(&basepath, &normalized_filename).await?;
+    let (base, path) = if must_exist.unwrap_or(false) {
+        resolve_existing_path(&basepath, &normalized_filename).await?
+    } else {
+        (
+            canonical_basepath(&basepath, &normalized_filename).await?,
+            resolve_write_path(&basepath, &normalized_filename).await?,
+        )
+    };
 
     path.strip_prefix(base)
         .map(|relative| Some(relative.to_string_lossy().into_owned()))

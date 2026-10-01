@@ -6,7 +6,7 @@
 import { createSignal, onCleanup, onMount, Show, JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { Crepe } from "@milkdown/crepe";
-import { remarkStringifyOptionsCtx } from "@milkdown/kit/core";
+import { editorViewCtx, remarkStringifyOptionsCtx } from "@milkdown/kit/core";
 import { EditorView as CodeMirrorEditorView } from "@codemirror/view";
 import { useI18N } from "../Localization";
 import { useAppContext } from "../AppContext";
@@ -28,6 +28,11 @@ import {
     createMarkdownImageProxy,
     type MarkdownImageProxy,
 } from "../MarkdownImageProxy";
+import {
+    imageNavigationHref,
+    imageSourceFromDOM,
+    navigableImageFromTarget,
+} from "../MarkdownImageNavigation";
 
 export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -106,6 +111,44 @@ export function EditorMarkdown(): JSX.Element {
             }
         } catch (err: unknown) {
             console.error("Unable to resolve editor link:", err);
+            showAppMessage(translateAppError(err, t), "error");
+        }
+    };
+
+    const handleImageDoubleClick = async (event: MouseEvent): Promise<void> => {
+        const target = event.target;
+        if (!(target instanceof Element)) {
+            return;
+        }
+
+        const image = navigableImageFromTarget(target, editorRef);
+        if (!image || !crepeInstance) {
+            return;
+        }
+
+        let source: string | null = null;
+        crepeInstance.editor.action((ctx) => {
+            source = imageSourceFromDOM(ctx.get(editorViewCtx), image);
+        });
+        if (!source) {
+            return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        try {
+            const resolvedFilename = await invoke<string | null>("resolve_link", {
+                basepath: basepath(),
+                filename: filename(),
+                href: imageNavigationHref(source),
+                mustExist: true,
+            });
+            if (resolvedFilename !== null) {
+                await loadFilename(resolvedFilename);
+            }
+        } catch (err: unknown) {
+            console.error("Unable to resolve editor image:", err);
             showAppMessage(translateAppError(err, t), "error");
         }
     };
@@ -197,10 +240,12 @@ export function EditorMarkdown(): JSX.Element {
 
     onMount(() => {
         editorRef.addEventListener("click", handleLinkPreviewClick, { capture: true });
+        editorRef.addEventListener("dblclick", handleImageDoubleClick, { capture: true });
     });
 
     onCleanup(() => {
         editorRef.removeEventListener("click", handleLinkPreviewClick, { capture: true });
+        editorRef.removeEventListener("dblclick", handleImageDoubleClick, { capture: true });
     });
 
     return (
