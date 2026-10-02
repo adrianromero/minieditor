@@ -19,7 +19,6 @@ import SidebarTabSection from "../commons/SidebarTabSection";
 import ErrorView from "./ErrorView";
 import styles from "./EditorImage.module.css";
 import CircleDot from "lucide-solid/icons/circle-dot";
-import Grid3x3 from "lucide-solid/icons/grid-3x3";
 import Maximize2 from "lucide-solid/icons/maximize-2";
 import RotateCcw from "lucide-solid/icons/rotate-ccw";
 import RotateCw from "lucide-solid/icons/rotate-cw";
@@ -162,7 +161,6 @@ export function EditorImage(): JSX.Element {
     const [zoom, setZoom] = createSignal(1);
     const [panX, setPanX] = createSignal(0);
     const [panY, setPanY] = createSignal(0);
-    const [showGrid, setShowGrid] = createSignal(false);
     const [dimensions, setDimensions] = createSignal({ width: 0, height: 0 });
 
     const renderCanvas = (): void => {
@@ -310,7 +308,7 @@ export function EditorImage(): JSX.Element {
             <section class={styles.studio}>
                 <div
                     ref={viewportRef}
-                    class={`${styles.viewport} ${showGrid() ? styles.grid : ""}`}
+                    class={styles.viewport}
                     onWheel={(event) => {
                         event.preventDefault();
                         setZoom((value) =>
@@ -448,14 +446,6 @@ export function EditorImage(): JSX.Element {
                                 </div>
                             </div>
 
-                            <button
-                                class={`stdButton toolbar ${showGrid() ? "selected" : ""}`}
-                                style={{ "grid-column": "span 5" }}
-                                onClick={() => setShowGrid((value) => !value)}
-                            >
-                                <Grid3x3 aria-hidden="true" />
-                                {t("image.grid")}
-                            </button>
                             <button
                                 class="stdButton toolbar"
                                 onClick={() => {
