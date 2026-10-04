@@ -43,11 +43,11 @@ Otra lista sencilla]]
 `.trim();
 
         const expected = `
-* lista [[sencilla
+- lista [[sencilla
 
-* lista sencilla 2
+- lista sencilla 2
 
-* Otra lista sencilla]]
+- Otra lista sencilla]]
 `.trim();
 
         const result = await runCrepeMarkdownAction(markdown, (ctx) => toggleList(ctx, "bullet"));
@@ -111,11 +111,11 @@ Otra lista sencilla]]
 `.trim();
 
         const expected = `
-* [ ] lista [[sencilla
+- [ ] lista [[sencilla
 
-* [ ] lista sencilla 2
+- [ ] lista sencilla 2
 
-* [ ] Otra lista sencilla]]
+- [ ] Otra lista sencilla]]
 `.trim();
 
         const result = await runCrepeMarkdownAction(markdown, (ctx) => toggleList(ctx, "task"));
@@ -149,5 +149,11 @@ Cuatro]] 4
         const result = await runCrepeMarkdownAction(markdown, (ctx) => toggleList(ctx, "ordered"));
 
         expect(result.trim()).toBe(expected);
+    });
+
+    it("serializa los separadores horizontales con tres guiones", async () => {
+        const result = await runCrepeMarkdownAction("[[Texto]]\n\n***", () => undefined);
+
+        expect(result.trim()).toBe("[[Texto]]\n\n---");
     });
 });

@@ -6,7 +6,7 @@
 import { createSignal, onCleanup, onMount, Show, JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { Crepe } from "@milkdown/crepe";
-import { EditorStatus, remarkStringifyOptionsCtx } from "@milkdown/kit/core";
+import { EditorStatus } from "@milkdown/kit/core";
 import { EditorView as CodeMirrorEditorView } from "@codemirror/view";
 import { useI18N } from "../Localization";
 import { useAppContext } from "../AppContext";
@@ -24,11 +24,9 @@ import {
 import styles from "./EditorMarkdown.module.css";
 import "./MilkdownTheme.css";
 import EditorMarkdownSidebar from "./EditorMarkdownSidebar";
-import {
-    createMarkdownImageProxy,
-    type MarkdownImageProxy,
-} from "../MarkdownImageProxy";
+import { createMarkdownImageProxy, type MarkdownImageProxy } from "./MarkdownImageProxy";
 import MarkdownImageActions from "./MarkdownImageActions";
+import { configureMarkdownSerialization } from "./MarkdownSerialization";
 
 export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -140,16 +138,10 @@ export function EditorMarkdown(): JSX.Element {
                     },
                     [Crepe.Feature.ImageBlock]: {
                         proxyDomURL: nextImageProxy.proxyDomURL,
-                        blockUploadPlaceholderText: t(
-                            "markdownToolbar.imageLinkPlaceholder"
-                        ),
-                        inlineUploadPlaceholderText: t(
-                            "markdownToolbar.imageLinkPlaceholder"
-                        ),
+                        blockUploadPlaceholderText: t("markdownToolbar.imageLinkPlaceholder"),
+                        inlineUploadPlaceholderText: t("markdownToolbar.imageLinkPlaceholder"),
                         blockConfirmButton: t("markdownToolbar.imageLinkConfirm"),
-                        blockCaptionPlaceholderText: t(
-                            "markdownToolbar.imageCaptionPlaceholder"
-                        ),
+                        blockCaptionPlaceholderText: t("markdownToolbar.imageCaptionPlaceholder"),
                     },
                 },
                 features: {
@@ -161,11 +153,7 @@ export function EditorMarkdown(): JSX.Element {
             crepeInstance = nextCrepe;
             setImageActionsCrepe(nextCrepe);
 
-            nextCrepe.editor.config((ctx) => {
-                ctx.update(remarkStringifyOptionsCtx, (options) => ({
-                    ...options,
-                }));
-            });
+            nextCrepe.editor.config(configureMarkdownSerialization);
 
             let firstUpdate = true;
             nextCrepe.on((listener) => {
@@ -230,17 +218,12 @@ export function EditorMarkdown(): JSX.Element {
                 <ErrorView>{error() ?? t("errors.unknown")}</ErrorView>
             </Show>
             <div class={`scrollingView ${error() ? "errorView" : ""}`}>
-                <div
-                    ref={editorRef}
-                    class={`contentView milkdowntheme ${styles.editorMarkdown}`}
-                />
+                <div ref={editorRef} class={`contentView milkdowntheme ${styles.editorMarkdown}`} />
                 <MarkdownImageActions editorRoot={() => editorRef} crepe={imageActionsCrepe} />
             </div>
             <EditorMarkdownSidebar
                 disabled={editorDisabled()}
-                getEditor={() =>
-                    editorReady() && crepeInstance ? crepeInstance.editor : null
-                }
+                getEditor={() => (editorReady() && crepeInstance ? crepeInstance.editor : null)}
             />
         </section>
     );

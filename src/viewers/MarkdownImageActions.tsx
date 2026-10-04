@@ -18,7 +18,7 @@ import {
     imageNavigationHref,
     imageSourceFromDOM,
     navigableImageFromTarget,
-} from "../MarkdownImageNavigation";
+} from "./MarkdownImageNavigation";
 import styles from "./MarkdownImageActions.module.css";
 
 interface MarkdownImageActionsProps {

@@ -113,7 +113,7 @@
     },
     "errors": {
         "unknown": "Error desconocido",
-        "loadFileFailed": "No se ha podido cargar el archivo {{ filename }}.",
+        "loadFileFailed": "No se ha podido cargar el archivo.",
         "unsupportedPathType": "Tipo de ruta no compatible: {{ filename }}"
     },
     "backendErrors": {

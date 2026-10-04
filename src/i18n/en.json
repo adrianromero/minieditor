@@ -113,7 +113,7 @@
     },
     "errors": {
         "unknown": "Unknown error",
-        "loadFileFailed": "The file {{ filename }} could not be loaded.",
+        "loadFileFailed": "The file could not be loaded.",
         "unsupportedPathType": "Unsupported path type: {{ filename }}"
     },
     "backendErrors": {

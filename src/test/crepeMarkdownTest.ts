@@ -4,10 +4,11 @@
  */
 
 import { Crepe } from "@milkdown/crepe";
-import { editorViewCtx, remarkStringifyOptionsCtx } from "@milkdown/kit/core";
+import { editorViewCtx } from "@milkdown/kit/core";
 import type { Ctx } from "@milkdown/kit/ctx";
 import type { Node as ProseMirrorNode } from "@milkdown/kit/prose/model";
 import { TextSelection } from "@milkdown/kit/prose/state";
+import { configureMarkdownSerialization } from "../viewers/MarkdownSerialization";
 
 const SELECTION_START = "MINIEDITORSELECTIONSTART7F3A";
 const SELECTION_END = "MINIEDITORSELECTIONEND7F3A";
@@ -68,10 +69,7 @@ function serializeWithSelection(ctx: Ctx, crepe: Crepe): string {
 
     view.dispatch(transaction);
 
-    return crepe
-        .getMarkdown()
-        .replace(SELECTION_START, "[[")
-        .replace(SELECTION_END, "]]");
+    return crepe.getMarkdown().replace(SELECTION_START, "[[").replace(SELECTION_END, "]]");
 }
 
 /**
@@ -93,9 +91,7 @@ export async function runCrepeMarkdownAction(
         },
     });
 
-    crepe.editor.config((ctx) => {
-        ctx.update(remarkStringifyOptionsCtx, (options) => ({ ...options }));
-    });
+    crepe.editor.config(configureMarkdownSerialization);
 
     try {
         await crepe.create();

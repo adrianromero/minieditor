@@ -104,11 +104,7 @@ export function createFileEditorController<Content = string>(
         setFileModified(false);
         setState({
             status: "error",
-            message: translateAppError(
-                err,
-                t,
-                t("errors.loadFileFailed", { filename: filename() })
-            ),
+            message: translateAppError(err, t, t("errors.loadFileFailed")),
         });
         // Reload remains available as a recovery action after both initial-load
         // and reload failures.
