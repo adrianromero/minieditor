@@ -122,7 +122,7 @@ export function AppProvider(props: {
             const onClose = () => {
                 resolve(confirmed);
             };
-            setAppMessageInfo(info ?? "status");
+            setAppMessageInfo(info ?? "question");
             setAppCancelKey("dialog.cancel");
             setAppConfirmKey(confirmKey ?? "dialog.continue");
             setAppClose(() => onClose);

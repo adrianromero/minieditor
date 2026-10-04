@@ -24,7 +24,7 @@ export function Dialog(props: DialogProps): JSX.Element {
     const { t } = useI18N();
     let dialogRef!: HTMLDialogElement;
     const titleId = createUniqueId();
-    const kind = (): MessageInfoKind => props.info ?? "error";
+    const kind = (): MessageInfoKind => props.info ?? (props.confirmLabel ? "question" : "error");
     const info = (): MessageInfo => messagesinfo[kind()];
 
     createEffect(() => {

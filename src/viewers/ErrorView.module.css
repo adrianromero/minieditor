@@ -52,6 +52,17 @@
     color: var(--color-status-text);
 }
 
+.styleQuestion > .errorContent {
+    background-color: var(--color-question-background);
+    border: 1px solid var(--color-question-border);
+}
+
+.styleQuestion .icon,
+.styleQuestion .title {
+    font-weight: 600;
+    color: var(--color-question-text);
+}
+
 .icon {
     width: 1.5em;
     height: 1.5em;

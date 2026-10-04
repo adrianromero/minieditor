@@ -201,7 +201,7 @@ export function createFileEditorController<Content = string>(
         if (state().status !== "error") {
             const confirmed = await showAppConfirmation(
                 fileModified() ? t("dialog.reloadDiscardChanges") : t("dialog.reloadFile"),
-                "status",
+                "question",
                 "dialog.confirm"
             );
             if (!confirmed) {

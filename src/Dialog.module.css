@@ -76,6 +76,19 @@
     color: var(--color-status-text);
 }
 
+.styleQuestion > .iconRow {
+    color: var(--color-question-text);
+    background: linear-gradient(
+        to bottom,
+        var(--color-question-background) 0 50%,
+        var(--color-surface) 50% 100%
+    );
+}
+
+.styleQuestion > .title {
+    color: var(--color-question-text);
+}
+
 .actions {
     display: inline-grid;
     grid-auto-flow: column;

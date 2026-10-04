@@ -109,7 +109,8 @@
     },
     "info": {
         "status": "Information",
-        "error": "Error"
+        "error": "Error",
+        "question": "Question"
     },
     "errors": {
         "unknown": "Unknown error",
