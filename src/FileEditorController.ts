@@ -14,7 +14,7 @@ import { UserMessageError } from "./UserMessageError";
 export type FileEditorAdapter<Content = string> = {
     getContent: () => Promise<Content | null>;
     replaceContent: (content: Content, filename: string, onModified: () => void) => Promise<void>;
-    destroy: () => void;
+    destroy: () => void | Promise<void>;
 };
 
 export type FileEditorStorage<Content> = {
@@ -27,8 +27,13 @@ export type FileEditorStorage<Content> = {
     ) => Promise<void>;
 };
 
+export type FileEditorState =
+    | { status: "loading" }
+    | { status: "ready" }
+    | { status: "error"; message: string };
+
 export type FileEditorController = {
-    error: Accessor<string | null>;
+    state: Accessor<FileEditorState>;
 };
 
 export const textFileStorage: FileEditorStorage<string> = {
@@ -60,7 +65,56 @@ export function createFileEditorController<Content = string>(
         spinner: { showSpinner, hideSpinner, setSpinnerParams },
         editor: { fileModified, setSaveFile, setReloadFile, setFileModified },
     } = useAppContext();
-    const [error, setError] = createSignal<string | null>(null);
+    const [state, setState] = createSignal<FileEditorState>({ status: "loading" });
+    let activeLoad = 0;
+    let replacementQueue = Promise.resolve();
+
+    const queueAdapterCleanup = (): void => {
+        const cleanupTask = replacementQueue.then(() => adapter.destroy());
+        replacementQueue = cleanupTask.then(
+            () => undefined,
+            (err: unknown) => {
+                console.error(`Error destroying editor in ${editorName}:`, err);
+            }
+        );
+    };
+
+    const beginLoading = (): number => {
+        const loadId = ++activeLoad;
+        setSaveFile(null);
+        setReloadFile(null);
+        setOnunload(null);
+        setFileModified(false);
+        setState({ status: "loading" });
+        return loadId;
+    };
+
+    const enterReadyState = (loadId: number): void => {
+        if (loadId !== activeLoad) return;
+        setState({ status: "ready" });
+        setSaveFile(saveCurrentFile);
+        setReloadFile(reloadCurrentFile);
+        setOnunload(componentOnUnload);
+    };
+
+    const enterErrorState = (loadId: number, err: unknown): void => {
+        if (loadId !== activeLoad) return;
+        setSaveFile(null);
+        setOnunload(null);
+        setFileModified(false);
+        setState({
+            status: "error",
+            message: translateAppError(
+                err,
+                t,
+                t("errors.loadFileFailed", { filename: filename() })
+            ),
+        });
+        // Reload remains available as a recovery action after both initial-load
+        // and reload failures.
+        setReloadFile(reloadCurrentFile);
+        queueAdapterCleanup();
+    };
 
     const writeCurrentFile = async (createIfEmpty: boolean): Promise<void> => {
         const content = await adapter.getContent();
@@ -111,38 +165,62 @@ export function createFileEditorController<Content = string>(
 
     const replaceContentFromDisk = async (
         currentBasepath: string,
-        currentFilename: string
-    ): Promise<void> => {
+        currentFilename: string,
+        loadId: number
+    ): Promise<boolean> => {
         setSpinnerParams(t("editor.loading", { filename: currentFilename }));
         showSpinner();
         try {
             const result = await storage.read(currentBasepath, currentFilename);
+            if (loadId !== activeLoad) return false;
 
-            await adapter.replaceContent(result.content, currentFilename, () => {
-                setFileModified(true);
+            let applied = false;
+            const replaceTask = replacementQueue.then(async () => {
+                if (loadId !== activeLoad) return;
+
+                // A previous asynchronous adapter replacement may have completed
+                // after this load began. Reset once more immediately before applying
+                // the current content.
+                await adapter.destroy();
+                await adapter.replaceContent(result.content, currentFilename, () => {
+                    if (loadId === activeLoad) setFileModified(true);
+                });
+                if (loadId !== activeLoad) return;
+
+                setFileModified(result.isNew);
+                applied = true;
             });
-            setError(null);
-            setFileModified(result.isNew);
+            replacementQueue = replaceTask.then(
+                () => undefined,
+                () => undefined
+            );
+            await replaceTask;
+            return applied;
         } finally {
-            hideSpinner();
+            if (loadId === activeLoad) hideSpinner();
         }
     };
 
     const reloadCurrentFile = async (): Promise<void> => {
-        const confirmed = await showAppConfirmation(
-            fileModified() ? t("dialog.reloadDiscardChanges") : t("dialog.reloadFile"),
-            "status",
-            "dialog.confirm"
-        );
-        if (!confirmed) {
-            return;
+        if (state().status !== "error") {
+            const confirmed = await showAppConfirmation(
+                fileModified() ? t("dialog.reloadDiscardChanges") : t("dialog.reloadFile"),
+                "status",
+                "dialog.confirm"
+            );
+            if (!confirmed) {
+                return;
+            }
         }
 
+        const loadId = beginLoading();
         try {
-            await replaceContentFromDisk(basepath(), filename());
+            const applied = await replaceContentFromDisk(basepath(), filename(), loadId);
+            if (applied) enterReadyState(loadId);
         } catch (err: unknown) {
+            if (loadId !== activeLoad) return;
             console.error(`Error reloading file in ${editorName}:`, err);
-            await showAppMessage(translateAppError(err, t), "error");
+            enterErrorState(loadId, err);
         }
     };
 
@@ -150,32 +228,27 @@ export function createFileEditorController<Content = string>(
         const currentBasepath = basepath();
         const currentFilename = filename();
 
-        adapter.destroy();
-        setSaveFile(null);
-        setReloadFile(null);
-        setFileModified(false);
-        setError(null);
+        const loadId = beginLoading();
 
-        void replaceContentFromDisk(currentBasepath, currentFilename)
-            .then(() => {
-                setSaveFile(saveCurrentFile);
-                setReloadFile(reloadCurrentFile);
-                setOnunload(componentOnUnload);
+        void replaceContentFromDisk(currentBasepath, currentFilename, loadId)
+            .then((applied) => {
+                if (applied) enterReadyState(loadId);
             })
             .catch((err: unknown) => {
-                adapter.destroy();
+                if (loadId !== activeLoad) return;
                 console.error(`Error loading file in ${editorName}:`, err);
-                setError(translateAppError(err, t));
+                enterErrorState(loadId, err);
             });
     });
 
     onCleanup(() => {
+        activeLoad += 1;
         setSaveFile(null);
         setReloadFile(null);
         setOnunload(null);
         setFileModified(false);
-        adapter.destroy();
+        queueAdapterCleanup();
     });
 
-    return { error };
+    return { state };
 }

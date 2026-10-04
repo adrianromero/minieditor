@@ -6,7 +6,7 @@
 import { createSignal, onCleanup, onMount, Show, JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { Crepe } from "@milkdown/crepe";
-import { remarkStringifyOptionsCtx } from "@milkdown/kit/core";
+import { EditorStatus, remarkStringifyOptionsCtx } from "@milkdown/kit/core";
 import { EditorView as CodeMirrorEditorView } from "@codemirror/view";
 import { useI18N } from "../Localization";
 import { useAppContext } from "../AppContext";
@@ -117,10 +117,8 @@ export function EditorMarkdown(): JSX.Element {
         replaceContent: async (content, currentFilename, onModified) => {
             setEditorReady(false);
             setImageActionsCrepe(null);
-            crepeInstance?.destroy();
-            imageProxy?.dispose();
-            imageProxy = createMarkdownImageProxy(basepath(), currentFilename);
-            crepeInstance = new Crepe({
+            const nextImageProxy = createMarkdownImageProxy(basepath(), currentFilename);
+            const nextCrepe = new Crepe({
                 root: editorRef,
                 defaultValue: content,
                 featureConfigs: {
@@ -141,7 +139,7 @@ export function EditorMarkdown(): JSX.Element {
                         previewLoading: t("markdownToolbar.codePreviewLoading"),
                     },
                     [Crepe.Feature.ImageBlock]: {
-                        proxyDomURL: imageProxy.proxyDomURL,
+                        proxyDomURL: nextImageProxy.proxyDomURL,
                         blockUploadPlaceholderText: t(
                             "markdownToolbar.imageLinkPlaceholder"
                         ),
@@ -159,16 +157,18 @@ export function EditorMarkdown(): JSX.Element {
                     [Crepe.Feature.Toolbar]: false,
                 },
             });
-            setImageActionsCrepe(crepeInstance);
+            imageProxy = nextImageProxy;
+            crepeInstance = nextCrepe;
+            setImageActionsCrepe(nextCrepe);
 
-            crepeInstance.editor.config((ctx) => {
+            nextCrepe.editor.config((ctx) => {
                 ctx.update(remarkStringifyOptionsCtx, (options) => ({
                     ...options,
                 }));
             });
 
             let firstUpdate = true;
-            crepeInstance.on((listener) => {
+            nextCrepe.on((listener) => {
                 listener.markdownUpdated((_: Ctx, markdown: string, prevMarkdown: string) => {
                     // Mitigates Crepe load changes without user interaction
                     if (firstUpdate) {
@@ -186,19 +186,35 @@ export function EditorMarkdown(): JSX.Element {
                 });
             });
 
-            await crepeInstance.create();
+            await nextCrepe.create();
             setEditorReady(true);
         },
-        destroy: () => {
+        destroy: async () => {
             setEditorReady(false);
             setImageActionsCrepe(null);
-            crepeInstance?.destroy();
+            const currentCrepe = crepeInstance;
             crepeInstance = null;
-            imageProxy?.dispose();
+            const currentImageProxy = imageProxy;
             imageProxy = null;
+            currentImageProxy?.dispose();
+
+            try {
+                // Milkdown leaves a failed create in OnCreate. Calling destroy in
+                // that state retries forever, so remove its partial DOM directly.
+                if (currentCrepe?.editor.status === EditorStatus.Created) {
+                    await currentCrepe.destroy();
+                }
+            } finally {
+                editorRef.replaceChildren();
+            }
         },
     };
-    const { error } = createFileEditorController("EditorMarkdown", adapter, textFileStorage);
+    const { state } = createFileEditorController("EditorMarkdown", adapter, textFileStorage);
+    const error = (): string | null => {
+        const current = state();
+        return current.status === "error" ? current.message : null;
+    };
+    const editorDisabled = (): boolean => state().status !== "ready";
 
     onMount(() => {
         editorRef.addEventListener("click", handleLinkPreviewClick, { capture: true });
@@ -209,30 +225,24 @@ export function EditorMarkdown(): JSX.Element {
     });
 
     return (
-        <>
+        <section class={styles.studio}>
             <Show when={error()}>
                 <ErrorView>{error() ?? t("errors.unknown")}</ErrorView>
             </Show>
-            <section class={`${styles.studio} ${error() ? styles.errorStudio : ""}`}>
-                <div class={`scrollingView ${error() ? "errorView" : ""}`}>
-                    <div
-                        ref={editorRef}
-                        class={`contentView milkdowntheme ${styles.editorMarkdown}`}
-                    />
-                    <MarkdownImageActions
-                        editorRoot={() => editorRef}
-                        crepe={imageActionsCrepe}
-                    />
-                </div>
-                <Show when={!error()}>
-                    <EditorMarkdownSidebar
-                        getEditor={() =>
-                            editorReady() && crepeInstance ? crepeInstance.editor : null
-                        }
-                    />
-                </Show>
-            </section>
-        </>
+            <div class={`scrollingView ${error() ? "errorView" : ""}`}>
+                <div
+                    ref={editorRef}
+                    class={`contentView milkdowntheme ${styles.editorMarkdown}`}
+                />
+                <MarkdownImageActions editorRoot={() => editorRef} crepe={imageActionsCrepe} />
+            </div>
+            <EditorMarkdownSidebar
+                disabled={editorDisabled()}
+                getEditor={() =>
+                    editorReady() && crepeInstance ? crepeInstance.editor : null
+                }
+            />
+        </section>
     );
 }
 

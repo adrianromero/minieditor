@@ -48,4 +48,43 @@ describe("SidebarTab", () => {
         expect(tabs[1].getAttribute("aria-selected")).toBe("true");
         expect(root.querySelector("[role=tabpanel]")?.textContent).toContain("Second content");
     });
+
+    it("makes all of its controls inert when disabled", () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+        dispose = render(
+            () => (
+                <Sidebar disabled>
+                    <button type="button">Action</button>
+                </Sidebar>
+            ),
+            root
+        );
+
+        const sidebar = root.querySelector("aside");
+        expect(sidebar?.getAttribute("aria-disabled")).toBe("true");
+        expect(sidebar?.inert).toBe(true);
+    });
+
+    it("does not present its active tab as selected when disabled", () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+        dispose = render(
+            () => (
+                <Sidebar disabled>
+                    <SidebarTab>
+                        <SidebarTabSection key="first" label="First">
+                            First content
+                        </SidebarTabSection>
+                    </SidebarTab>
+                </Sidebar>
+            ),
+            root
+        );
+
+        const tab = root.querySelector<HTMLButtonElement>("[role=tab]");
+        expect(tab?.getAttribute("aria-selected")).toBe("false");
+        expect(tab?.disabled).toBe(true);
+        expect(root.querySelector("[role=tabpanel]")?.textContent).toContain("First content");
+    });
 });

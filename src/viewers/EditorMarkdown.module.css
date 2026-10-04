@@ -12,10 +12,6 @@
     background: var(--color-view-background);
 }
 
-.errorStudio {
-    display: none;
-}
-
 .editorMarkdown > :global(.milkdown) {
     --crepe-font-title: unset;
     --crepe-font-default: unset;

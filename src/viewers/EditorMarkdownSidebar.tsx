@@ -77,11 +77,12 @@ import SquareFunction from "lucide-solid/icons/square-function";
 import Strikethrough from "lucide-solid/icons/strikethrough";
 import Table2 from "lucide-solid/icons/table-2";
 import { useI18N } from "../Localization";
-import Sidebar from "../commons/Sidebar";
+import Sidebar, { useSidebarDisabled } from "../commons/Sidebar";
 import styles from "./EditorMarkdownSidebar.module.css";
 
 type EditorMarkdownSidebarProps = {
     getEditor: () => Editor | null;
+    disabled?: boolean;
 };
 
 type ListKind = "bullet" | "ordered" | "task";
@@ -120,13 +121,16 @@ type SidebarButtonProps = {
 };
 
 function SidebarButton(props: SidebarButtonProps): JSX.Element {
+    const sidebarDisabled = useSidebarDisabled();
+    const active = (): boolean => Boolean(props.active) && !sidebarDisabled();
+
     return (
         <button
-            class={`stdButton toolbar ${props.active ? "selected" : ""}`}
+            class={`stdButton toolbar ${active() ? "selected" : ""}`}
             type="button"
             aria-label={props.label}
             title={props.label}
-            disabled={!props.getEditor()}
+            disabled={sidebarDisabled() || !props.getEditor()}
             onPointerDown={(event) => {
                 event.preventDefault();
                 const editor = props.getEditor();
@@ -155,13 +159,16 @@ type SidebarIconButtonProps = {
 };
 
 function SidebarIconButton(props: SidebarIconButtonProps): JSX.Element {
+    const sidebarDisabled = useSidebarDisabled();
+    const active = (): boolean => Boolean(props.active) && !sidebarDisabled();
+
     return (
         <button
-            class={`stdButton toolbar ${props.active ? "selected" : ""}`}
+            class={`stdButton toolbar ${active() ? "selected" : ""}`}
             type="button"
             aria-label={props.label}
             title={props.label}
-            disabled={!props.getEditor()}
+            disabled={sidebarDisabled() || !props.getEditor()}
             onPointerDown={(event) => {
                 event.preventDefault();
                 const editor = props.getEditor();
@@ -529,7 +536,7 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
     });
 
     return (
-        <Sidebar>
+        <Sidebar disabled={props.disabled}>
             <div class={styles.panel}>
                 <section class={styles.section}>
                     <h2 class={styles.sectionTitle}>{t("markdownToolbar.blockStyle")}</h2>

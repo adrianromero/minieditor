@@ -22,7 +22,7 @@ export function Toolbar() {
             <div class={styles.toolbarLeft}>
                 <FileNavigation />
                 <FileBreadcrumb />
-                <Show when={saveFile() && fileModified()}>
+                <Show when={fileModified()}>
                     <span
                         class={styles.modifiedIndicator}
                         role="img"
@@ -46,7 +46,7 @@ export function Toolbar() {
                         <HardDriveUpload aria-hidden="true" />
                     </button>
                 </Show>
-                <Show when={saveFile()}>
+                <Show when={reloadFile()}>
                     <button
                         class="stdButton toolbar"
                         aria-label={t("toolbar.save")}

@@ -39,16 +39,17 @@ function parsePayload(error: unknown): AppErrorPayload | null {
     };
 }
 
-export function translateAppError(error: unknown, t: Translator): string {
+export function translateAppError(error: unknown, t: Translator, fallback?: string): string {
+    const fallbackMessage = fallback ?? t("errors.unknown");
     const payload = parsePayload(error);
     if (!payload) {
-        return t("errors.unknown");
+        return fallbackMessage;
     }
 
     const path = payload.path ?? t("toolbar.basePath");
     const translationKey = `backendErrors.${payload.code}`;
     if (!hasTranslationKey(translationKey)) {
-        return t("errors.unknown");
+        return fallbackMessage;
     }
     return t(translationKey, { path });
 }

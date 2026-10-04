@@ -49,7 +49,11 @@ export function EditorText(props: EditorTextProps): JSX.Element {
             editorView = null;
         },
     };
-    const { error } = createFileEditorController("EditorText", adapter, textFileStorage);
+    const { state } = createFileEditorController("EditorText", adapter, textFileStorage);
+    const error = (): string | null => {
+        const current = state();
+        return current.status === "error" ? current.message : null;
+    };
 
     return (
         <>

@@ -40,6 +40,9 @@
 .viewport:active {
     cursor: grabbing;
 }
+.errorViewport {
+    display: none;
+}
 .canvas {
     position: absolute;
     top: 50%;

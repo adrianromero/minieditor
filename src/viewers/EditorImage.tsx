@@ -275,7 +275,12 @@ export function EditorImage(): JSX.Element {
         },
     };
 
-    const { error } = createFileEditorController("EditorImage", adapter, binaryFileStorage);
+    const { state } = createFileEditorController("EditorImage", adapter, binaryFileStorage);
+    const error = (): string | null => {
+        const current = state();
+        return current.status === "error" ? current.message : null;
+    };
+    const editorDisabled = (): boolean => state().status !== "ready";
     const applyPreset = (name: PresetName): void => {
         setSettings({ ...defaultSettings, ...presets[name] });
         queueMicrotask(renderCanvas);
@@ -304,40 +309,42 @@ export function EditorImage(): JSX.Element {
     };
 
     return (
-        <Show when={!error()} fallback={<ErrorView>{error() ?? t("errors.unknown")}</ErrorView>}>
-            <section class={styles.studio}>
-                <div
-                    ref={viewportRef}
-                    class={styles.viewport}
-                    onWheel={(event) => {
-                        event.preventDefault();
-                        setZoom((value) =>
-                            Math.min(5, Math.max(0.1, value * (event.deltaY < 0 ? 1.1 : 0.9)))
-                        );
+        <section class={styles.studio}>
+            <Show when={error()}>
+                <ErrorView>{error() ?? t("errors.unknown")}</ErrorView>
+            </Show>
+            <div
+                ref={viewportRef}
+                class={`${styles.viewport} ${error() ? styles.errorViewport : ""}`}
+                onWheel={(event) => {
+                    event.preventDefault();
+                    setZoom((value) =>
+                        Math.min(5, Math.max(0.1, value * (event.deltaY < 0 ? 1.1 : 0.9)))
+                    );
+                }}
+                onPointerDown={handlePointerDown}
+                onPointerMove={handlePointerMove}
+                onPointerUp={handlePointerUp}
+                onPointerCancel={handlePointerUp}
+            >
+                <canvas
+                    ref={canvasRef}
+                    class={styles.canvas}
+                    style={{
+                        transform: `translate(-50%, -50%) translate(${panX()}px, ${panY()}px) scale(${zoom()})`,
                     }}
-                    onPointerDown={handlePointerDown}
-                    onPointerMove={handlePointerMove}
-                    onPointerUp={handlePointerUp}
-                    onPointerCancel={handlePointerUp}
-                >
-                    <canvas
-                        ref={canvasRef}
-                        class={styles.canvas}
-                        style={{
-                            transform: `translate(-50%, -50%) translate(${panX()}px, ${panY()}px) scale(${zoom()})`,
-                        }}
-                    />
-                    <div class={styles.hud}>
-                        <span>
-                            {dimensions().width} × {dimensions().height} px
-                        </span>
-                        <span>•</span>
-                        <span>{Math.round(zoom() * 100)}%</span>
-                        <span>•</span>
-                        <span>{settings().rotation}°</span>
-                    </div>
+                />
+                <div class={styles.hud}>
+                    <span>
+                        {dimensions().width} × {dimensions().height} px
+                    </span>
+                    <span>•</span>
+                    <span>{Math.round(zoom() * 100)}%</span>
+                    <span>•</span>
+                    <span>{settings().rotation}°</span>
                 </div>
-                <Sidebar>
+            </div>
+            <Sidebar disabled={editorDisabled()}>
                     <SidebarTab defaultKey="transform">
                         <SidebarTabSection key="transform" label={t("image.transform")}>
                             <Control label={t("image.zoom")} value={`${Math.round(zoom() * 100)}%`}>
@@ -501,9 +508,8 @@ export function EditorImage(): JSX.Element {
                             </div>
                         </SidebarTabSection>
                     </SidebarTab>
-                </Sidebar>
-            </section>
-        </Show>
+            </Sidebar>
+        </section>
     );
 }
 
