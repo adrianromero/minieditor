@@ -5,7 +5,7 @@
 
 import { Show } from "solid-js";
 import HardDriveDownload from "lucide-solid/icons/hard-drive-download";
-import HardDriveUpload from "lucide-solid/icons/hard-drive-upload";
+import RefreshCw from "lucide-solid/icons/refresh-cw";
 import { useAppContext } from "./AppContext";
 import FileBreadcrumb from "./FileBreadcrumb";
 import FileNavigation from "./FileNavigation";
@@ -43,7 +43,7 @@ export function Toolbar() {
                             void reloadFile()?.();
                         }}
                     >
-                        <HardDriveUpload aria-hidden="true" />
+                        <RefreshCw aria-hidden="true" />
                     </button>
                 </Show>
                 <Show when={reloadFile()}>
