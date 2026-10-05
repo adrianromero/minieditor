@@ -1,0 +1,137 @@
+.catalog {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    color: var(--color-text);
+}
+
+.introduction {
+    max-width: 58rem;
+    margin: 0;
+    color: var(--color-text-muted);
+    line-height: 1.5;
+}
+
+.section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.sectionTitle,
+.variantTitle {
+    margin: 0;
+}
+
+.sectionTitle {
+    font-size: 1.25rem;
+}
+
+.variantTitle {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.source {
+    color: var(--color-text-subtle);
+    font-family: ui-monospace, SFMono-Regular, Consolas, "Liberation Mono", monospace;
+    font-size: 0.75rem;
+}
+
+.variant {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding: 1rem;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+}
+
+.states {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(9rem, 1fr));
+    gap: 1rem;
+    align-items: start;
+}
+
+.state {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+}
+
+.stateLabel {
+    color: var(--color-text-subtle);
+    font-size: 0.75rem;
+}
+
+.primaryActive {
+    background: var(--color-primary-active);
+}
+
+.secondaryActive {
+    background: var(--color-secondary-active);
+}
+
+.componentActive {
+    background: var(--color-secondary-active) !important;
+}
+
+.breadcrumbActive {
+    color: var(--color-primary-active);
+    text-decoration: underline;
+}
+
+.tabStrip {
+    display: flex;
+    width: 100%;
+    max-width: 16rem;
+}
+
+.folderList {
+    width: 100%;
+    max-width: 20rem;
+    padding: 0;
+    margin: 0;
+    background: var(--color-surface);
+    list-style: none;
+}
+
+.folderActive {
+    background-color: var(--color-primary-soft);
+}
+
+.floatingStage {
+    position: relative;
+    width: 3rem;
+    height: 2.5rem;
+}
+
+.floatingStage > div {
+    height: auto;
+}
+
+.floatingStage button {
+    position: static !important;
+}
+
+.externalStage {
+    min-height: auto !important;
+    justify-content: flex-start;
+}
+
+.note {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+@media (max-width: 700px) {
+    .states {
+        grid-template-columns: 1fr;
+    }
+}
