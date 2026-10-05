@@ -10,75 +10,31 @@
     pointer-events: none;
 }
 
-/* .actions > .fltButton {
-    position: absolute;
-    display: flex;
-    width: 2rem;
-    height: 2rem;
-    align-items: center;
-    justify-content: center;
-    padding: 0.25rem;
-    border: 0;
-    border-radius: 50%;
-    background: var(--crepe-color-inverse, var(--color-primary));
-    color: var(--crepe-color-on-inverse, var(--color-on-primary));
-    cursor: pointer;
-    opacity: 0.75;
-    pointer-events: auto;
-} */
+.actions > .crepeButtonHost {
+    display: contents;
+}
 
-.actions > .fltButton {
+.actions > .crepeButtonHost > :global(.tools) > .buttonGroup {
     position: absolute;
     pointer-events: auto;
 }
 
-.actions > .fltButton {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    justify-content: center;
-    padding: 0.55rem 0.55rem;
-
-    font: inherit;
-    font-size: 0.8rem;
-    font-weight: 500;
-    line-height: 1.25;
-
-    background: var(--color-view-background);
-    color: var(--color-on-secondary);
-    border: 1px solid var(--color-border-secondary);
-
-    border-radius: var(--radius-small);
-    /* box-shadow: inset 0 0 0 2px var(--color-button-inner-border); */
-    cursor: pointer;
-}
-
-.actions > .fltButton[hidden] {
+.actions > .crepeButtonHost > :global(.tools) > .buttonGroup[hidden] {
     display: none;
 }
 
-.actions > .fltButton:hover {
-    background: var(--color-secondary-hover);
+.actions > .crepeButtonHost > :global(.tools) > .buttonGroup > .fltButton {
+    opacity: 1;
 }
 
-.actions > .fltButton:active {
-    background: var(--color-secondary-active);
-    /* box-shadow: none; */
-}
-
-.actions > .fltButton:disabled,
-.actions > .fltButton:disabled:hover,
-.actions > .fltButton:disabled:active {
-    color: var(--color-on-disabled);
-    background: var(--color-disabled);
-    border-color: var(--color-border-disabled);
-    cursor: not-allowed;
-}
-
-.actions > .fltButton > :global(.lucide) {
-    width: 16px;
-    height: 16px;
-    stroke-width: 1.6px;
+.actions
+    > .crepeButtonHost
+    > :global(.tools)
+    > .buttonGroup
+    > .fltButton
+    > :global(.lucide) {
+    fill: none;
+    stroke: currentColor;
 }
 
 :global(.milkdowntheme > .milkdown .milkdown-image-block > .image-wrapper > .operation) {

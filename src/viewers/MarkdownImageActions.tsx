@@ -3,7 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { type Accessor, createEffect, createSignal, onCleanup, onMount, type JSX } from "solid-js";
+import {
+    type Accessor,
+    createEffect,
+    createSignal,
+    onCleanup,
+    onMount,
+    Show,
+    type JSX,
+} from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { type Crepe } from "@milkdown/crepe";
 import { editorViewCtx } from "@milkdown/kit/core";
@@ -29,7 +37,7 @@ interface MarkdownImageActionsProps {
 export default function MarkdownImageActions(props: MarkdownImageActionsProps): JSX.Element {
     let actionsRef!: HTMLDivElement;
     let navigationButtonRef!: HTMLButtonElement;
-    let captionButtonRef!: HTMLButtonElement;
+    let captionButtonRef: HTMLButtonElement | undefined;
     let hoveredImage: HTMLImageElement | null = null;
     let selectedImage: HTMLImageElement | null = null;
     let observedImage: HTMLImageElement | null = null;
@@ -130,7 +138,7 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
 
     const isImageActionTarget = (target: EventTarget | null): boolean =>
         target instanceof Node &&
-        (navigationButtonRef.contains(target) || captionButtonRef.contains(target));
+        (navigationButtonRef.contains(target) || Boolean(captionButtonRef?.contains(target)));
 
     const handleImagePointerOut = (event: PointerEvent): void => {
         const image = hoveredImage;
@@ -227,57 +235,63 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
     });
 
     return (
-        <div ref={actionsRef} class={styles.actions}>
-            <button
-                ref={navigationButtonRef}
-                class={styles.fltButton}
-                type="button"
-                aria-label={t("markdownToolbar.openImage")}
-                title={t("markdownToolbar.openImage")}
-                hidden={!activeImage()}
-                style={{
-                    left: `${buttonPosition().left}px`,
-                    top: `${buttonPosition().top}px`,
-                }}
-                onPointerDown={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }}
-                onPointerLeave={handleActionPointerLeave}
-                onClick={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    const image = activeImage();
-                    if (image) void navigateToImage(image);
-                }}
-            >
-                <LinkIcon aria-hidden="true" />
-            </button>
-            <button
-                ref={captionButtonRef}
-                class={styles.fltButton}
-                type="button"
-                aria-label={t("markdownToolbar.toggleImageCaption")}
-                title={t("markdownToolbar.toggleImageCaption")}
-                hidden={!activeImage()?.closest(".milkdown-image-block")}
-                style={{
-                    left: `${buttonPosition().left + 44}px`,
-                    top: `${buttonPosition().top}px`,
-                }}
-                onPointerDown={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                }}
-                onPointerLeave={handleActionPointerLeave}
-                onClick={(event) => {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    const image = activeImage();
-                    if (image) toggleImageCaption(image);
-                }}
-            >
-                <Captions aria-hidden="true" />
-            </button>
+        <div ref={actionsRef} class={`${styles.actions} milkdown`}>
+            <div class={`milkdown-code-block ${styles.crepeButtonHost}`}>
+                <div class="tools">
+                    <div
+                        class={`tools-button-group ${styles.buttonGroup}`}
+                        hidden={!activeImage()}
+                        onPointerLeave={handleActionPointerLeave}
+                        style={{
+                            left: `${buttonPosition().left}px`,
+                            top: `${buttonPosition().top}px`,
+                        }}
+                    >
+                        <button
+                            ref={navigationButtonRef}
+                            class={`copy-button ${styles.fltButton}`}
+                            type="button"
+                            aria-label={t("markdownToolbar.openImage")}
+                            title={t("markdownToolbar.openImage")}
+                            onPointerDown={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                const image = activeImage();
+                                if (image) void navigateToImage(image);
+                            }}
+                        >
+                            <LinkIcon aria-hidden="true" />
+                            {t("markdownToolbar.openImage")}
+                        </button>
+                        <Show when={activeImage()?.closest(".milkdown-image-block")}>
+                            <button
+                                ref={captionButtonRef}
+                                class={`preview-toggle-button ${styles.fltButton}`}
+                                type="button"
+                                aria-label={t("markdownToolbar.toggleImageCaption")}
+                                title={t("markdownToolbar.toggleImageCaption")}
+                                onPointerDown={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                }}
+                                onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    const image = activeImage();
+                                    if (image) toggleImageCaption(image);
+                                }}
+                            >
+                                <Captions aria-hidden="true" />
+                                {t("markdownToolbar.imageCaption")}
+                            </button>
+                        </Show>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
