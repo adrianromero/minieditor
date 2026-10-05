@@ -25,99 +25,93 @@ function SidebarContent(props: { disabled?: boolean }): JSX.Element {
 
     return (
         <div class="sidebarPanel">
-            <section class="sidebarSection">
-                <h2 class="sidebarSectionTitle">Zoom</h2>
-                <Control label="Nivel de zoom" value={`${zoom()}%`}>
-                    <input
-                        type="range"
-                        min="10"
-                        max="500"
-                        value={zoom()}
-                        disabled={props.disabled}
-                        onInput={(event) => setZoom(event.currentTarget.valueAsNumber)}
-                    />
-                </Control>
-                <div class="sidebarButtonGrid sidebarButtonGrid--5">
-                    <button
-                        class="stdButton toolbar"
-                        type="button"
-                        title="Alejar"
-                        disabled={props.disabled}
-                        onClick={() => setZoom((value) => Math.max(10, value - 10))}
-                    >
-                        <ZoomOut aria-hidden="true" />
-                    </button>
-                    <button
-                        class="stdButton toolbar"
-                        type="button"
-                        title="Ajustar"
-                        disabled={props.disabled}
-                        onClick={() => setZoom(80)}
-                    >
-                        <Maximize2 aria-hidden="true" />
-                    </button>
-                    <button
-                        class="stdButton toolbar"
-                        type="button"
-                        title="Centrar"
-                        disabled={props.disabled}
-                    >
-                        <CircleDot aria-hidden="true" />
-                    </button>
-                    <button
-                        class="stdButton toolbar"
-                        type="button"
-                        title="Tamaño real"
-                        disabled={props.disabled}
-                        onClick={() => setZoom(100)}
-                    >
-                        1:1
-                    </button>
-                    <button
-                        class="stdButton toolbar"
-                        type="button"
-                        title="Acercar"
-                        disabled={props.disabled}
-                        onClick={() => setZoom((value) => Math.min(500, value + 10))}
-                    >
-                        <ZoomIn aria-hidden="true" />
-                    </button>
-                </div>
-            </section>
+            <Control label="Nivel de zoom" value={`${zoom()}%`}>
+                <input
+                    type="range"
+                    min="10"
+                    max="500"
+                    value={zoom()}
+                    disabled={props.disabled}
+                    onInput={(event) => setZoom(event.currentTarget.valueAsNumber)}
+                />
+            </Control>
+            <div class="sidebarButtonGrid sidebarButtonGrid--5">
+                <button
+                    class="stdButton toolbar"
+                    type="button"
+                    title="Alejar"
+                    disabled={props.disabled}
+                    onClick={() => setZoom((value) => Math.max(10, value - 10))}
+                >
+                    <ZoomOut aria-hidden="true" />
+                </button>
+                <button
+                    class="stdButton toolbar"
+                    type="button"
+                    title="Ajustar"
+                    disabled={props.disabled}
+                    onClick={() => setZoom(80)}
+                >
+                    <Maximize2 aria-hidden="true" />
+                </button>
+                <button
+                    class="stdButton toolbar"
+                    type="button"
+                    title="Centrar"
+                    disabled={props.disabled}
+                >
+                    <CircleDot aria-hidden="true" />
+                </button>
+                <button
+                    class="stdButton toolbar"
+                    type="button"
+                    title="Tamaño real"
+                    disabled={props.disabled}
+                    onClick={() => setZoom(100)}
+                >
+                    1:1
+                </button>
+                <button
+                    class="stdButton toolbar"
+                    type="button"
+                    title="Acercar"
+                    disabled={props.disabled}
+                    onClick={() => setZoom((value) => Math.min(500, value + 10))}
+                >
+                    <ZoomIn aria-hidden="true" />
+                </button>
+            </div>
 
-            <section class="sidebarSection">
-                <h2 class="sidebarSectionTitle">Rotación</h2>
-                <Control label="Ángulo" value={`${rotation()}°`}>
-                    <input
-                        type="range"
-                        min="-180"
-                        max="180"
-                        value={rotation()}
-                        disabled={props.disabled}
-                        onInput={(event) => setRotation(event.currentTarget.valueAsNumber)}
-                    />
-                </Control>
-                <div class="sidebarButtonGrid sidebarButtonGrid--2">
-                    <button
-                        class="stdButton toolbar"
-                        type="button"
-                        disabled={props.disabled}
-                        onClick={() => setRotation((value) => value - 90)}
-                    >
-                        <RotateCcw aria-hidden="true" />
-                        -90° Izquierda
-                    </button>
-                    <button
-                        class="stdButton toolbar"
-                        type="button"
-                        disabled={props.disabled}
-                        onClick={() => setRotation((value) => value + 90)}
-                    >
-                        <RotateCw aria-hidden="true" />
-                        +90° Derecha
-                    </button>
-                </div>
-            </section>
+            <Control label="Ángulo" value={`${rotation()}°`}>
+                <input
+                    type="range"
+                    min="-180"
+                    max="180"
+                    value={rotation()}
+                    disabled={props.disabled}
+                    onInput={(event) => setRotation(event.currentTarget.valueAsNumber)}
+                />
+            </Control>
+            <div class="sidebarButtonGrid sidebarButtonGrid--2">
+                <button
+                    class="stdButton toolbar"
+                    type="button"
+                    disabled={props.disabled}
+                    onClick={() => setRotation((value) => value - 90)}
+                >
+                    <RotateCcw aria-hidden="true" />
+                    -90° Izquierda
+                </button>
+                <button
+                    class="stdButton toolbar"
+                    type="button"
+                    disabled={props.disabled}
+                    onClick={() => setRotation((value) => value + 90)}
+                >
+                    <RotateCw aria-hidden="true" />
+                    +90° Derecha
+                </button>
+            </div>
 
             <section class="sidebarSection">
                 <h2 class="sidebarSectionTitle">Acciones</h2>

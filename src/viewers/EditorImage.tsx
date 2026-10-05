@@ -347,172 +347,162 @@ export function EditorImage(): JSX.Element {
             <Sidebar disabled={editorDisabled()}>
                 <SidebarTab defaultKey="transform">
                     <SidebarTabSection key="transform" label={t("image.transform")}>
-                        <section class="sidebarSection">
-                            <h2 class="sidebarSectionTitle">{t("image.transform")}</h2>
-                            <Control label={t("image.zoom")} value={`${Math.round(zoom() * 100)}%`}>
-                                <input
-                                    type="range"
-                                    min="10"
-                                    max="500"
-                                    value={Math.round(zoom() * 100)}
-                                    onInput={(event) =>
-                                        setZoom(event.currentTarget.valueAsNumber / 100)
-                                    }
-                                />
-                            </Control>
+                        <Control label={t("image.zoom")} value={`${Math.round(zoom() * 100)}%`}>
+                            <input
+                                type="range"
+                                min="10"
+                                max="500"
+                                value={Math.round(zoom() * 100)}
+                                onInput={(event) =>
+                                    setZoom(event.currentTarget.valueAsNumber / 100)
+                                }
+                            />
+                        </Control>
 
-                            <div class="sidebarButtonGrid sidebarButtonGrid--5">
-                                <button
-                                    class="stdButton toolbar"
-                                    title={t("image.zoomOut")}
-                                    onClick={() => setZoom((value) => Math.max(0.1, value / 1.2))}
-                                >
-                                    <ZoomOut aria-hidden="true" />
-                                </button>
-                                <button
-                                    class="stdButton toolbar"
-                                    title={t("image.fit")}
-                                    onClick={fitImage}
-                                >
-                                    <Maximize2 aria-hidden="true" />
-                                </button>
-                                <button
-                                    class="stdButton toolbar"
-                                    title={t("image.center")}
-                                    onClick={() => {
-                                        setPanX(0);
-                                        setPanY(0);
-                                    }}
-                                >
-                                    <CircleDot aria-hidden="true" />
-                                </button>
-                                <button
-                                    class="stdButton toolbar"
-                                    title={t("image.actualSize")}
-                                    onClick={() => setZoom(1)}
-                                >
-                                    1:1
-                                </button>
-                                <button
-                                    class="stdButton toolbar"
-                                    title={t("image.zoomIn")}
-                                    onClick={() => setZoom((value) => Math.min(5, value * 1.2))}
-                                >
-                                    <ZoomIn aria-hidden="true" />
-                                </button>
-                            </div>
-
-                            <Control label={t("image.rotation")} value={`${settings().rotation}°`}>
-                                <input
-                                    type="range"
-                                    min="-180"
-                                    max="180"
-                                    value={settings().rotation}
-                                    onInput={(event) =>
-                                        updateSettings({
-                                            rotation: event.currentTarget.valueAsNumber,
-                                        })
-                                    }
-                                />
-                            </Control>
-                            <div class="sidebarButtonGrid sidebarButtonGrid--2">
-                                <button class="stdButton toolbar" onClick={() => rotateBy(-90)}>
-                                    <RotateCcw aria-hidden="true" />
-                                    {t("image.rotateLeft")}
-                                </button>
-                                <button class="stdButton toolbar" onClick={() => rotateBy(90)}>
-                                    <RotateCw aria-hidden="true" />
-                                    {t("image.rotateRight")}
-                                </button>
-                            </div>
-                            <section class="sidebarSection">
-                                <h2 class="sidebarSectionTitle">{t("image.flipMirror")}</h2>
-                                <div class="sidebarButtonGrid sidebarButtonGrid--2">
-                                    <button
-                                        class="stdButton toolbar"
-                                        onClick={() =>
-                                            updateSettings({
-                                                flipHorizontal: !settings().flipHorizontal,
-                                            })
-                                        }
-                                    >
-                                        <SquareCenterlineDashedVertical aria-hidden="true" />
-                                        {t("image.horizontal")}
-                                    </button>
-                                    <button
-                                        class="stdButton toolbar"
-                                        onClick={() =>
-                                            updateSettings({
-                                                flipVertical: !settings().flipVertical,
-                                            })
-                                        }
-                                    >
-                                        <SquareCenterlineDashedHorizontal aria-hidden="true" />
-                                        {t("image.vertical")}
-                                    </button>
-                                </div>
-                            </section>
-
+                        <div class="sidebarButtonGrid sidebarButtonGrid--5">
                             <button
                                 class="stdButton toolbar"
+                                title={t("image.zoomOut")}
+                                onClick={() => setZoom((value) => Math.max(0.1, value / 1.2))}
+                            >
+                                <ZoomOut aria-hidden="true" />
+                            </button>
+                            <button
+                                class="stdButton toolbar"
+                                title={t("image.fit")}
+                                onClick={fitImage}
+                            >
+                                <Maximize2 aria-hidden="true" />
+                            </button>
+                            <button
+                                class="stdButton toolbar"
+                                title={t("image.center")}
                                 onClick={() => {
-                                    updateSettings({
-                                        flipHorizontal: false,
-                                        flipVertical: false,
-                                        rotation: 0,
-                                    });
-                                    queueMicrotask(fitImage);
+                                    setPanX(0);
+                                    setPanY(0);
                                 }}
                             >
-                                {t("image.resetTransform")}
+                                <CircleDot aria-hidden="true" />
                             </button>
-                        </section>
-                    </SidebarTabSection>
-                    <SidebarTabSection key="adjust" label={t("image.adjust")}>
-                        <section class="sidebarSection">
-                            <h2 class="sidebarSectionTitle">{t("image.adjust")}</h2>
-                            <For each={filters}>
-                                {(filter) => (
-                                    <Control
-                                        label={t(`image.${filter.name}`)}
-                                        value={`${settings()[filter.name]}${filter.unit}`}
-                                    >
-                                        <input
-                                            type="range"
-                                            min={filter.min}
-                                            max={filter.max}
-                                            value={settings()[filter.name]}
-                                            onInput={(event) =>
-                                                updateSettings({
-                                                    [filter.name]:
-                                                        event.currentTarget.valueAsNumber,
-                                                })
-                                            }
-                                        />
-                                    </Control>
-                                )}
-                            </For>
-                            <button class="stdButton toolbar" onClick={() => resetFilters()}>
-                                {t("image.resetFilters")}
+                            <button
+                                class="stdButton toolbar"
+                                title={t("image.actualSize")}
+                                onClick={() => setZoom(1)}
+                            >
+                                1:1
                             </button>
-                        </section>
-                    </SidebarTabSection>
-                    <SidebarTabSection key="presets" label={t("image.presets")}>
+                            <button
+                                class="stdButton toolbar"
+                                title={t("image.zoomIn")}
+                                onClick={() => setZoom((value) => Math.min(5, value * 1.2))}
+                            >
+                                <ZoomIn aria-hidden="true" />
+                            </button>
+                        </div>
+
+                        <Control label={t("image.rotation")} value={`${settings().rotation}°`}>
+                            <input
+                                type="range"
+                                min="-180"
+                                max="180"
+                                value={settings().rotation}
+                                onInput={(event) =>
+                                    updateSettings({
+                                        rotation: event.currentTarget.valueAsNumber,
+                                    })
+                                }
+                            />
+                        </Control>
+                        <div class="sidebarButtonGrid sidebarButtonGrid--2">
+                            <button class="stdButton toolbar" onClick={() => rotateBy(-90)}>
+                                <RotateCcw aria-hidden="true" />
+                                {t("image.rotateLeft")}
+                            </button>
+                            <button class="stdButton toolbar" onClick={() => rotateBy(90)}>
+                                <RotateCw aria-hidden="true" />
+                                {t("image.rotateRight")}
+                            </button>
+                        </div>
                         <section class="sidebarSection">
-                            <h2 class="sidebarSectionTitle">{t("image.presets")}</h2>
+                            <h2 class="sidebarSectionTitle">{t("image.flipMirror")}</h2>
                             <div class="sidebarButtonGrid sidebarButtonGrid--2">
-                                <For each={presetNames}>
-                                    {(preset) => (
-                                        <button
-                                            class="stdButton toolbar"
-                                            onClick={() => applyPreset(preset)}
-                                        >
-                                            {t(`image.preset.${preset}`)}
-                                        </button>
-                                    )}
-                                </For>
+                                <button
+                                    class="stdButton toolbar"
+                                    onClick={() =>
+                                        updateSettings({
+                                            flipHorizontal: !settings().flipHorizontal,
+                                        })
+                                    }
+                                >
+                                    <SquareCenterlineDashedVertical aria-hidden="true" />
+                                    {t("image.horizontal")}
+                                </button>
+                                <button
+                                    class="stdButton toolbar"
+                                    onClick={() =>
+                                        updateSettings({
+                                            flipVertical: !settings().flipVertical,
+                                        })
+                                    }
+                                >
+                                    <SquareCenterlineDashedHorizontal aria-hidden="true" />
+                                    {t("image.vertical")}
+                                </button>
                             </div>
                         </section>
+
+                        <button
+                            class="stdButton toolbar"
+                            onClick={() => {
+                                updateSettings({
+                                    flipHorizontal: false,
+                                    flipVertical: false,
+                                    rotation: 0,
+                                });
+                                queueMicrotask(fitImage);
+                            }}
+                        >
+                            {t("image.resetTransform")}
+                        </button>
+                    </SidebarTabSection>
+                    <SidebarTabSection key="adjust" label={t("image.adjust")}>
+                        <For each={filters}>
+                            {(filter) => (
+                                <Control
+                                    label={t(`image.${filter.name}`)}
+                                    value={`${settings()[filter.name]}${filter.unit}`}
+                                >
+                                    <input
+                                        type="range"
+                                        min={filter.min}
+                                        max={filter.max}
+                                        value={settings()[filter.name]}
+                                        onInput={(event) =>
+                                            updateSettings({
+                                                [filter.name]: event.currentTarget.valueAsNumber,
+                                            })
+                                        }
+                                    />
+                                </Control>
+                            )}
+                        </For>
+                        <button class="stdButton toolbar" onClick={() => resetFilters()}>
+                            {t("image.resetFilters")}
+                        </button>
+                    </SidebarTabSection>
+                    <SidebarTabSection key="presets" label={t("image.presets")}>
+                        <div class="sidebarButtonGrid sidebarButtonGrid--2">
+                            <For each={presetNames}>
+                                {(preset) => (
+                                    <button
+                                        class="stdButton toolbar"
+                                        onClick={() => applyPreset(preset)}
+                                    >
+                                        {t(`image.preset.${preset}`)}
+                                    </button>
+                                )}
+                            </For>
+                        </div>
                     </SidebarTabSection>
                 </SidebarTab>
             </Sidebar>
