@@ -6,17 +6,41 @@ use crate::paths::{
     canonical_basepath, normalize_link_filename, resolve_existing_path, resolve_write_path,
 };
 use std::path::PathBuf;
+use std::sync::Mutex;
 use tauri_plugin_opener::OpenerExt;
 use tracing::info;
 
 pub(crate) struct AppState {
     basepath: PathBuf,
-    filename: String,
+    filename: Mutex<String>,
 }
 
 impl AppState {
     pub(crate) fn new(basepath: PathBuf, filename: String) -> Self {
-        Self { basepath, filename }
+        Self {
+            basepath,
+            filename: Mutex::new(filename),
+        }
+    }
+
+    pub(crate) fn basepath(&self) -> &PathBuf {
+        &self.basepath
+    }
+
+    pub(crate) fn filename(&self) -> Result<String, String> {
+        self.filename
+            .lock()
+            .map(|filename| filename.clone())
+            .map_err(|error| format!("unable to read the current filename: {error}"))
+    }
+
+    pub(crate) fn set_filename(&self, filename: String) -> Result<(), String> {
+        let mut current = self
+            .filename
+            .lock()
+            .map_err(|error| format!("unable to update the current filename: {error}"))?;
+        *current = filename;
+        Ok(())
     }
 }
 
@@ -68,11 +92,21 @@ pub(crate) struct ReadBinaryFileResult {
 }
 
 #[tauri::command]
-pub(crate) fn initial_config(state: tauri::State<'_, AppState>) -> InitialConfig {
-    InitialConfig {
+pub(crate) fn initial_config(state: tauri::State<'_, AppState>) -> Result<InitialConfig, String> {
+    Ok(InitialConfig {
         basepath: state.basepath.to_string_lossy().into_owned(),
-        filename: state.filename.clone(),
-    }
+        filename: state.filename()?,
+    })
+}
+
+#[tauri::command]
+pub(crate) fn set_current_filename(
+    state: tauri::State<'_, AppState>,
+    filename: String,
+) -> Result<(), String> {
+    crate::paths::validate_relative_filename(&filename)
+        .map_err(|_| "filename must be relative to the base path".to_owned())?;
+    state.set_filename(filename)
 }
 
 #[tauri::command]

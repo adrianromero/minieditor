@@ -13,6 +13,7 @@ import {
     Setter,
     useContext,
 } from "solid-js";
+import { invoke } from "@tauri-apps/api/core";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { SpinnerPanel } from "./SpinnerPanel";
 import Dialog from "./Dialog";
@@ -152,6 +153,11 @@ export function AppProvider(props: {
             setOnunload(null);
         }
         setFilename(nextFilename);
+        try {
+            await invoke("set_current_filename", { filename: nextFilename });
+        } catch (error: unknown) {
+            console.error("Unable to update the current filename:", error);
+        }
     };
 
     let unlistenCloseRequested: (() => void) | undefined;
