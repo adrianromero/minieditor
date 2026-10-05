@@ -33,6 +33,14 @@
     background-color: var(--color-primary-soft);
 }
 
+.entryButton:disabled,
+.entryButton:disabled:hover,
+.entryButton:disabled:active {
+    color: var(--color-disabled);
+    background-color: transparent;
+    cursor: not-allowed;
+}
+
 .entryButton:focus-visible {
     outline: 2px solid var(--color-primary);
     outline-offset: -2px;

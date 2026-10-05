@@ -46,6 +46,14 @@
     text-decoration: underline;
 }
 
+.segmentLink:disabled,
+.segmentLink:disabled:hover,
+.segmentLink:disabled:active {
+    color: var(--color-disabled);
+    text-decoration: none;
+    cursor: not-allowed;
+}
+
 .segmentLink:focus {
     outline: none;
 }

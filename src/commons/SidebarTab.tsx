@@ -20,8 +20,8 @@ export type SidebarTabProps = {
 };
 
 export type SidebarTabContextValue = {
-    activeKey: Accessor<string | undefined>;
-    setActiveKey: Setter<string | undefined>;
+    selectedKey: Accessor<string | undefined>;
+    setSelectedKey: Setter<string | undefined>;
     register: (key: string) => void;
     tabList: HTMLDivElement;
 };
@@ -35,25 +35,25 @@ export function useSidebarTab(): SidebarTabContextValue {
 }
 
 export function SidebarTab(props: SidebarTabProps): JSX.Element {
-    const [activeKey, setActiveKey] = createSignal<string | undefined>(props.defaultKey);
+    const [selectedKey, setSelectedKey] = createSignal<string | undefined>(props.defaultKey);
     const [tabList, setTabList] = createSignal<HTMLDivElement>();
     const registeredKeys = new Set<string>();
 
     const register = (key: string): void => {
         if (registeredKeys.has(key)) return;
         registeredKeys.add(key);
-        if (activeKey() === undefined) setActiveKey(key);
+        if (selectedKey() === undefined) setSelectedKey(key);
     };
 
     return (
         <div class={styles.tabbedSidebar}>
-            <div ref={setTabList} class={styles.tabs} role="tablist" />
+            <div ref={setTabList} class={`tabs ${styles.tabList}`} role="tablist" />
             <Show when={tabList()}>
                 {(resolvedTabList) => (
                     <SidebarTabContext.Provider
                         value={{
-                            activeKey,
-                            setActiveKey,
+                            selectedKey,
+                            setSelectedKey,
                             register,
                             tabList: resolvedTabList(),
                         }}

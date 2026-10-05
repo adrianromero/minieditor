@@ -114,7 +114,7 @@ const EMPTY_INLINE_STYLE_STATE: InlineStyleState = {
 
 type SidebarButtonProps = {
     getEditor: () => Editor | null;
-    active?: boolean;
+    selected?: boolean;
     icon: LucideIcon;
     label: string;
     onRun: (ctx: Ctx) => void;
@@ -122,11 +122,11 @@ type SidebarButtonProps = {
 
 function SidebarButton(props: SidebarButtonProps): JSX.Element {
     const sidebarDisabled = useSidebarDisabled();
-    const active = (): boolean => Boolean(props.active) && !sidebarDisabled();
+    const selected = (): boolean => Boolean(props.selected) && !sidebarDisabled();
 
     return (
         <button
-            class={`stdButton toolbar ${active() ? "selected" : ""}`}
+            class={`stdButton toolbar ${selected() ? "selected" : ""}`}
             type="button"
             aria-label={props.label}
             title={props.label}
@@ -152,7 +152,7 @@ function SidebarButton(props: SidebarButtonProps): JSX.Element {
 
 type SidebarIconButtonProps = {
     getEditor: () => Editor | null;
-    active?: boolean;
+    selected?: boolean;
     icon: LucideIcon;
     label: string;
     onRun: (ctx: Ctx) => void;
@@ -160,11 +160,11 @@ type SidebarIconButtonProps = {
 
 function SidebarIconButton(props: SidebarIconButtonProps): JSX.Element {
     const sidebarDisabled = useSidebarDisabled();
-    const active = (): boolean => Boolean(props.active) && !sidebarDisabled();
+    const selected = (): boolean => Boolean(props.selected) && !sidebarDisabled();
 
     return (
         <button
-            class={`stdButton toolbar ${active() ? "selected" : ""}`}
+            class={`stdButton toolbar ${selected() ? "selected" : ""}`}
             type="button"
             aria-label={props.label}
             title={props.label}
@@ -508,30 +508,30 @@ export function insertImage(ctx: Ctx): void {
 
 export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.Element {
     const { t } = useI18N();
-    const [activeHeadingLevel, setActiveHeadingLevel] = createSignal(0);
-    const [activeInlineStyles, setActiveInlineStyles] =
+    const [selectedHeadingLevel, setSelectedHeadingLevel] = createSignal(0);
+    const [selectedInlineStyles, setSelectedInlineStyles] =
         createSignal<InlineStyleState>(EMPTY_INLINE_STYLE_STATE);
 
-    const updateActiveState = (ctx: Ctx, selection?: Selection): void => {
-        setActiveHeadingLevel(getHeadingLevel(ctx, selection));
-        setActiveInlineStyles(getInlineStyleState(ctx, selection));
+    const updateSelectedState = (ctx: Ctx, selection?: Selection): void => {
+        setSelectedHeadingLevel(getHeadingLevel(ctx, selection));
+        setSelectedInlineStyles(getInlineStyleState(ctx, selection));
     };
 
     createEffect(() => {
         const editor = props.getEditor();
         if (!editor) {
-            setActiveHeadingLevel(0);
-            setActiveInlineStyles(EMPTY_INLINE_STYLE_STATE);
+            setSelectedHeadingLevel(0);
+            setSelectedInlineStyles(EMPTY_INLINE_STYLE_STATE);
             return;
         }
 
         editor.action((ctx) => {
-            updateActiveState(ctx);
+            updateSelectedState(ctx);
             ctx.get(listenerCtx)
                 .selectionUpdated((updatedCtx, selection) => {
-                    updateActiveState(updatedCtx, selection);
+                    updateSelectedState(updatedCtx, selection);
                 })
-                .updated((updatedCtx) => updateActiveState(updatedCtx));
+                .updated((updatedCtx) => updateSelectedState(updatedCtx));
         });
     });
 
@@ -543,73 +543,73 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                     <div class={styles.buttonGridLarge}>
                         <SidebarIconButton
                             getEditor={props.getEditor}
-                            active={activeHeadingLevel() === 1}
+                            selected={selectedHeadingLevel() === 1}
                             icon={Heading1}
                             label={t("markdownToolbar.heading1")}
                             onRun={(ctx) => {
                                 setHeading(ctx, 1);
-                                updateActiveState(ctx);
+                                updateSelectedState(ctx);
                             }}
                         />
                         <SidebarIconButton
                             getEditor={props.getEditor}
-                            active={activeHeadingLevel() === 2}
+                            selected={selectedHeadingLevel() === 2}
                             icon={Heading2}
                             label={t("markdownToolbar.heading2")}
                             onRun={(ctx) => {
                                 setHeading(ctx, 2);
-                                updateActiveState(ctx);
+                                updateSelectedState(ctx);
                             }}
                         />
                         <SidebarIconButton
                             getEditor={props.getEditor}
-                            active={activeHeadingLevel() === 3}
+                            selected={selectedHeadingLevel() === 3}
                             icon={Heading3}
                             label={t("markdownToolbar.heading3")}
                             onRun={(ctx) => {
                                 setHeading(ctx, 3);
-                                updateActiveState(ctx);
+                                updateSelectedState(ctx);
                             }}
                         />
                         <SidebarIconButton
                             getEditor={props.getEditor}
-                            active={activeHeadingLevel() === 4}
+                            selected={selectedHeadingLevel() === 4}
                             icon={Heading4}
                             label={t("markdownToolbar.heading4")}
                             onRun={(ctx) => {
                                 setHeading(ctx, 4);
-                                updateActiveState(ctx);
+                                updateSelectedState(ctx);
                             }}
                         />
                         <SidebarIconButton
                             getEditor={props.getEditor}
-                            active={activeHeadingLevel() === 5}
+                            selected={selectedHeadingLevel() === 5}
                             icon={Heading5}
                             label={t("markdownToolbar.heading5")}
                             onRun={(ctx) => {
                                 setHeading(ctx, 5);
-                                updateActiveState(ctx);
+                                updateSelectedState(ctx);
                             }}
                         />
                         <SidebarIconButton
                             getEditor={props.getEditor}
-                            active={activeHeadingLevel() === 6}
+                            selected={selectedHeadingLevel() === 6}
                             icon={Heading6}
                             label={t("markdownToolbar.heading6")}
                             onRun={(ctx) => {
                                 setHeading(ctx, 6);
-                                updateActiveState(ctx);
+                                updateSelectedState(ctx);
                             }}
                         />
                     </div>
                     <SidebarButton
                         getEditor={props.getEditor}
-                        active={activeHeadingLevel() === 0}
+                        selected={selectedHeadingLevel() === 0}
                         icon={Pilcrow}
                         label={t("markdownToolbar.paragraph")}
                         onRun={(ctx) => {
                             setHeading(ctx, 0);
-                            updateActiveState(ctx);
+                            updateSelectedState(ctx);
                         }}
                     />
 
@@ -638,62 +638,62 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                     <div class={styles.buttonGridLarge}>
                         <SidebarIconButton
                             getEditor={props.getEditor}
-                            active={activeInlineStyles().bold}
+                            selected={selectedInlineStyles().bold}
                             icon={Bold}
                             label={t("markdownToolbar.bold")}
                             onRun={(ctx) => {
                                 ctx.get(commandsCtx).call(toggleStrongCommand.key);
-                                updateActiveState(ctx);
+                                updateSelectedState(ctx);
                             }}
                         />
                         <SidebarIconButton
                             getEditor={props.getEditor}
-                            active={activeInlineStyles().italic}
+                            selected={selectedInlineStyles().italic}
                             icon={Italic}
                             label={t("markdownToolbar.italic")}
                             onRun={(ctx) => {
                                 ctx.get(commandsCtx).call(toggleEmphasisCommand.key);
-                                updateActiveState(ctx);
+                                updateSelectedState(ctx);
                             }}
                         />
                         <SidebarIconButton
                             getEditor={props.getEditor}
-                            active={activeInlineStyles().strikethrough}
+                            selected={selectedInlineStyles().strikethrough}
                             icon={Strikethrough}
                             label={t("markdownToolbar.strikethrough")}
                             onRun={(ctx) => {
                                 ctx.get(commandsCtx).call(toggleStrikethroughCommand.key);
-                                updateActiveState(ctx);
+                                updateSelectedState(ctx);
                             }}
                         />
                         <SidebarIconButton
                             getEditor={props.getEditor}
-                            active={activeInlineStyles().link}
+                            selected={selectedInlineStyles().link}
                             icon={LinkIcon}
                             label={t("markdownToolbar.link")}
                             onRun={(ctx) => {
                                 toggleLink(ctx);
-                                updateActiveState(ctx);
+                                updateSelectedState(ctx);
                             }}
                         />
                         <SidebarIconButton
                             getEditor={props.getEditor}
-                            active={activeInlineStyles().code}
+                            selected={selectedInlineStyles().code}
                             icon={Code}
                             label={t("markdownToolbar.inlineCode")}
                             onRun={(ctx) => {
                                 toggleInlineCode(ctx);
-                                updateActiveState(ctx);
+                                updateSelectedState(ctx);
                             }}
                         />
                         <SidebarIconButton
                             getEditor={props.getEditor}
-                            active={activeInlineStyles().math}
+                            selected={selectedInlineStyles().math}
                             icon={SquareFunction}
                             label={t("markdownToolbar.inlineMath")}
                             onRun={(ctx) => {
                                 ctx.get(commandsCtx).call("ToggleLatex");
-                                updateActiveState(ctx);
+                                updateSelectedState(ctx);
                             }}
                         />
                     </div>

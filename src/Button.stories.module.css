@@ -68,23 +68,6 @@
     font-size: 0.75rem;
 }
 
-.primaryActive {
-    background: var(--color-primary-active);
-}
-
-.secondaryActive {
-    background: var(--color-secondary-active);
-}
-
-.componentActive {
-    background: var(--color-secondary-active) !important;
-}
-
-.breadcrumbActive {
-    color: var(--color-primary-active);
-    text-decoration: underline;
-}
-
 .tabStrip {
     display: flex;
     width: 100%;
@@ -98,10 +81,6 @@
     margin: 0;
     background: var(--color-surface);
     list-style: none;
-}
-
-.folderActive {
-    background-color: var(--color-primary-soft);
 }
 
 .floatingStage {

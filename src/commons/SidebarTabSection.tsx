@@ -21,8 +21,8 @@ export function SidebarTabSection(props: SidebarTabSectionProps): JSX.Element {
     const id = createUniqueId();
     const tabId = `sidebar-tab-${id}`;
     const panelId = `sidebar-tab-panel-${id}`;
-    const active = (): boolean => tabs.activeKey() === props.key;
-    const selected = (): boolean => active() && !sidebarDisabled();
+    const current = (): boolean => tabs.selectedKey() === props.key;
+    const selected = (): boolean => current() && !sidebarDisabled();
 
     tabs.register(props.key);
 
@@ -33,16 +33,16 @@ export function SidebarTabSection(props: SidebarTabSectionProps): JSX.Element {
                     id={tabId}
                     type="button"
                     role="tab"
-                    class={`${styles.tab} ${selected() ? styles.active : ""}`}
+                    class={`stdButton tab ${selected() ? "selected" : ""}`}
                     aria-controls={panelId}
                     aria-selected={selected()}
                     disabled={sidebarDisabled()}
-                    onClick={() => tabs.setActiveKey(props.key)}
+                    onClick={() => tabs.setSelectedKey(props.key)}
                 >
                     {props.label}
                 </button>
             </Portal>
-            <Show when={active()}>
+            <Show when={current()}>
                 <div id={panelId} class={styles.panel} role="tabpanel" aria-labelledby={tabId}>
                     {props.children}
                 </div>

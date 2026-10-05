@@ -8,7 +8,6 @@ import Save from "lucide-solid/icons/save";
 import type { JSX } from "solid-js";
 import breadcrumbStyles from "./FileBreadcrumb.module.css";
 import styles from "./Button.stories.module.css";
-import sidebarTabStyles from "./commons/SidebarTabSection.module.css";
 import externalFileStyles from "./viewers/EditorExternalFile.module.css";
 import folderStyles from "./viewers/EditorFolder.module.css";
 import floatingStyles from "./viewers/MarkdownImageActions.module.css";
@@ -25,7 +24,7 @@ type Story = StoryObj;
 
 type ButtonStatesProps = {
     normal: JSX.Element;
-    active: JSX.Element;
+    selected: JSX.Element;
     disabled: JSX.Element;
 };
 
@@ -37,8 +36,8 @@ function ButtonStates(props: ButtonStatesProps): JSX.Element {
                 {props.normal}
             </div>
             <div class={styles.state}>
-                <span class={styles.stateLabel}>Activo</span>
-                {props.active}
+                <span class={styles.stateLabel}>Selected</span>
+                {props.selected}
             </div>
             <div class={styles.state}>
                 <span class={styles.stateLabel}>Deshabilitado</span>
@@ -72,15 +71,15 @@ export const GlobalTheme: Story = {
                 <h2 class={styles.sectionTitle}>Botones globales</h2>
                 <p class={styles.introduction}>
                     Variantes basadas exclusivamente en las clases globales de theme.css. El estado
-                    activo reproduce el aspecto transitorio de :active o la clase persistente de
-                    selección disponible para esa variante.
+                    seleccionado utiliza la clase persistente de selección disponible para cada
+                    variante, aunque todavía no tenga reglas visuales asociadas.
                 </p>
 
                 <Variant name="Primario" source='.stdButton'>
                     <ButtonStates
                         normal={<button class="stdButton">Continuar</button>}
-                        active={<button class={`stdButton ${styles.primaryActive}`}>Continuar</button>}
-                        disabled={<button class="stdButton" disabled>Continuar</button>}
+                        selected={<button class="stdButton selected">Continuar</button>}
+                        disabled={<button class="stdButton" disabled={true}>Continuar</button>}
                     />
                 </Variant>
 
@@ -91,44 +90,40 @@ export const GlobalTheme: Story = {
                 >
                     <ButtonStates
                         normal={<button class="stdButton secondary">Cancelar</button>}
-                        active={
-                            <button class={`stdButton secondary ${styles.secondaryActive}`}>
-                                Cancelar
-                            </button>
-                        }
-                        disabled={<button class="stdButton secondary" disabled>Cancelar</button>}
+                        selected={<button class="stdButton secondary selected">Cancelar</button>}
+                        disabled={<button class="stdButton secondary" disabled={true}>Cancelar</button>}
                     />
                 </Variant>
 
                 <Variant name="Toolbar" source='.stdButton.toolbar · .selected'>
                     <ButtonStates
                         normal={<button class="stdButton toolbar" aria-label="Actualizar"><RefreshCw /></button>}
-                        active={<button class="stdButton toolbar selected" aria-label="Actualizar seleccionado" aria-pressed="true"><RefreshCw /></button>}
-                        disabled={<button class="stdButton toolbar" aria-label="Actualizar deshabilitado" disabled><RefreshCw /></button>}
+                        selected={<button class="stdButton toolbar selected" aria-label="Actualizar seleccionado" aria-pressed="true"><RefreshCw /></button>}
+                        disabled={<button class="stdButton toolbar" aria-label="Actualizar deshabilitado" disabled={true}><RefreshCw /></button>}
                     />
                 </Variant>
 
                 <Variant
                     name="Pequeño"
-                    source='.stdButton.small · .active'
+                    source='.stdButton.small · .selected'
                     note="Solo aparece en código comentado de EditorFolder; no tiene uso activo."
                 >
                     <ButtonStates
                         normal={<button class="stdButton small"><Save /> Guardar</button>}
-                        active={<button class="stdButton small active" aria-pressed="true"><Save /> Guardar</button>}
-                        disabled={<button class="stdButton small" disabled><Save /> Guardar</button>}
+                        selected={<button class="stdButton small selected" aria-pressed="true"><Save /> Guardar</button>}
+                        disabled={<button class="stdButton small" disabled={true}><Save /> Guardar</button>}
                     />
                 </Variant>
 
                 <Variant
                     name="Pestaña global"
-                    source='.stdButton.tab · .activeTab'
-                    note="Definido en theme.css, pero las pestañas actuales usan SidebarTabSection.module.css."
+                    source='.stdButton.tab · .selected'
+                    note="Es la variante utilizada por las pestañas de Sidebar."
                 >
                     <ButtonStates
-                        normal={<button class="stdButton tab">Ajustar</button>}
-                        active={<button class="stdButton tab activeTab" role="tab" aria-selected="true">Ajustar</button>}
-                        disabled={<button class="stdButton tab" disabled>Ajustar</button>}
+                        normal={<div class={styles.tabStrip}><button class="stdButton tab" role="tab" aria-selected="false">Ajustar</button></div>}
+                        selected={<div class={styles.tabStrip}><button class="stdButton tab selected" role="tab" aria-selected="true">Ajustar</button></div>}
+                        disabled={<div class={styles.tabStrip}><button class="stdButton tab" role="tab" aria-selected="false" disabled={true}>Ajustar</button></div>}
                     />
                 </Variant>
             </section>
@@ -150,48 +145,36 @@ export const ComponentScoped: Story = {
                 <Variant
                     name="Enlace de breadcrumb"
                     source="FileBreadcrumb.module.css · .segmentLink"
-                    note="No define :active ni :disabled; el estado activo mostrado corresponde a su regla :hover."
+                    note="Todavía no define una apariencia específica para .selected; :disabled neutraliza también :hover y :active."
                 >
                     <ButtonStates
                         normal={<button class={breadcrumbStyles.segmentLink}>projects</button>}
-                        active={<button class={`${breadcrumbStyles.segmentLink} ${styles.breadcrumbActive}`}>projects</button>}
-                        disabled={<button class={breadcrumbStyles.segmentLink} disabled>projects</button>}
-                    />
-                </Variant>
-
-                <Variant
-                    name="Pestaña de Sidebar"
-                    source="SidebarTabSection.module.css · .tab · .active"
-                    note="El módulo define la selección activa. El aspecto deshabilitado se aplica realmente mediante la opacidad del contenedor Sidebar, no en el propio botón."
-                >
-                    <ButtonStates
-                        normal={<div class={styles.tabStrip}><button class={sidebarTabStyles.tab} role="tab" aria-selected="false">Transformar</button></div>}
-                        active={<div class={styles.tabStrip}><button class={`${sidebarTabStyles.tab} ${sidebarTabStyles.active}`} role="tab" aria-selected="true">Transformar</button></div>}
-                        disabled={<div class={styles.tabStrip}><button class={sidebarTabStyles.tab} role="tab" aria-selected="false" disabled>Transformar</button></div>}
+                        selected={<button class={`${breadcrumbStyles.segmentLink} selected`}>projects</button>}
+                        disabled={<button class={breadcrumbStyles.segmentLink} disabled={true}>projects</button>}
                     />
                 </Variant>
 
                 <Variant
                     name="Entrada de carpeta"
                     source="EditorFolder.module.css · .entryButton"
-                    note="No tiene :active ni :disabled propios; el estado activo mostrado reproduce su realce de :hover."
+                    note="Todavía no define una apariencia específica para .selected; :disabled neutraliza también :hover y :active."
                 >
                     <ButtonStates
                         normal={<ul class={styles.folderList}><li><button class={folderStyles.entryButton}><Folder class={`${folderStyles.entryIcon} ${folderStyles.directoryIcon}`} /><span class={folderStyles.entryName}>documents</span></button></li></ul>}
-                        active={<ul class={styles.folderList}><li><button class={`${folderStyles.entryButton} ${styles.folderActive}`}><Folder class={`${folderStyles.entryIcon} ${folderStyles.directoryIcon}`} /><span class={folderStyles.entryName}>documents</span></button></li></ul>}
-                        disabled={<ul class={styles.folderList}><li><button class={folderStyles.entryButton} disabled><File class={`${folderStyles.entryIcon} ${folderStyles.fileIcon}`} /><span class={folderStyles.entryName}>notes.md</span></button></li></ul>}
+                        selected={<ul class={styles.folderList}><li><button class={`${folderStyles.entryButton} selected`}><Folder class={`${folderStyles.entryIcon} ${folderStyles.directoryIcon}`} /><span class={folderStyles.entryName}>documents</span></button></li></ul>}
+                        disabled={<ul class={styles.folderList}><li><button class={folderStyles.entryButton} disabled={true}><File class={`${folderStyles.entryIcon} ${folderStyles.fileIcon}`} /><span class={folderStyles.entryName}>notes.md</span></button></li></ul>}
                     />
                 </Variant>
 
                 <Variant
                     name="Acción flotante de imagen"
                     source="MarkdownImageActions.module.css · .actions > .fltButton"
-                    note="El módulo define :active, pero no una apariencia específica para disabled."
+                    note="Todavía no define una apariencia específica para .selected; :disabled neutraliza también :hover y :active."
                 >
                     <ButtonStates
                         normal={<div class={styles.floatingStage}><div class={floatingStyles.actions}><button class={floatingStyles.fltButton} aria-label="Abrir imagen"><LinkIcon /></button></div></div>}
-                        active={<div class={styles.floatingStage}><div class={floatingStyles.actions}><button class={`${floatingStyles.fltButton} ${styles.componentActive}`} aria-label="Abrir imagen activa"><LinkIcon /></button></div></div>}
-                        disabled={<div class={styles.floatingStage}><div class={floatingStyles.actions}><button class={floatingStyles.fltButton} aria-label="Abrir imagen deshabilitada" disabled><LinkIcon /></button></div></div>}
+                        selected={<div class={styles.floatingStage}><div class={floatingStyles.actions}><button class={`${floatingStyles.fltButton} selected`} aria-label="Abrir imagen seleccionada"><LinkIcon /></button></div></div>}
+                        disabled={<div class={styles.floatingStage}><div class={floatingStyles.actions}><button class={floatingStyles.fltButton} aria-label="Abrir imagen deshabilitada" disabled={true}><LinkIcon /></button></div></div>}
                     />
                 </Variant>
 
@@ -202,8 +185,8 @@ export const ComponentScoped: Story = {
                 >
                     <ButtonStates
                         normal={<div class={`${externalFileStyles.externalFile} ${styles.externalStage}`}><button class="stdButton"><ExternalLink class="actionIcon" /> Abrir archivo</button></div>}
-                        active={<div class={`${externalFileStyles.externalFile} ${styles.externalStage}`}><button class={`stdButton ${styles.primaryActive}`}><ExternalLink class="actionIcon" /> Abrir archivo</button></div>}
-                        disabled={<div class={`${externalFileStyles.externalFile} ${styles.externalStage}`}><button class="stdButton" disabled><ExternalLink class="actionIcon" /> Abrir archivo</button></div>}
+                        selected={<div class={`${externalFileStyles.externalFile} ${styles.externalStage}`}><button class="stdButton selected"><ExternalLink class="actionIcon" /> Abrir archivo</button></div>}
+                        disabled={<div class={`${externalFileStyles.externalFile} ${styles.externalStage}`}><button class="stdButton" disabled={true}><ExternalLink class="actionIcon" /> Abrir archivo</button></div>}
                     />
                 </Variant>
             </section>

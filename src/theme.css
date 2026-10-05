@@ -159,8 +159,7 @@ body {
     background: var(--color-view-background);
 }
 
-.stdButton.small.selected,
-.stdButton.small.active {
+.stdButton.small.selected {
     color: var(--color-primary);
     border-color: var(--color-primary);
 }
@@ -191,7 +190,7 @@ body {
     border-radius: var(--radius-small) var(--radius-small) 0 0;
 }
 
-.stdButton.tab.activeTab {
+.stdButton.tab.selected {
     color: var(--color-primary);
     border-bottom-color: var(--color-primary);
 }

@@ -66,6 +66,15 @@
     /* box-shadow: none; */
 }
 
+.actions > .fltButton:disabled,
+.actions > .fltButton:disabled:hover,
+.actions > .fltButton:disabled:active {
+    color: var(--color-on-disabled);
+    background: var(--color-disabled);
+    border-color: var(--color-border-disabled);
+    cursor: not-allowed;
+}
+
 .actions > .fltButton > :global(.lucide) {
     width: 16px;
     height: 16px;

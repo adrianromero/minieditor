@@ -18,7 +18,7 @@ describe("SidebarTab", () => {
         document.body.replaceChildren();
     });
 
-    it("selects the first section and changes the active section", () => {
+    it("selects the first section and changes the selected section", () => {
         const root = document.createElement("div");
         document.body.append(root);
         dispose = render(
@@ -40,12 +40,16 @@ describe("SidebarTab", () => {
         const tabs = root.querySelectorAll<HTMLButtonElement>("[role=tab]");
         expect(tabs).toHaveLength(2);
         expect(tabs[0].getAttribute("aria-selected")).toBe("true");
+        expect(tabs[0].classList.contains("selected")).toBe(true);
+        expect(tabs[1].classList.contains("selected")).toBe(false);
         expect(root.querySelector("[role=tabpanel]")?.textContent).toContain("First content");
 
         tabs[1].click();
 
         expect(tabs[0].getAttribute("aria-selected")).toBe("false");
         expect(tabs[1].getAttribute("aria-selected")).toBe("true");
+        expect(tabs[0].classList.contains("selected")).toBe(false);
+        expect(tabs[1].classList.contains("selected")).toBe(true);
         expect(root.querySelector("[role=tabpanel]")?.textContent).toContain("Second content");
     });
 
@@ -66,7 +70,7 @@ describe("SidebarTab", () => {
         expect(sidebar?.inert).toBe(true);
     });
 
-    it("does not present its active tab as selected when disabled", () => {
+    it("does not present its current tab as selected when disabled", () => {
         const root = document.createElement("div");
         document.body.append(root);
         dispose = render(
@@ -84,6 +88,7 @@ describe("SidebarTab", () => {
 
         const tab = root.querySelector<HTMLButtonElement>("[role=tab]");
         expect(tab?.getAttribute("aria-selected")).toBe("false");
+        expect(tab?.classList.contains("selected")).toBe(false);
         expect(tab?.disabled).toBe(true);
         expect(root.querySelector("[role=tabpanel]")?.textContent).toContain("First content");
     });
