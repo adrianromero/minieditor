@@ -20,26 +20,3 @@ export const Range: Story = {
         </div>
     ),
 };
-
-export const Select: Story = {
-    render: () => (
-        <div class="catalogColumn">
-            <Control label="Orientación" value="Horizontal">
-                <select>
-                    <option>Horizontal</option>
-                    <option>Vertical</option>
-                </select>
-            </Control>
-        </div>
-    ),
-};
-
-export const Checkbox: Story = {
-    render: () => (
-        <div class="catalogColumn">
-            <Control label="Vista previa" value="Activada">
-                <input type="checkbox" checked />
-            </Control>
-        </div>
-    ),
-};

@@ -345,8 +345,10 @@ export function EditorImage(): JSX.Element {
                 </div>
             </div>
             <Sidebar disabled={editorDisabled()}>
-                    <SidebarTab defaultKey="transform">
-                        <SidebarTabSection key="transform" label={t("image.transform")}>
+                <SidebarTab defaultKey="transform">
+                    <SidebarTabSection key="transform" label={t("image.transform")}>
+                        <section class="sidebarSection">
+                            <h2 class="sidebarSectionTitle">{t("image.transform")}</h2>
                             <Control label={t("image.zoom")} value={`${Math.round(zoom() * 100)}%`}>
                                 <input
                                     type="range"
@@ -359,7 +361,7 @@ export function EditorImage(): JSX.Element {
                                 />
                             </Control>
 
-                            <div class={styles.zoomGrid}>
+                            <div class="sidebarButtonGrid sidebarButtonGrid--5">
                                 <button
                                     class="stdButton toolbar"
                                     title={t("image.zoomOut")}
@@ -413,7 +415,7 @@ export function EditorImage(): JSX.Element {
                                     }
                                 />
                             </Control>
-                            <div class={styles.buttonGrid}>
+                            <div class="sidebarButtonGrid sidebarButtonGrid--2">
                                 <button class="stdButton toolbar" onClick={() => rotateBy(-90)}>
                                     <RotateCcw aria-hidden="true" />
                                     {t("image.rotateLeft")}
@@ -423,11 +425,9 @@ export function EditorImage(): JSX.Element {
                                     {t("image.rotateRight")}
                                 </button>
                             </div>
-                            <div>
-                                <label class="controlLabel">
-                                    <div>{t("image.flipMirror")}</div>
-                                </label>
-                                <div class={styles.buttonGrid}>
+                            <section class="sidebarSection">
+                                <h2 class="sidebarSectionTitle">{t("image.flipMirror")}</h2>
+                                <div class="sidebarButtonGrid sidebarButtonGrid--2">
                                     <button
                                         class="stdButton toolbar"
                                         onClick={() =>
@@ -451,7 +451,7 @@ export function EditorImage(): JSX.Element {
                                         {t("image.vertical")}
                                     </button>
                                 </div>
-                            </div>
+                            </section>
 
                             <button
                                 class="stdButton toolbar"
@@ -466,8 +466,11 @@ export function EditorImage(): JSX.Element {
                             >
                                 {t("image.resetTransform")}
                             </button>
-                        </SidebarTabSection>
-                        <SidebarTabSection key="adjust" label={t("image.adjust")}>
+                        </section>
+                    </SidebarTabSection>
+                    <SidebarTabSection key="adjust" label={t("image.adjust")}>
+                        <section class="sidebarSection">
+                            <h2 class="sidebarSectionTitle">{t("image.adjust")}</h2>
                             <For each={filters}>
                                 {(filter) => (
                                     <Control
@@ -492,9 +495,12 @@ export function EditorImage(): JSX.Element {
                             <button class="stdButton toolbar" onClick={() => resetFilters()}>
                                 {t("image.resetFilters")}
                             </button>
-                        </SidebarTabSection>
-                        <SidebarTabSection key="presets" label={t("image.presets")}>
-                            <div class={styles.presetGrid}>
+                        </section>
+                    </SidebarTabSection>
+                    <SidebarTabSection key="presets" label={t("image.presets")}>
+                        <section class="sidebarSection">
+                            <h2 class="sidebarSectionTitle">{t("image.presets")}</h2>
+                            <div class="sidebarButtonGrid sidebarButtonGrid--2">
                                 <For each={presetNames}>
                                     {(preset) => (
                                         <button
@@ -506,8 +512,9 @@ export function EditorImage(): JSX.Element {
                                     )}
                                 </For>
                             </div>
-                        </SidebarTabSection>
-                    </SidebarTab>
+                        </section>
+                    </SidebarTabSection>
+                </SidebarTab>
             </Sidebar>
         </section>
     );

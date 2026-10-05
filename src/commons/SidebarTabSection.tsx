@@ -7,7 +7,6 @@ import { createUniqueId, Show, type JSX } from "solid-js";
 import { Portal } from "solid-js/web";
 import { useSidebarDisabled } from "./Sidebar";
 import { useSidebarTab } from "./SidebarTab";
-import styles from "./SidebarTabSection.module.css";
 
 export type SidebarTabSectionProps = {
     key: string;
@@ -43,7 +42,12 @@ export function SidebarTabSection(props: SidebarTabSectionProps): JSX.Element {
                 </button>
             </Portal>
             <Show when={current()}>
-                <div id={panelId} class={styles.panel} role="tabpanel" aria-labelledby={tabId}>
+                <div
+                    id={panelId}
+                    class="sidebarPanel"
+                    role="tabpanel"
+                    aria-labelledby={tabId}
+                >
                     {props.children}
                 </div>
             </Show>

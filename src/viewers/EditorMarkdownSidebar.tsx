@@ -78,7 +78,6 @@ import Strikethrough from "lucide-solid/icons/strikethrough";
 import Table2 from "lucide-solid/icons/table-2";
 import { useI18N } from "../Localization";
 import Sidebar, { useSidebarDisabled } from "../commons/Sidebar";
-import styles from "./EditorMarkdownSidebar.module.css";
 
 type EditorMarkdownSidebarProps = {
     getEditor: () => Editor | null;
@@ -537,10 +536,10 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
 
     return (
         <Sidebar disabled={props.disabled}>
-            <div class={styles.panel}>
-                <section class={styles.section}>
-                    <h2 class={styles.sectionTitle}>{t("markdownToolbar.blockStyle")}</h2>
-                    <div class={styles.buttonGridLarge}>
+            <div class="sidebarPanel">
+                <section class="sidebarSection">
+                    <h2 class="sidebarSectionTitle">{t("markdownToolbar.blockStyle")}</h2>
+                    <div class="sidebarButtonGrid sidebarButtonGrid--6">
                         <SidebarIconButton
                             getEditor={props.getEditor}
                             selected={selectedHeadingLevel() === 1}
@@ -613,7 +612,7 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                         }}
                     />
 
-                    <div class={styles.buttonGrid}>
+                    <div class="sidebarButtonGrid sidebarButtonGrid--2">
                         <SidebarButton
                             getEditor={props.getEditor}
                             icon={Quote}
@@ -633,9 +632,9 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                     </div>
                 </section>
 
-                <section class={styles.section}>
-                    <h2 class={styles.sectionTitle}>{t("markdownToolbar.formatting")}</h2>
-                    <div class={styles.buttonGridLarge}>
+                <section class="sidebarSection">
+                    <h2 class="sidebarSectionTitle">{t("markdownToolbar.formatting")}</h2>
+                    <div class="sidebarButtonGrid sidebarButtonGrid--6">
                         <SidebarIconButton
                             getEditor={props.getEditor}
                             selected={selectedInlineStyles().bold}
@@ -698,8 +697,8 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                         />
                     </div>
                 </section>
-                <section class={styles.section}>
-                    <h2 class={styles.sectionTitle}>{t("markdownToolbar.lists")}</h2>
+                <section class="sidebarSection">
+                    <h2 class="sidebarSectionTitle">{t("markdownToolbar.lists")}</h2>
 
                     <SidebarButton
                         getEditor={props.getEditor}
@@ -719,7 +718,7 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                         label={t("markdownToolbar.taskList")}
                         onRun={(ctx) => toggleList(ctx, "task")}
                     />
-                    <div class={styles.buttonGrid}>
+                    <div class="sidebarButtonGrid sidebarButtonGrid--2">
                         <SidebarButton
                             getEditor={props.getEditor}
                             icon={IndentIncrease}
@@ -738,8 +737,8 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                         />
                     </div>
                 </section>
-                <section class={styles.section}>
-                    <h2 class={styles.sectionTitle}>{t("markdownToolbar.blocks")}</h2>
+                <section class="sidebarSection">
+                    <h2 class="sidebarSectionTitle">{t("markdownToolbar.blocks")}</h2>
 
                     <SidebarButton
                         getEditor={props.getEditor}
