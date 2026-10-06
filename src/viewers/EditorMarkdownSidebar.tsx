@@ -50,10 +50,9 @@ import {
     type Transaction,
 } from "@milkdown/kit/prose/state";
 
-import type { LucideIcon } from "lucide-solid";
+import { type LucideIcon } from "lucide-solid";
 import Bold from "lucide-solid/icons/bold";
 import Code from "lucide-solid/icons/code";
-import CodeXml from "lucide-solid/icons/code-xml";
 import Heading1 from "lucide-solid/icons/heading-1";
 import Heading2 from "lucide-solid/icons/heading-2";
 import Heading3 from "lucide-solid/icons/heading-3";
@@ -64,16 +63,17 @@ import ImageIcon from "lucide-solid/icons/image";
 import IndentDecrease from "lucide-solid/icons/indent-decrease";
 import IndentIncrease from "lucide-solid/icons/indent-increase";
 import Italic from "lucide-solid/icons/italic";
-import LinkIcon from "lucide-solid/icons/link";
+import Link2 from "lucide-solid/icons/link-2";
 
 import List from "lucide-solid/icons/list";
 import ListOrdered from "lucide-solid/icons/list-ordered";
 import ListTodo from "lucide-solid/icons/list-todo";
 import Minus from "lucide-solid/icons/minus";
-import Pilcrow from "lucide-solid/icons/pilcrow";
+import TextAlignStart from "lucide-solid/icons/text-align-start";
 import Quote from "lucide-solid/icons/quote";
 import Sigma from "lucide-solid/icons/sigma";
-import SquareFunction from "lucide-solid/icons/square-function";
+import SquareCode from "lucide-solid/icons/square-code";
+import SquareSigma from "lucide-solid/icons/square-sigma";
 import Strikethrough from "lucide-solid/icons/strikethrough";
 import Table2 from "lucide-solid/icons/table-2";
 import { useI18N } from "../Localization";
@@ -488,9 +488,7 @@ export function insertImage(ctx: Ctx): void {
     const canReplaceParagraphWithBlock =
         isEmptyParagraph &&
         containerDepth >= 0 &&
-        $from
-            .node(containerDepth)
-            .canReplaceWith(paragraphIndex, paragraphIndex + 1, imageBlock);
+        $from.node(containerDepth).canReplaceWith(paragraphIndex, paragraphIndex + 1, imageBlock);
     const commands = ctx.get(commandsCtx);
 
     if (
@@ -604,8 +602,8 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                     <SidebarButton
                         getEditor={props.getEditor}
                         selected={selectedHeadingLevel() === 0}
-                        icon={Pilcrow}
-                        label={t("markdownToolbar.paragraph")}
+                        icon={TextAlignStart}
+                        label={t("markdownToolbar.normal")}
                         onRun={(ctx) => {
                             setHeading(ctx, 0);
                             updateSelectedState(ctx);
@@ -668,7 +666,7 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                         <SidebarIconButton
                             getEditor={props.getEditor}
                             selected={selectedInlineStyles().link}
-                            icon={LinkIcon}
+                            icon={Link2}
                             label={t("markdownToolbar.link")}
                             onRun={(ctx) => {
                                 toggleLink(ctx);
@@ -688,7 +686,7 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                         <SidebarIconButton
                             getEditor={props.getEditor}
                             selected={selectedInlineStyles().math}
-                            icon={SquareFunction}
+                            icon={Sigma}
                             label={t("markdownToolbar.inlineMath")}
                             onRun={(ctx) => {
                                 ctx.get(commandsCtx).call("ToggleLatex");
@@ -723,17 +721,13 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                             getEditor={props.getEditor}
                             icon={IndentIncrease}
                             label={t("markdownToolbar.increaseIndent")}
-                            onRun={(ctx) =>
-                                ctx.get(commandsCtx).call(sinkListItemCommand.key)
-                            }
+                            onRun={(ctx) => ctx.get(commandsCtx).call(sinkListItemCommand.key)}
                         />
                         <SidebarButton
                             getEditor={props.getEditor}
                             icon={IndentDecrease}
                             label={t("markdownToolbar.decreaseIndent")}
-                            onRun={(ctx) =>
-                                ctx.get(commandsCtx).call(liftListItemCommand.key)
-                            }
+                            onRun={(ctx) => ctx.get(commandsCtx).call(liftListItemCommand.key)}
                         />
                     </div>
                 </section>
@@ -762,7 +756,7 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
 
                     <SidebarButton
                         getEditor={props.getEditor}
-                        icon={CodeXml}
+                        icon={SquareCode}
                         label={t("markdownToolbar.codeBlock")}
                         onRun={(ctx) => {
                             ctx.get(commandsCtx).call(setBlockTypeCommand.key, {
@@ -772,7 +766,7 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                     />
                     <SidebarButton
                         getEditor={props.getEditor}
-                        icon={Sigma}
+                        icon={SquareSigma}
                         label={t("markdownToolbar.mathBlock")}
                         onRun={(ctx) => {
                             ctx.get(commandsCtx).call(addBlockTypeCommand.key, {
