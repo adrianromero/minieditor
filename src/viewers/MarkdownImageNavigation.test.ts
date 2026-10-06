@@ -5,11 +5,13 @@
 
 import { Crepe } from "@milkdown/crepe";
 import { editorViewCtx } from "@milkdown/kit/core";
+import { NodeSelection } from "@milkdown/kit/prose/state";
 import { describe, expect, it } from "vitest";
 import {
     imageNavigationHref,
     imageSourceFromDOM,
     navigableImageFromTarget,
+    updateImageSourceFromDOM,
 } from "./MarkdownImageNavigation";
 
 async function sourceFromMarkdown(markdown: string, selector: string): Promise<string | null> {
@@ -77,11 +79,58 @@ describe("navigableImageFromTarget", () => {
             const image = root.querySelector(selector);
             expect(image).not.toBeNull();
             expect(navigableImageFromTarget(image!, root)).toBe(image);
+            expect(navigableImageFromTarget(image!.parentElement!, root)).toBe(image);
         } finally {
             await crepe.destroy();
             root.remove();
         }
     });
+});
+
+describe("updateImageSourceFromDOM", () => {
+    it.each([
+        [
+            "![1.00](./old-block.png)",
+            ".milkdown-image-block img",
+            "./new-block.png",
+            "![1.00](./new-block.png)",
+        ],
+        [
+            "Texto ![imagen](./old-inline.png)",
+            ".milkdown-image-inline img",
+            "./new-inline.png",
+            "Texto ![imagen](./new-inline.png)",
+        ],
+    ])(
+        "actualiza y serializa el enlace de la imagen",
+        async (markdown, selector, source, expected) => {
+            const root = document.createElement("div");
+            document.body.append(root);
+            const crepe = new Crepe({ root, defaultValue: markdown });
+
+            try {
+                await crepe.create();
+                const image = root.querySelector(selector);
+                expect(image).not.toBeNull();
+
+                crepe.editor.action((ctx) => {
+                    const view = ctx.get(editorViewCtx);
+                    expect(
+                        updateImageSourceFromDOM(view, image!, source)
+                    ).toBe(true);
+                    expect(view.state.selection).toBeInstanceOf(NodeSelection);
+                    expect(view.state.doc.nodeAt(view.state.selection.from)?.attrs.src).toBe(
+                        source
+                    );
+                });
+
+                expect(crepe.getMarkdown().trim()).toBe(expected);
+            } finally {
+                await crepe.destroy();
+                root.remove();
+            }
+        }
+    );
 });
 
 describe("imageNavigationHref", () => {

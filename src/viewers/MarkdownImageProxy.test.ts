@@ -3,8 +3,23 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { describe, expect, it } from "vitest";
-import { imageMimeType, localImageSource } from "./MarkdownImageProxy";
+import { invoke } from "@tauri-apps/api/core";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import {
+    createMarkdownImageProxy,
+    imageMimeType,
+    localImageSource,
+} from "./MarkdownImageProxy";
+
+vi.mock("@tauri-apps/api/core", () => ({
+    invoke: vi.fn(),
+}));
+
+const invokeMock = vi.mocked(invoke);
+
+beforeEach(() => {
+    invokeMock.mockReset();
+});
 
 describe("localImageSource", () => {
     it("recognizes a relative image and decodes its filesystem path", () => {
@@ -43,5 +58,49 @@ describe("imageMimeType", () => {
 
     it("uses a safe generic type for unknown extensions", () => {
         expect(imageMimeType("image.unknown")).toBe("application/octet-stream");
+    });
+});
+
+describe("createMarkdownImageProxy", () => {
+    it("keeps remote image URLs unchanged", () => {
+        const proxy = createMarkdownImageProxy("/documents", "/documents/note.md");
+
+        expect(proxy.proxyDomURL("https://example.com/image.png")).toBe(
+            "https://example.com/image.png"
+        );
+        expect(invokeMock).not.toHaveBeenCalled();
+    });
+
+    it("creates an object URL for an existing local image", async () => {
+        invokeMock.mockResolvedValue([137, 80, 78, 71]);
+        const createObjectURL = vi
+            .spyOn(URL, "createObjectURL")
+            .mockReturnValue("blob:http://localhost/image");
+        const revokeObjectURL = vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
+        const proxy = createMarkdownImageProxy("/documents", "/documents/note.md");
+
+        await expect(proxy.proxyDomURL("./image.png")).resolves.toBe(
+            "blob:http://localhost/image"
+        );
+        expect(createObjectURL).toHaveBeenCalledOnce();
+
+        proxy.dispose();
+        expect(revokeObjectURL).toHaveBeenCalledWith("blob:http://localhost/image");
+    });
+
+    it("returns a visible fallback when a local image does not exist", async () => {
+        const readError = new Error("File not found");
+        invokeMock.mockRejectedValue(readError);
+        const consoleError = vi.spyOn(console, "error").mockImplementation(() => {});
+        const proxy = createMarkdownImageProxy("/documents", "/documents/note.md");
+
+        const result = await proxy.proxyDomURL("./missing.png");
+
+        expect(result).toMatch(/^data:image\/svg\+xml;charset=utf-8,/);
+        expect(decodeURIComponent(result)).toContain('width="160" height="160"');
+        expect(consoleError).toHaveBeenCalledWith(
+            "Unable to load local Markdown image:",
+            readError
+        );
     });
 });

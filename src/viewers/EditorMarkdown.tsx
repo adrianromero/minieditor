@@ -247,9 +247,15 @@ export function EditorMarkdown(): JSX.Element {
     const toggleFrontmatter = (): void => {
         const visible = !frontmatterVisible();
         setFrontmatterVisible(visible);
-        if (visible) {
-            requestAnimationFrame(() => frontmatterEditor?.requestMeasure());
-        }
+        requestAnimationFrame(() => {
+            if (visible) {
+                frontmatterEditor?.requestMeasure();
+                frontmatterEditor?.focus();
+                return;
+            }
+
+            crepeInstance?.editor.action((ctx) => ctx.get(editorViewCtx).focus());
+        });
     };
 
     onMount(() => {

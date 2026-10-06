@@ -17,8 +17,11 @@ import { type Crepe } from "@milkdown/crepe";
 import { editorViewCtx } from "@milkdown/kit/core";
 import { type Ctx } from "@milkdown/kit/ctx";
 import { NodeSelection, type Selection } from "@milkdown/kit/prose/state";
+import Check from "lucide-solid/icons/check";
 import Captions from "lucide-solid/icons/captions";
 import LinkIcon from "lucide-solid/icons/link";
+import Pencil from "lucide-solid/icons/pencil";
+import X from "lucide-solid/icons/x";
 import { useAppContext } from "../AppContext";
 import { translateAppError } from "../AppError";
 import { useI18N } from "../Localization";
@@ -26,6 +29,7 @@ import {
     imageNavigationHref,
     imageSourceFromDOM,
     navigableImageFromTarget,
+    updateImageSourceFromDOM,
 } from "./MarkdownImageNavigation";
 import styles from "./MarkdownImageActions.module.css";
 
@@ -37,11 +41,16 @@ interface MarkdownImageActionsProps {
 export default function MarkdownImageActions(props: MarkdownImageActionsProps): JSX.Element {
     let actionsRef!: HTMLDivElement;
     let navigationButtonRef!: HTMLButtonElement;
+    let editButtonRef!: HTMLButtonElement;
     let captionButtonRef: HTMLButtonElement | undefined;
+    let linkEditorRef: HTMLFormElement | undefined;
+    let linkInputRef: HTMLInputElement | undefined;
     let hoveredImage: HTMLImageElement | null = null;
     let selectedImage: HTMLImageElement | null = null;
     let observedImage: HTMLImageElement | null = null;
     const [activeImage, setActiveImage] = createSignal<HTMLImageElement | null>(null);
+    const [editingImage, setEditingImage] = createSignal<HTMLImageElement | null>(null);
+    const [draftSource, setDraftSource] = createSignal("");
     const [buttonPosition, setButtonPosition] = createSignal({ left: 0, top: 0 });
 
     const { t } = useI18N();
@@ -75,6 +84,54 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
         }
     };
 
+    const focusEditor = (): void => {
+        const crepe = props.crepe();
+        crepe?.editor.action((ctx) => ctx.get(editorViewCtx).focus());
+    };
+
+    const stopEditingLink = (focus = true): void => {
+        setEditingImage(null);
+        if (focus) {
+            requestAnimationFrame(focusEditor);
+        }
+    };
+
+    const startEditingLink = (image: HTMLImageElement): void => {
+        const crepe = props.crepe();
+        if (!crepe) return;
+
+        let source: string | null = null;
+        crepe.editor.action((ctx) => {
+            source = imageSourceFromDOM(ctx.get(editorViewCtx), image);
+        });
+        if (source === null) return;
+
+        setDraftSource(source);
+        setEditingImage(image);
+        requestAnimationFrame(() => {
+            linkInputRef?.focus();
+            linkInputRef?.select();
+        });
+    };
+
+    const saveEditedLink = (): void => {
+        const crepe = props.crepe();
+        const image = editingImage();
+        if (!crepe || !image) return;
+
+        let updated = false;
+        crepe.editor.action((ctx) => {
+            updated = updateImageSourceFromDOM(
+                ctx.get(editorViewCtx),
+                image,
+                draftSource()
+            );
+        });
+        if (updated) {
+            stopEditingLink();
+        }
+    };
+
     const toggleImageCaption = (image: HTMLImageElement): void => {
         const nativeCaptionButton = image
             .closest(".milkdown-image-block")
@@ -92,18 +149,22 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
         }
 
         const imageRect = image.getBoundingClientRect();
+        const nodeViewRect = image
+            .closest<HTMLElement>(".milkdown-image-block, .milkdown-image-inline")
+            ?.getBoundingClientRect();
+        const anchorRect =
+            imageRect.width > 0 || imageRect.height > 0 ? imageRect : (nodeViewRect ?? imageRect);
         const actionsRect = actionsRef.getBoundingClientRect();
-        // const isBlock = Boolean(image.closest(".milkdown-image-block"));
         setButtonPosition({
-            left: imageRect.left - actionsRect.left + 12,
-            top: imageRect.top - actionsRect.top + 12,
+            left: anchorRect.left - actionsRect.left + 12,
+            top: anchorRect.top - actionsRect.top + 12,
         });
     };
 
     const resizeObserver = new ResizeObserver(positionButtons);
 
     const syncActiveImage = (): void => {
-        const nextImage = hoveredImage ?? selectedImage;
+        const nextImage = editingImage() ?? hoveredImage ?? selectedImage;
         if (observedImage !== nextImage) {
             if (observedImage) resizeObserver.unobserve(observedImage);
             observedImage = nextImage;
@@ -138,7 +199,10 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
 
     const isImageActionTarget = (target: EventTarget | null): boolean =>
         target instanceof Node &&
-        (navigationButtonRef.contains(target) || Boolean(captionButtonRef?.contains(target)));
+        (navigationButtonRef.contains(target) ||
+            editButtonRef.contains(target) ||
+            Boolean(captionButtonRef?.contains(target)) ||
+            Boolean(linkEditorRef?.contains(target)));
 
     const handleImagePointerOut = (event: PointerEvent): void => {
         const image = hoveredImage;
@@ -167,12 +231,15 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
             return;
         }
 
+        setEditingImage(null);
         hoveredImage = null;
         selectedImage = null;
         syncActiveImage();
     };
 
     const handleActionPointerLeave = (event: PointerEvent): void => {
+        if (editingImage()) return;
+
         const image = activeImage();
         if (
             image &&
@@ -267,6 +334,26 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
                             <LinkIcon aria-hidden="true" />
                             {t("markdownToolbar.openImage")}
                         </button>
+                        <button
+                            ref={editButtonRef}
+                            class={`preview-toggle-button ${styles.fltButton}`}
+                            type="button"
+                            aria-label={t("markdownToolbar.editImageLink")}
+                            title={t("markdownToolbar.editImageLink")}
+                            onPointerDown={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                            }}
+                            onClick={(event) => {
+                                event.preventDefault();
+                                event.stopPropagation();
+                                const image = activeImage();
+                                if (image) startEditingLink(image);
+                            }}
+                        >
+                            <Pencil aria-hidden="true" />
+                            {t("markdownToolbar.editImageLink")}
+                        </button>
                         <Show when={activeImage()?.closest(".milkdown-image-block")}>
                             <button
                                 ref={captionButtonRef}
@@ -288,6 +375,51 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
                                 <Captions aria-hidden="true" />
                                 {t("markdownToolbar.imageCaption")}
                             </button>
+                        </Show>
+                        <Show when={editingImage()}>
+                            <form
+                                ref={linkEditorRef}
+                                class={styles.linkEditor}
+                                onSubmit={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    saveEditedLink();
+                                }}
+                                onPointerDown={(event) => event.stopPropagation()}
+                            >
+                                <input
+                                    ref={linkInputRef}
+                                    class={styles.linkInput}
+                                    aria-label={t("markdownToolbar.imageLink")}
+                                    placeholder={t("markdownToolbar.imageLinkPlaceholder")}
+                                    value={draftSource()}
+                                    onInput={(event) => setDraftSource(event.currentTarget.value)}
+                                    onKeyDown={(event) => {
+                                        event.stopPropagation();
+                                        if (event.key === "Escape") {
+                                            event.preventDefault();
+                                            stopEditingLink();
+                                        }
+                                    }}
+                                />
+                                <button
+                                    class={styles.linkEditorButton}
+                                    type="submit"
+                                    aria-label={t("markdownToolbar.imageLinkConfirm")}
+                                    title={t("markdownToolbar.imageLinkConfirm")}
+                                >
+                                    <Check aria-hidden="true" />
+                                </button>
+                                <button
+                                    class={styles.linkEditorButton}
+                                    type="button"
+                                    aria-label={t("markdownToolbar.cancelImageLink")}
+                                    title={t("markdownToolbar.cancelImageLink")}
+                                    onClick={() => stopEditingLink()}
+                                >
+                                    <X aria-hidden="true" />
+                                </button>
+                            </form>
                         </Show>
                     </div>
                 </div>

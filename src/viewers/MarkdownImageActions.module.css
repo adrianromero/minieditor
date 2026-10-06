@@ -37,6 +37,67 @@
     stroke: currentColor;
 }
 
+.buttonGroup > .linkEditor {
+    position: absolute;
+    top: calc(100% + 0.4rem);
+    right: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    box-sizing: border-box;
+    width: min(25rem, calc(100vw - 3rem));
+    padding: 0.4rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-surface);
+}
+
+.linkInput {
+    min-width: 0;
+    flex: 1;
+    padding: 0.35rem 0.5rem;
+    color: var(--color-text);
+    background: var(--color-view-background);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+    outline: none;
+}
+
+.linkInput:focus {
+    border-color: var(--color-primary);
+    outline: 2px solid var(--color-focus);
+    outline-offset: -1px;
+}
+
+.actions
+    > .crepeButtonHost
+    > :global(.tools)
+    > .buttonGroup
+    > .linkEditor
+    > .linkEditorButton {
+    width: 1.8rem;
+    height: 1.8rem;
+    flex: 0 0 auto;
+    padding: 0.3rem;
+    opacity: 1;
+    border-radius: var(--radius-small);
+}
+
+.actions
+    > .crepeButtonHost
+    > :global(.tools)
+    > .buttonGroup
+    > .linkEditor
+    > .linkEditorButton
+    > :global(.lucide) {
+    width: 1rem;
+    height: 1rem;
+    fill: none;
+    stroke: currentColor;
+}
+
 :global(.milkdowntheme > .milkdown .milkdown-image-block > .image-wrapper > .operation) {
     display: none;
 }

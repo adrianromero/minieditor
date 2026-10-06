@@ -111,6 +111,7 @@ const EMPTY_INLINE_STYLE_STATE: InlineStyleState = {
 type SidebarButtonProps = {
     getEditor: () => Editor | null;
     selected?: boolean;
+    focusEditorAfterRun?: boolean;
     icon: LucideIcon;
     label: string;
     onRun: (ctx: Ctx) => void;
@@ -136,7 +137,9 @@ function SidebarButton(props: SidebarButtonProps): JSX.Element {
 
                 editor.action((ctx) => {
                     props.onRun(ctx);
-                    ctx.get(editorViewCtx).focus();
+                    if (props.focusEditorAfterRun !== false) {
+                        ctx.get(editorViewCtx).focus();
+                    }
                 });
             }}
         >
@@ -813,6 +816,7 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                     <SidebarButton
                         getEditor={props.getEditor}
                         selected={props.frontmatterVisible}
+                        focusEditorAfterRun={false}
                         icon={FileCog}
                         label={t("markdownToolbar.frontmatter")}
                         onRun={props.onToggleFrontmatter}

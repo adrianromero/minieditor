@@ -4,6 +4,7 @@
  */
 
 import { invoke } from "@tauri-apps/api/core";
+import missingImageSvg from "../assets/missing-markdown-image.svg?raw";
 
 type LocalImageSource = {
     href: string;
@@ -11,6 +12,10 @@ type LocalImageSource = {
 };
 
 const uriSchemePattern = /^[A-Za-z][A-Za-z\d+.-]*:/;
+
+const missingImageDataUrl = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+    missingImageSvg.trim()
+)}`;
 
 export function localImageSource(source: string): LocalImageSource | null {
     if (
@@ -115,7 +120,8 @@ export function createMarkdownImageProxy(
             })
             .catch((error: unknown) => {
                 cachedUrls.delete(source);
-                throw error;
+                console.error("Unable to load local Markdown image:", error);
+                return missingImageDataUrl;
             });
 
         cachedUrls.set(source, pendingUrl);
