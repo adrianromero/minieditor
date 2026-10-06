@@ -20,6 +20,7 @@ import Dialog from "./Dialog";
 import { TranslationKey, useI18N } from "./Localization";
 import { UserMessageError } from "./UserMessageError";
 import { MessageInfoKind } from "./messagesinfo";
+import AppShortcuts from "./AppShortcuts";
 
 export type SaveFileHandler = () => Promise<void>;
 export type ReloadFileHandler = () => Promise<void>;
@@ -232,6 +233,12 @@ export function AppProvider(props: {
             }}
         >
             {props.children}
+            <AppShortcuts
+                saveFile={saveFile}
+                reloadFile={reloadFile}
+                fileModified={fileModified}
+                interactionsBlocked={() => spinnerVisible() || appMessage() !== null}
+            />
             <SpinnerPanel visible={spinnerVisible()} text={spinnerText()} />
 
             <Dialog
