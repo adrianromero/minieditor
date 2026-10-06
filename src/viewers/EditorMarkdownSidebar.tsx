@@ -47,6 +47,7 @@ import { Plugin, TextSelection, type Selection, type Transaction } from "@milkdo
 import { type LucideIcon } from "lucide-solid";
 import Bold from "lucide-solid/icons/bold";
 import Code from "lucide-solid/icons/code";
+import FileCog from "lucide-solid/icons/file-cog";
 import Heading1 from "lucide-solid/icons/heading-1";
 import Heading2 from "lucide-solid/icons/heading-2";
 import Heading3 from "lucide-solid/icons/heading-3";
@@ -76,6 +77,8 @@ import Sidebar, { useSidebarDisabled } from "../commons/Sidebar";
 type EditorMarkdownSidebarProps = {
     getEditor: () => Editor | null;
     disabled?: boolean;
+    frontmatterVisible: boolean;
+    onToggleFrontmatter: () => void;
 };
 
 type ListKind = "bullet" | "ordered" | "task";
@@ -803,6 +806,16 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                                 attrs: { language: "LaTeX" },
                             });
                         }}
+                    />
+                </section>
+                <section class="sidebarSection">
+                    <h2 class="sidebarSectionTitle">{t("markdownToolbar.document")}</h2>
+                    <SidebarButton
+                        getEditor={props.getEditor}
+                        selected={props.frontmatterVisible}
+                        icon={FileCog}
+                        label={t("markdownToolbar.frontmatter")}
+                        onRun={props.onToggleFrontmatter}
                     />
                 </section>
             </div>

@@ -16,6 +16,9 @@
         "empty": "Esta carpeta está vacía"
     },
     "markdownToolbar": {
+        "document": "Documento",
+        "frontmatter": "Propiedades",
+        "frontmatterEditor": "Propiedades del documento",
         "blockStyle": "Estilo de bloque",
         "normal": "Texto normal",
         "heading1": "Encabezado 1",

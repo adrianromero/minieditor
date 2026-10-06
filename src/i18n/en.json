@@ -16,6 +16,9 @@
         "empty": "This folder is empty"
     },
     "markdownToolbar": {
+        "document": "Document",
+        "frontmatter": "Properties",
+        "frontmatterEditor": "Document properties",
         "blockStyle": "Block style",
         "normal": "Normal text",
         "heading1": "Heading 1",

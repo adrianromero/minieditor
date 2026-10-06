@@ -6,7 +6,9 @@
 import { createSignal, onCleanup, onMount, Show, JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { Crepe } from "@milkdown/crepe";
-import { EditorStatus } from "@milkdown/kit/core";
+import { editorViewCtx, EditorStatus } from "@milkdown/kit/core";
+import { yaml } from "@codemirror/lang-yaml";
+import { basicSetup } from "codemirror";
 import { EditorView as CodeMirrorEditorView } from "@codemirror/view";
 import { useI18N } from "../Localization";
 import { useAppContext } from "../AppContext";
@@ -28,13 +30,17 @@ import { createMarkdownImageProxy, type MarkdownImageProxy } from "./MarkdownIma
 import MarkdownImageActions from "./MarkdownImageActions";
 import { configureMarkdownSerialization } from "./MarkdownSerialization";
 import { configureCodeLanguages } from "./CodeLanguages";
+import { joinMarkdownFrontmatter, splitMarkdownFrontmatter } from "./MarkdownFrontmatter";
 
 export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
+    let frontmatterRef!: HTMLDivElement;
     let crepeInstance: Crepe | null = null;
+    let frontmatterEditor: CodeMirrorEditorView | null = null;
     let imageProxy: MarkdownImageProxy | null = null;
     const [editorReady, setEditorReady] = createSignal(false);
     const [imageActionsCrepe, setImageActionsCrepe] = createSignal<Crepe | null>(null);
+    const [frontmatterVisible, setFrontmatterVisible] = createSignal(false);
 
     const { t } = useI18N();
     const {
@@ -112,14 +118,42 @@ export function EditorMarkdown(): JSX.Element {
     };
 
     const adapter: FileEditorAdapter = {
-        getContent: () => Promise.resolve(crepeInstance?.getMarkdown() ?? null),
+        getContent: () => {
+            if (!crepeInstance) {
+                return Promise.resolve(null);
+            }
+
+            const frontmatter = frontmatterEditor?.state.doc.toString() ?? "";
+            return Promise.resolve(
+                joinMarkdownFrontmatter(frontmatter, crepeInstance.getMarkdown())
+            );
+        },
         replaceContent: async (content, currentFilename, onModified) => {
             setEditorReady(false);
             setImageActionsCrepe(null);
+            const document = splitMarkdownFrontmatter(content);
+            setFrontmatterVisible(document.hasFrontmatter);
+            frontmatterEditor = new CodeMirrorEditorView({
+                doc: document.frontmatter,
+                extensions: [
+                    basicSetup,
+                    CodeMirrorEditorView.lineWrapping,
+                    yaml(),
+                    CodeMirrorEditorView.contentAttributes.of({
+                        "aria-label": t("markdownToolbar.frontmatterEditor"),
+                    }),
+                    CodeMirrorEditorView.updateListener.of((update) => {
+                        if (update.docChanged) {
+                            onModified();
+                        }
+                    }),
+                ],
+                parent: frontmatterRef,
+            });
             const nextImageProxy = createMarkdownImageProxy(basepath(), currentFilename);
             const nextCrepe = new Crepe({
                 root: editorRef,
-                defaultValue: content,
+                defaultValue: document.markdown,
                 featureConfigs: {
                     [Crepe.Feature.CodeMirror]: {
                         // Crepe uses oneDark by default. A neutral view theme lets
@@ -177,11 +211,16 @@ export function EditorMarkdown(): JSX.Element {
             });
 
             await nextCrepe.create();
+            nextCrepe.editor.action((ctx) => ctx.get(editorViewCtx).focus());
             setEditorReady(true);
         },
         destroy: async () => {
             setEditorReady(false);
             setImageActionsCrepe(null);
+            setFrontmatterVisible(false);
+            frontmatterEditor?.destroy();
+            frontmatterEditor = null;
+            frontmatterRef.replaceChildren();
             const currentCrepe = crepeInstance;
             crepeInstance = null;
             const currentImageProxy = imageProxy;
@@ -205,6 +244,13 @@ export function EditorMarkdown(): JSX.Element {
         return current.status === "error" ? current.message : null;
     };
     const editorDisabled = (): boolean => state().status !== "ready";
+    const toggleFrontmatter = (): void => {
+        const visible = !frontmatterVisible();
+        setFrontmatterVisible(visible);
+        if (visible) {
+            requestAnimationFrame(() => frontmatterEditor?.requestMeasure());
+        }
+    };
 
     onMount(() => {
         editorRef.addEventListener("click", handleLinkPreviewClick, { capture: true });
@@ -220,12 +266,24 @@ export function EditorMarkdown(): JSX.Element {
                 <ErrorView>{error() ?? t("errors.unknown")}</ErrorView>
             </Show>
             <div class={`scrollingView ${error() ? "errorView" : ""}`}>
+                <div
+                    class={`contentView ${styles.frontmatterPanel}`}
+                    classList={{ [styles.hidden]: !frontmatterVisible() }}
+                    aria-hidden={!frontmatterVisible()}
+                >
+                    <div class={styles.frontmatterTitle}>
+                        {t("markdownToolbar.frontmatterEditor")}
+                    </div>
+                    <div ref={frontmatterRef} class={styles.frontmatterEditor} />
+                </div>
                 <div ref={editorRef} class={`contentView milkdowntheme ${styles.editorMarkdown}`} />
                 <MarkdownImageActions editorRoot={() => editorRef} crepe={imageActionsCrepe} />
             </div>
             <EditorMarkdownSidebar
                 disabled={editorDisabled()}
                 getEditor={() => (editorReady() && crepeInstance ? crepeInstance.editor : null)}
+                frontmatterVisible={frontmatterVisible()}
+                onToggleFrontmatter={toggleFrontmatter}
             />
         </section>
     );
