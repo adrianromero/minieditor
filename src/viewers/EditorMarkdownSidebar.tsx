@@ -3,10 +3,10 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { createEffect, createSignal, type JSX } from "solid-js";
+import { createEffect, createSignal, onCleanup, type JSX } from "solid-js";
 import { Dynamic } from "solid-js/web";
 import type { Editor } from "@milkdown/kit/core";
-import { commandsCtx, editorViewCtx, schemaCtx } from "@milkdown/kit/core";
+import { commandsCtx, editorViewCtx } from "@milkdown/kit/core";
 import type { Ctx } from "@milkdown/kit/ctx";
 import { imageBlockSchema } from "@milkdown/kit/component/image-block";
 import { toggleLinkCommand } from "@milkdown/kit/component/link-tooltip";
@@ -39,16 +39,10 @@ import {
     strikethroughSchema,
     toggleStrikethroughCommand,
 } from "@milkdown/kit/preset/gfm";
-import { listenerCtx } from "@milkdown/kit/plugin/listener";
 import { lift } from "@milkdown/kit/prose/commands";
 import type { MarkType, Node as ProseMirrorNode, NodeType } from "@milkdown/kit/prose/model";
 import { liftListItem, wrapInList } from "@milkdown/kit/prose/schema-list";
-import {
-    NodeSelection,
-    TextSelection,
-    type Selection,
-    type Transaction,
-} from "@milkdown/kit/prose/state";
+import { Plugin, TextSelection, type Selection, type Transaction } from "@milkdown/kit/prose/state";
 
 import { type LucideIcon } from "lucide-solid";
 import Bold from "lucide-solid/icons/bold";
@@ -224,20 +218,57 @@ function isMarkActive(ctx: Ctx, markType: MarkType, selection?: Selection): bool
     );
 }
 
-function getInlineStyleState(ctx: Ctx, selection?: Selection): InlineStyleState {
+function isTypingMarkActive(ctx: Ctx, markType: MarkType, selection?: Selection): boolean {
+    const state = ctx.get(editorViewCtx).state;
+    const currentSelection = selection ?? state.selection;
+    const marks =
+        state.storedMarks ??
+        (currentSelection.empty
+            ? currentSelection.$from.marks()
+            : currentSelection.$from.marksAcross(currentSelection.$to)) ??
+        [];
+
+    return marks.some((mark) => mark.type === markType);
+}
+
+export function getInlineStyleState(ctx: Ctx, selection?: Selection): InlineStyleState {
     const currentSelection = selection ?? ctx.get(editorViewCtx).state.selection;
-    const mathInline = ctx.get(schemaCtx).nodes.math_inline;
 
     return {
-        bold: isMarkActive(ctx, strongSchema.type(ctx), currentSelection),
-        italic: isMarkActive(ctx, emphasisSchema.type(ctx), currentSelection),
-        strikethrough: isMarkActive(ctx, strikethroughSchema.type(ctx), currentSelection),
-        code: isMarkActive(ctx, inlineCodeSchema.type(ctx), currentSelection),
-        math:
-            Boolean(mathInline) &&
-            currentSelection instanceof NodeSelection &&
-            currentSelection.node.type === mathInline,
+        bold: isTypingMarkActive(ctx, strongSchema.type(ctx), currentSelection),
+        italic: isTypingMarkActive(ctx, emphasisSchema.type(ctx), currentSelection),
+        strikethrough: isTypingMarkActive(ctx, strikethroughSchema.type(ctx), currentSelection),
+        code: isTypingMarkActive(ctx, inlineCodeSchema.type(ctx), currentSelection),
+        // Inline math is an atomic node, not a mark that can be pending for the next input.
+        math: false,
         link: isMarkActive(ctx, linkSchema.type(ctx), currentSelection),
+    };
+}
+
+export function observeEditorState(ctx: Ctx, onUpdate: () => void): () => void {
+    const view = ctx.get(editorViewCtx);
+    const observer = new Plugin({
+        view: () => ({
+            update: onUpdate,
+        }),
+    });
+
+    view.updateState(
+        view.state.reconfigure({
+            plugins: [...view.state.plugins, observer],
+        })
+    );
+
+    return () => {
+        if (view.isDestroyed) {
+            return;
+        }
+
+        view.updateState(
+            view.state.reconfigure({
+                plugins: view.state.plugins.filter((plugin) => plugin !== observer),
+            })
+        );
     };
 }
 
@@ -522,14 +553,12 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
             return;
         }
 
+        let stopObserving = (): void => undefined;
         editor.action((ctx) => {
             updateSelectedState(ctx);
-            ctx.get(listenerCtx)
-                .selectionUpdated((updatedCtx, selection) => {
-                    updateSelectedState(updatedCtx, selection);
-                })
-                .updated((updatedCtx) => updateSelectedState(updatedCtx));
+            stopObserving = observeEditorState(ctx, () => updateSelectedState(ctx));
         });
+        onCleanup(() => stopObserving());
     });
 
     return (
