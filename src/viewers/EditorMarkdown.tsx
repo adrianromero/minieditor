@@ -27,6 +27,7 @@ import EditorMarkdownSidebar from "./EditorMarkdownSidebar";
 import { createMarkdownImageProxy, type MarkdownImageProxy } from "./MarkdownImageProxy";
 import MarkdownImageActions from "./MarkdownImageActions";
 import { configureMarkdownSerialization } from "./MarkdownSerialization";
+import { configureCodeLanguages } from "./CodeLanguages";
 
 export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -153,6 +154,7 @@ export function EditorMarkdown(): JSX.Element {
             crepeInstance = nextCrepe;
             setImageActionsCrepe(nextCrepe);
 
+            nextCrepe.editor.config(configureCodeLanguages);
             nextCrepe.editor.config(configureMarkdownSerialization);
 
             let firstUpdate = true;
