@@ -46,7 +46,7 @@ export function Toolbar() {
                         <RefreshCw aria-hidden="true" />
                     </button>
                 </Show>
-                <Show when={reloadFile()}>
+                <Show when={saveFile()}>
                     <button
                         class="stdButton toolbar"
                         aria-label={t("toolbar.save")}

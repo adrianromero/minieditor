@@ -13,7 +13,9 @@
     },
     "folder": {
         "loading": "Cargando {{ path }}...",
-        "empty": "Esta carpeta está vacía"
+        "empty": "Esta carpeta está vacía",
+        "showHidden": "Mostrar archivos ocultos",
+        "hideHidden": "Ocultar archivos ocultos"
     },
     "markdownToolbar": {
         "document": "Documento",

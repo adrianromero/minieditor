@@ -52,7 +52,7 @@ describe("Toolbar", () => {
         document.body.replaceChildren();
     });
 
-    it("shows Save disabled when a failed editor only exposes Reload", () => {
+    it("only shows Save when a save handler is available", () => {
         const root = document.createElement("div");
         document.body.append(root);
         dispose = render(() => <Toolbar />, root);
@@ -61,12 +61,12 @@ describe("Toolbar", () => {
 
         setReloadFile(() => Promise.resolve());
 
-        const saveButton = root.querySelector<HTMLButtonElement>('[aria-label="toolbar.save"]');
-        expect(saveButton).not.toBeNull();
-        expect(saveButton?.disabled).toBe(true);
+        expect(root.querySelector('[aria-label="toolbar.save"]')).toBeNull();
 
         const save = vi.fn(() => Promise.resolve());
         setSaveFile(save);
+        const saveButton = root.querySelector<HTMLButtonElement>('[aria-label="toolbar.save"]');
+        expect(saveButton).not.toBeNull();
         expect(saveButton?.disabled).toBe(true);
 
         setFileModified(true);

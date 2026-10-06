@@ -13,7 +13,9 @@
     },
     "folder": {
         "loading": "Loading {{ path }}...",
-        "empty": "This folder is empty"
+        "empty": "This folder is empty",
+        "showHidden": "Show hidden files",
+        "hideHidden": "Hide hidden files"
     },
     "markdownToolbar": {
         "document": "Document",
