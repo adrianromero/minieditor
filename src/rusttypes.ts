@@ -8,6 +8,7 @@
 export type InitialConfig = {
     basepath: string;
     filename: string;
+    sidebarVisible: boolean;
 };
 
 export type PathKind = "file" | "directory" | "other";

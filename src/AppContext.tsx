@@ -78,6 +78,7 @@ export function useAppContext() {
 export function AppProvider(props: {
     initialBasepath: string;
     initialFilename: string;
+    initialSidebarVisible: boolean;
     children: JSX.Element;
 }): JSX.Element {
     const { t } = useI18N();
@@ -87,7 +88,7 @@ export function AppProvider(props: {
     const [saveFile, setSaveFileSignal] = createSignal<SaveFileHandler | null>(null);
     const [reloadFile, setReloadFileSignal] = createSignal<ReloadFileHandler | null>(null);
     const [searchFile, setSearchFileSignal] = createSignal<SearchFileHandler | null>(null);
-    const [sidebarVisible, setSidebarVisible] = createSignal(true);
+    const [sidebarVisible, setSidebarVisibleSignal] = createSignal(props.initialSidebarVisible);
     const [toggleSidebar, setToggleSidebarSignal] = createSignal<ToggleSidebarHandler | null>(null);
     const [onunload, setOnunloadSignal] = createSignal<OnunloadHandler | null>(null);
     const [fileModified, setFileModified] = createSignal(false);
@@ -115,6 +116,22 @@ export function AppProvider(props: {
     };
     const setToggleSidebar = (handler: ToggleSidebarHandler | null) => {
         setToggleSidebarSignal(() => handler);
+    };
+    let pendingSidebarUpdate = Promise.resolve();
+    const queueSidebarUpdate = (visible: boolean): void => {
+        pendingSidebarUpdate = pendingSidebarUpdate
+            .then(() => invoke<void>("set_sidebar_visible", { visible }))
+            .catch((error: unknown) => {
+                console.error("Unable to update sidebar visibility:", error);
+            });
+    };
+    const setSidebarVisible: Setter<boolean> = (value) => {
+        const previous = sidebarVisible();
+        const visible = setSidebarVisibleSignal(value);
+        if (visible !== previous) {
+            queueSidebarUpdate(visible);
+        }
+        return visible;
     };
     const saveModifiedFile = (): void | Promise<void> => {
         const handler = saveFile();
@@ -225,6 +242,7 @@ export function AppProvider(props: {
                     }
                     setOnunload(null);
                 }
+                await pendingSidebarUpdate;
                 await getCurrentWindow().destroy();
             })
             .then((unlisten) => {

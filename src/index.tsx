@@ -34,7 +34,13 @@ if (import.meta.env.PROD) {
 async function bootstrap(): Promise<void> {
     const config = await invoke<InitialConfig>("initial_config");
     render(
-        () => <App initialBasepath={config.basepath} initialFilename={config.filename} />,
+        () => (
+            <App
+                initialBasepath={config.basepath}
+                initialFilename={config.filename}
+                initialSidebarVisible={config.sidebarVisible}
+            />
+        ),
         document.getElementById("root") as HTMLElement
     );
 }

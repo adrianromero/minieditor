@@ -13,8 +13,14 @@ const PROPERTIES_FILENAME: &str = "properties.toml";
 pub(crate) struct Properties {
     pub(crate) width: u32,
     pub(crate) height: u32,
+    #[serde(default = "default_sidebar_visible")]
+    pub(crate) sidebar_visible: bool,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     basepaths: BTreeMap<String, String>,
+}
+
+fn default_sidebar_visible() -> bool {
+    true
 }
 
 impl Properties {
@@ -22,6 +28,7 @@ impl Properties {
         Self {
             width,
             height,
+            sidebar_visible: true,
             basepaths: BTreeMap::new(),
         }
     }
@@ -76,7 +83,7 @@ pub(crate) fn save(path: &Path, properties: &Properties) -> Result<(), String> {
         .map_err(|error| format!("unable to create '{}': {error}", parent.display()))?;
 
     let contents = toml::to_string_pretty(&properties)
-        .map_err(|error| format!("unable to serialize window properties: {error}"))?;
+        .map_err(|error| format!("unable to serialize application properties: {error}"))?;
     fs::write(path, contents)
         .map_err(|error| format!("unable to write '{}': {error}", path.display()))
 }
@@ -146,6 +153,7 @@ mod tests {
 
         assert_eq!(properties.width, 1024);
         assert_eq!(properties.height, 768);
+        assert!(properties.sidebar_visible);
         assert_eq!(properties.filename_for(Path::new("/missing")), None);
         fs::remove_dir_all(home).unwrap();
     }
@@ -165,5 +173,18 @@ mod tests {
             properties.filename_for(Path::new("/documents/two")),
             Some("folder/second.md")
         );
+    }
+
+    #[test]
+    fn sidebar_visibility_is_created_and_loaded() {
+        let home = test_home();
+        let path = properties_path(&home);
+        let mut expected = Properties::default();
+        expected.sidebar_visible = false;
+
+        save(&path, &expected).unwrap();
+
+        assert_eq!(load(&path).unwrap(), Some(expected));
+        fs::remove_dir_all(home).unwrap();
     }
 }

@@ -14,18 +14,30 @@ use tauri::{LogicalSize, Manager, WindowEvent};
 use tracing::{error, info};
 
 #[derive(Debug, Default)]
-struct PropertiesState {
+pub(crate) struct PropertiesState {
     path: Option<PathBuf>,
     properties: Properties,
+}
+
+impl PropertiesState {
+    pub(crate) fn sidebar_visible(&self) -> bool {
+        self.properties.sidebar_visible
+    }
+
+    pub(crate) fn set_sidebar_visible(&mut self, visible: bool) {
+        self.properties.sidebar_visible = visible;
+    }
 }
 
 pub fn run_with_path(basepath: PathBuf, filename: String) {
     let application_properties = Arc::new(Mutex::new(PropertiesState::default()));
     let setup_properties = Arc::clone(&application_properties);
     let event_properties = Arc::clone(&application_properties);
+    let managed_properties = Arc::clone(&application_properties);
 
     tauri::Builder::default()
         .manage(AppState::new(basepath, filename))
+        .manage(managed_properties)
         .plugin(tauri_plugin_opener::init())
         .setup(move |app| {
             let (properties_path, application_properties) = match app.path().home_dir() {
@@ -167,9 +179,10 @@ pub fn run_with_path(basepath: PathBuf, filename: String) {
                     };
                     match properties::save(&path, &application_properties) {
                         Ok(()) => info!(
-                            "Saved application properties, including window dimensions {}x{}, to {}",
+                            "Saved application properties, including window dimensions {}x{} and sidebar visibility {}, to {}",
                             application_properties.width,
                             application_properties.height,
+                            application_properties.sidebar_visible,
                             path.display()
                         ),
                         Err(message) => error!("Failed to save application properties: {message}"),
@@ -181,6 +194,7 @@ pub fn run_with_path(basepath: PathBuf, filename: String) {
         .invoke_handler(tauri::generate_handler![
             commands::initial_config,
             commands::set_current_filename,
+            commands::set_sidebar_visible,
             commands::path_kind,
             commands::resolve_link,
             commands::list_directory,

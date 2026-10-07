@@ -6,7 +6,7 @@ use crate::paths::{
     canonical_basepath, normalize_link_filename, resolve_existing_path, resolve_write_path,
 };
 use std::path::PathBuf;
-use std::sync::Mutex;
+use std::sync::{Arc, Mutex};
 use tauri_plugin_opener::OpenerExt;
 use tracing::info;
 
@@ -49,6 +49,7 @@ impl AppState {
 pub(crate) struct InitialConfig {
     basepath: String,
     filename: String,
+    sidebar_visible: bool,
 }
 
 #[derive(serde::Serialize)]
@@ -92,10 +93,18 @@ pub(crate) struct ReadBinaryFileResult {
 }
 
 #[tauri::command]
-pub(crate) fn initial_config(state: tauri::State<'_, AppState>) -> Result<InitialConfig, String> {
+pub(crate) fn initial_config(
+    state: tauri::State<'_, AppState>,
+    properties_state: tauri::State<'_, Arc<Mutex<crate::PropertiesState>>>,
+) -> Result<InitialConfig, String> {
+    let sidebar_visible = properties_state
+        .lock()
+        .map_err(|error| format!("unable to read application properties: {error}"))?
+        .sidebar_visible();
     Ok(InitialConfig {
         basepath: state.basepath.to_string_lossy().into_owned(),
         filename: state.filename()?,
+        sidebar_visible,
     })
 }
 
@@ -107,6 +116,18 @@ pub(crate) fn set_current_filename(
     crate::paths::validate_relative_filename(&filename)
         .map_err(|_| "filename must be relative to the base path".to_owned())?;
     state.set_filename(filename)
+}
+
+#[tauri::command]
+pub(crate) fn set_sidebar_visible(
+    properties_state: tauri::State<'_, Arc<Mutex<crate::PropertiesState>>>,
+    visible: bool,
+) -> Result<(), String> {
+    properties_state
+        .lock()
+        .map_err(|error| format!("unable to update application properties: {error}"))?
+        .set_sidebar_visible(visible);
+    Ok(())
 }
 
 #[tauri::command]
