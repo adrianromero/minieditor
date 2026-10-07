@@ -10,18 +10,19 @@ import {
     useContext,
     type Accessor,
     type JSX,
-    type Setter,
 } from "solid-js";
 import styles from "./SidebarTab.module.css";
 
 export type SidebarTabProps = {
     children: JSX.Element;
     defaultKey?: string;
+    selectedKey?: string;
+    onSelectedKeyChange?: (key: string | undefined) => void;
 };
 
 export type SidebarTabContextValue = {
     selectedKey: Accessor<string | undefined>;
-    setSelectedKey: Setter<string | undefined>;
+    setSelectedKey: (key: string | undefined) => void;
     register: (key: string) => void;
     tabList: HTMLDivElement;
 };
@@ -35,9 +36,16 @@ export function useSidebarTab(): SidebarTabContextValue {
 }
 
 export function SidebarTab(props: SidebarTabProps): JSX.Element {
-    const [selectedKey, setSelectedKey] = createSignal<string | undefined>(props.defaultKey);
+    const [internalSelectedKey, setInternalSelectedKey] = createSignal<string | undefined>(
+        props.defaultKey
+    );
     const [tabList, setTabList] = createSignal<HTMLDivElement>();
     const registeredKeys = new Set<string>();
+    const selectedKey = (): string | undefined => props.selectedKey ?? internalSelectedKey();
+    const setSelectedKey = (key: string | undefined): void => {
+        setInternalSelectedKey(key);
+        props.onSelectedKeyChange?.(key);
+    };
 
     const register = (key: string): void => {
         if (registeredKeys.has(key)) return;

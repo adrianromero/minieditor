@@ -81,6 +81,8 @@ describe("createFileEditorController", () => {
                 setReloadFile: (handler) => {
                     reloadFile = handler;
                 },
+                searchFile: () => null,
+                setSearchFile: vi.fn(),
                 fileModified,
                 setFileModified,
             },

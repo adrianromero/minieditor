@@ -5,12 +5,20 @@
 
 import { type Accessor, type JSX, onCleanup, onMount } from "solid-js";
 
-type ShortcutHandler = () => Promise<void>;
+export type ShortcutHandler = () => void | Promise<void>;
+export type ShortcutPhase = "capture" | "bubble";
+
+export type ShortcutDefinition = {
+    id: string;
+    key: string;
+    shift?: boolean;
+    alt?: boolean;
+    phase?: ShortcutPhase;
+    getHandler: Accessor<ShortcutHandler | null>;
+};
 
 type AppShortcutsProps = {
-    saveFile: Accessor<ShortcutHandler | null>;
-    reloadFile: Accessor<ShortcutHandler | null>;
-    fileModified: Accessor<boolean>;
+    shortcuts: readonly ShortcutDefinition[];
     interactionsBlocked: Accessor<boolean>;
 };
 
@@ -18,61 +26,76 @@ function isPrimaryModifier(event: KeyboardEvent): boolean {
     return (event.ctrlKey || event.metaKey) && !(event.ctrlKey && event.metaKey);
 }
 
-function hasExactPrimaryModifiers(event: KeyboardEvent): boolean {
-    return isPrimaryModifier(event) && !event.altKey && !event.shiftKey;
+function matchesShortcut(event: KeyboardEvent, shortcut: ShortcutDefinition): boolean {
+    return (
+        event.key.toLowerCase() === shortcut.key.toLowerCase() &&
+        isPrimaryModifier(event) &&
+        event.shiftKey === Boolean(shortcut.shift) &&
+        event.altKey === Boolean(shortcut.alt)
+    );
 }
 
 export function AppShortcuts(props: AppShortcutsProps): JSX.Element {
-    const runningActions = new Set<"save" | "reload">();
+    const runningActions = new Set<string>();
 
-    const run = (action: "save" | "reload", handler: ShortcutHandler): void => {
-        if (runningActions.has(action)) {
+    const execute = (
+        phase: ShortcutPhase,
+        shortcut: ShortcutDefinition,
+        handler: ShortcutHandler
+    ): void => {
+        if (phase === "capture") {
+            void handler();
             return;
         }
 
-        runningActions.add(action);
-        void handler().finally(() => runningActions.delete(action));
-    };
+        if (runningActions.has(shortcut.id)) return;
+        runningActions.add(shortcut.id);
 
-    const handleKeyDown = (event: KeyboardEvent): void => {
-        if (
-            event.defaultPrevented ||
-            event.isComposing ||
-            !hasExactPrimaryModifiers(event)
-        ) {
-            return;
-        }
-
-        const key = event.key.toLowerCase();
-        if (key !== "s" && key !== "r") {
-            return;
-        }
-
-        // These combinations belong to the application. Always suppress the
-        // WebView's Save Page and Reload behaviors, even when the current action
-        // is unavailable.
-        event.preventDefault();
-
-        if (event.repeat || props.interactionsBlocked()) {
-            return;
-        }
-
-        if (key === "s") {
-            const saveFile = props.saveFile();
-            if (saveFile && props.fileModified()) {
-                run("save", saveFile);
+        try {
+            const result = handler();
+            if (result) {
+                void result.finally(() => runningActions.delete(shortcut.id));
+            } else {
+                runningActions.delete(shortcut.id);
             }
-            return;
-        }
-
-        const reloadFile = props.reloadFile();
-        if (reloadFile) {
-            run("reload", reloadFile);
+        } catch (error: unknown) {
+            runningActions.delete(shortcut.id);
+            throw error;
         }
     };
 
-    onMount(() => document.addEventListener("keydown", handleKeyDown));
-    onCleanup(() => document.removeEventListener("keydown", handleKeyDown));
+    const handleKeyDown = (phase: ShortcutPhase, event: KeyboardEvent): void => {
+        if (event.defaultPrevented || event.isComposing) return;
+
+        const shortcut = props.shortcuts.find(
+            (candidate) =>
+                (candidate.phase ?? "bubble") === phase && matchesShortcut(event, candidate)
+        );
+        if (!shortcut) return;
+
+        event.preventDefault();
+        if (phase === "capture") event.stopPropagation();
+
+        const handler = shortcut.getHandler();
+
+        if (!handler || props.interactionsBlocked() || event.repeat) {
+            return;
+        }
+
+        execute(phase, shortcut, handler);
+    };
+
+    const handleCaptureKeyDown = (event: KeyboardEvent): void => handleKeyDown("capture", event);
+    const handleBubbleKeyDown = (event: KeyboardEvent): void => handleKeyDown("bubble", event);
+
+    onMount(() => {
+        document.addEventListener("keydown", handleCaptureKeyDown, { capture: true });
+        document.addEventListener("keydown", handleBubbleKeyDown);
+    });
+    onCleanup(() => {
+        document.removeEventListener("keydown", handleCaptureKeyDown, { capture: true });
+        document.removeEventListener("keydown", handleBubbleKeyDown);
+    });
 
     return <></>;
 }

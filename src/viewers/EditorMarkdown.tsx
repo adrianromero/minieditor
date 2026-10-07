@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { createSignal, onCleanup, onMount, Show, JSX } from "solid-js";
+import { createEffect, createSignal, onCleanup, onMount, Show, JSX } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import { Crepe } from "@milkdown/crepe";
 import { editorViewCtx, EditorStatus } from "@milkdown/kit/core";
@@ -31,6 +31,8 @@ import MarkdownImageActions from "./MarkdownImageActions";
 import { configureMarkdownSerialization } from "./MarkdownSerialization";
 import { configureCodeLanguages } from "./CodeLanguages";
 import { joinMarkdownFrontmatter, splitMarkdownFrontmatter } from "./MarkdownFrontmatter";
+import { ProseMirrorSearchController } from "../search/ProseMirrorSearchController";
+import type { SearchController } from "../search/SearchController";
 
 export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -38,13 +40,18 @@ export function EditorMarkdown(): JSX.Element {
     let crepeInstance: Crepe | null = null;
     let frontmatterEditor: CodeMirrorEditorView | null = null;
     let imageProxy: MarkdownImageProxy | null = null;
+    let currentSearchController: ProseMirrorSearchController | null = null;
+    let focusSearch: (() => void) | null = null;
     const [editorReady, setEditorReady] = createSignal(false);
     const [imageActionsCrepe, setImageActionsCrepe] = createSignal<Crepe | null>(null);
     const [frontmatterVisible, setFrontmatterVisible] = createSignal(false);
+    const [searchController, setSearchController] = createSignal<SearchController | null>(null);
+    const [selectedSidebarTab, setSelectedSidebarTab] = createSignal("format");
 
     const { t } = useI18N();
     const {
         main: { basepath, filename, loadFilename, showAppMessage },
+        editor: { setSearchFile },
     } = useAppContext();
 
     const navigateToAnchor = (href: string): boolean => {
@@ -131,6 +138,9 @@ export function EditorMarkdown(): JSX.Element {
         replaceContent: async (content, currentFilename, onModified) => {
             setEditorReady(false);
             setImageActionsCrepe(null);
+            currentSearchController?.destroy();
+            currentSearchController = null;
+            setSearchController(null);
             const document = splitMarkdownFrontmatter(content);
             setFrontmatterVisible(document.hasFrontmatter);
             frontmatterEditor = new CodeMirrorEditorView({
@@ -212,11 +222,18 @@ export function EditorMarkdown(): JSX.Element {
 
             await nextCrepe.create();
             nextCrepe.editor.action((ctx) => ctx.get(editorViewCtx).focus());
+            nextCrepe.editor.action((ctx) => {
+                currentSearchController = new ProseMirrorSearchController(ctx.get(editorViewCtx));
+                setSearchController(currentSearchController);
+            });
             setEditorReady(true);
         },
         destroy: async () => {
             setEditorReady(false);
             setImageActionsCrepe(null);
+            currentSearchController?.destroy();
+            currentSearchController = null;
+            setSearchController(null);
             setFrontmatterVisible(false);
             frontmatterEditor?.destroy();
             frontmatterEditor = null;
@@ -257,6 +274,14 @@ export function EditorMarkdown(): JSX.Element {
             crepeInstance?.editor.action((ctx) => ctx.get(editorViewCtx).focus());
         });
     };
+    const openSearch = (): void => {
+        setSelectedSidebarTab("search");
+        requestAnimationFrame(() => focusSearch?.());
+    };
+
+    createEffect(() => {
+        setSearchFile(state().status === "ready" ? openSearch : null);
+    });
 
     onMount(() => {
         editorRef.addEventListener("click", handleLinkPreviewClick, { capture: true });
@@ -264,6 +289,7 @@ export function EditorMarkdown(): JSX.Element {
 
     onCleanup(() => {
         editorRef.removeEventListener("click", handleLinkPreviewClick, { capture: true });
+        setSearchFile(null);
     });
 
     return (
@@ -290,6 +316,12 @@ export function EditorMarkdown(): JSX.Element {
                 getEditor={() => (editorReady() && crepeInstance ? crepeInstance.editor : null)}
                 frontmatterVisible={frontmatterVisible()}
                 onToggleFrontmatter={toggleFrontmatter}
+                searchController={searchController()}
+                selectedTab={selectedSidebarTab()}
+                onSelectedTabChange={setSelectedSidebarTab}
+                registerSearchFocus={(focus) => {
+                    focusSearch = focus;
+                }}
             />
         </section>
     );

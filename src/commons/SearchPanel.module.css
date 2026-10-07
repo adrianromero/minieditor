@@ -1,0 +1,130 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.buttonRow {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.input {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    padding: 0.45rem 0.55rem;
+    color: var(--color-text);
+    font: inherit;
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+}
+
+.input:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 0;
+}
+
+.input[aria-invalid="true"] {
+    border-color: var(--color-error);
+}
+
+.searchField {
+    position: relative;
+    min-width: 0;
+}
+
+.searchInput {
+    padding-right: 4rem;
+}
+
+.counter {
+    position: absolute;
+    top: 50%;
+    right: 0.55rem;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    font-variant-numeric: tabular-nums;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.5rem;
+}
+
+.switchOption {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    color: var(--color-text);
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.switch {
+    appearance: none;
+    box-sizing: border-box;
+    flex: none;
+    width: 2rem;
+    height: 1.125rem;
+    margin: 0;
+    background-color: var(--color-secondary);
+    background-image: radial-gradient(
+        circle,
+        var(--color-text-muted) 0 50%,
+        transparent 55%
+    );
+    background-repeat: no-repeat;
+    background-position: 0.125rem center;
+    background-size: 0.75rem 0.75rem;
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 999px;
+    cursor: pointer;
+    transition:
+        background-color 120ms ease,
+        background-position 120ms ease,
+        border-color 120ms ease;
+}
+
+.switch:checked {
+    background-color: var(--color-primary);
+    background-image: radial-gradient(
+        circle,
+        var(--color-on-primary) 0 50%,
+        transparent 55%
+    );
+    background-position: calc(100% - 0.125rem) center;
+    border-color: var(--color-border-primary);
+}
+
+.switch:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+}
+
+.textButton {
+    width: 100%;
+    min-width: 0;
+    padding-right: 0.5rem;
+    padding-left: 0.5rem;
+    font-size: 0.8rem;
+}
+
+.invalid {
+    min-width: 0;
+    color: var(--color-error-text);
+    font-size: 0.75rem;
+}

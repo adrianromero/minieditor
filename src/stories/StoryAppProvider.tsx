@@ -5,6 +5,7 @@ import {
     type OnunloadHandler,
     type ReloadFileHandler,
     type SaveFileHandler,
+    type SearchFileHandler,
 } from "../AppContext";
 
 type StoryAppProviderProps = {
@@ -32,6 +33,7 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
     const [reloadFile, setReloadFileSignal] = createSignal<ReloadFileHandler | null>(
         props.reloadAvailable === false ? null : defaultReloadFile
     );
+    const [searchFile, setSearchFileSignal] = createSignal<SearchFileHandler | null>(null);
 
     const setOnunload = (handler: OnunloadHandler | null): void => {
         setOnunloadSignal(() => handler);
@@ -41,6 +43,9 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
     };
     const setReloadFile = (handler: ReloadFileHandler | null): void => {
         setReloadFileSignal(() => handler);
+    };
+    const setSearchFile = (handler: SearchFileHandler | null): void => {
+        setSearchFileSignal(() => handler);
     };
 
     const value: AppContextValues = {
@@ -67,6 +72,8 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
             setSaveFile,
             reloadFile,
             setReloadFile,
+            searchFile,
+            setSearchFile,
             fileModified,
             setFileModified,
         },

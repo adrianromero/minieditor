@@ -12,32 +12,65 @@ describe("AppShortcuts", () => {
     let dispose: (() => void) | undefined;
     let saveFile: ReturnType<typeof vi.fn<() => Promise<void>>>;
     let reloadFile: ReturnType<typeof vi.fn<() => Promise<void>>>;
+    let searchFile: ReturnType<typeof vi.fn<() => void>>;
+    let customAction: ReturnType<typeof vi.fn<() => void>>;
     let setSaveAvailable: (available: boolean) => void;
     let setReloadAvailable: (available: boolean) => void;
+    let setSearchAvailable: (available: boolean) => void;
     let setFileModified: (modified: boolean) => void;
     let setInteractionsBlocked: (blocked: boolean) => void;
 
     beforeEach(() => {
         saveFile = vi.fn(() => Promise.resolve());
         reloadFile = vi.fn(() => Promise.resolve());
+        searchFile = vi.fn();
+        customAction = vi.fn();
         const [saveAvailable, setSaveAvailableSignal] = createSignal(false);
         const [reloadAvailable, setReloadAvailableSignal] = createSignal(false);
+        const [searchAvailable, setSearchAvailableSignal] = createSignal(false);
         const [fileModified, setFileModifiedSignal] = createSignal(false);
         const [interactionsBlocked, setInteractionsBlockedSignal] = createSignal(false);
 
         setSaveAvailable = setSaveAvailableSignal;
         setReloadAvailable = setReloadAvailableSignal;
+        setSearchAvailable = setSearchAvailableSignal;
         setFileModified = setFileModifiedSignal;
         setInteractionsBlocked = setInteractionsBlockedSignal;
+
+        const saveModifiedFile = (): void | Promise<void> => {
+            if (saveAvailable() && fileModified()) {
+                return saveFile();
+            }
+        };
 
         const root = document.createElement("div");
         document.body.append(root);
         dispose = render(
             () => (
                 <AppShortcuts
-                    saveFile={() => (saveAvailable() ? saveFile : null)}
-                    reloadFile={() => (reloadAvailable() ? reloadFile : null)}
-                    fileModified={fileModified}
+                    shortcuts={[
+                        {
+                            id: "save",
+                            key: "s",
+                            getHandler: () => saveModifiedFile,
+                        },
+                        {
+                            id: "reload",
+                            key: "r",
+                            getHandler: () => (reloadAvailable() ? reloadFile : null),
+                        },
+                        {
+                            id: "search",
+                            key: "f",
+                            phase: "capture",
+                            getHandler: () => (searchAvailable() ? searchFile : null),
+                        },
+                        {
+                            id: "custom",
+                            key: "k",
+                            getHandler: () => customAction,
+                        },
+                    ]}
                     interactionsBlocked={interactionsBlocked}
                 />
             ),
@@ -87,6 +120,23 @@ describe("AppShortcuts", () => {
         expect(reloadFile).toHaveBeenCalledOnce();
     });
 
+    it("opens editor search with Mod+F only when Search is available", () => {
+        const unavailableEvent = press("f");
+        expect(unavailableEvent.defaultPrevented).toBe(true);
+        expect(searchFile).not.toHaveBeenCalled();
+
+        setSearchAvailable(true);
+        press("F", { ctrlKey: false, metaKey: true });
+        expect(searchFile).toHaveBeenCalledOnce();
+    });
+
+    it("executes additional shortcuts supplied only through configuration", () => {
+        const event = press("k");
+
+        expect(event.defaultPrevented).toBe(true);
+        expect(customAction).toHaveBeenCalledOnce();
+    });
+
     it("leaves editor shortcuts and modified variants untouched", () => {
         setSaveAvailable(true);
         setFileModified(true);
@@ -101,15 +151,21 @@ describe("AppShortcuts", () => {
 
     it("does not execute actions while interaction is blocked or a key repeats", () => {
         setReloadAvailable(true);
+        setSearchAvailable(true);
         setInteractionsBlocked(true);
         const blockedEvent = press("r");
+        const blockedSearchEvent = press("f");
 
         setInteractionsBlocked(false);
         const repeatedEvent = press("r", { repeat: true });
+        const repeatedSearchEvent = press("f", { repeat: true });
 
         expect(blockedEvent.defaultPrevented).toBe(true);
+        expect(blockedSearchEvent.defaultPrevented).toBe(true);
         expect(repeatedEvent.defaultPrevented).toBe(true);
+        expect(repeatedSearchEvent.defaultPrevented).toBe(true);
         expect(reloadFile).not.toHaveBeenCalled();
+        expect(searchFile).not.toHaveBeenCalled();
     });
 
     it("respects an editor that already handled the event", () => {

@@ -41,6 +41,8 @@ describe("Toolbar", () => {
             setSaveFile,
             reloadFile,
             setReloadFile,
+            searchFile: () => null,
+            setSearchFile: vi.fn(),
             fileModified,
             setFileModified: setFileModifiedSignal,
         };

@@ -3,16 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-import {
-    createResource,
-    createSignal,
-    For,
-    JSX,
-    Match,
-    onCleanup,
-    Show,
-    Switch,
-} from "solid-js";
+import { createResource, createSignal, For, JSX, Match, onCleanup, Show, Switch } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
 import Eye from "lucide-solid/icons/eye";
 import EyeOff from "lucide-solid/icons/eye-off";
@@ -134,10 +125,7 @@ export function EditorFolder(): JSX.Element {
                             aria-pressed={showHidden()}
                             onClick={() => setShowHidden((visible) => !visible)}
                         >
-                            <Dynamic
-                                component={showHidden() ? EyeOff : Eye}
-                                aria-hidden="true"
-                            />
+                            <Dynamic component={showHidden() ? EyeOff : Eye} aria-hidden="true" />
                             {t(showHidden() ? "folder.hideHidden" : "folder.showHidden")}
                         </button>
                     </div>

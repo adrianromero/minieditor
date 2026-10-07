@@ -6,6 +6,14 @@
  * Las reglas están agrupadas por formato para facilitar su personalización.
  */
 
+.milkdowntheme .ProseMirror-search-match {
+    background: var(--color-search-match);
+}
+
+.milkdowntheme .ProseMirror-active-search-match {
+    background: var(--color-search-match-active);
+}
+
 /* Documento */
 .milkdowntheme > .milkdown .ProseMirror {
     padding: 40px 80px;

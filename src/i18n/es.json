@@ -17,6 +17,20 @@
         "showHidden": "Mostrar archivos ocultos",
         "hideHidden": "Ocultar archivos ocultos"
     },
+    "search": {
+        "title": "Buscar",
+        "format": "Formato",
+        "searchFor": "Buscar texto",
+        "replaceWith": "Reemplazar por",
+        "previous": "Anterior",
+        "next": "Siguiente",
+        "matchCase": "Distinguir mayúsculas y minúsculas",
+        "wholeWord": "Solo palabras completas",
+        "regexp": "Usar expresión regular",
+        "invalidRegexp": "Expresión no válida",
+        "replace": "Reemplazar",
+        "replaceAll": "Reemplazar todo"
+    },
     "markdownToolbar": {
         "document": "Documento",
         "frontmatter": "Propiedades",

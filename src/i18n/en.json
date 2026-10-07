@@ -17,6 +17,20 @@
         "showHidden": "Show hidden files",
         "hideHidden": "Hide hidden files"
     },
+    "search": {
+        "title": "Search",
+        "format": "Format",
+        "searchFor": "Find text",
+        "replaceWith": "Replace with",
+        "previous": "Previous",
+        "next": "Next",
+        "matchCase": "Match case",
+        "wholeWord": "Match whole word",
+        "regexp": "Use regular expression",
+        "invalidRegexp": "Invalid expression",
+        "replace": "Replace",
+        "replaceAll": "Replace all"
+    },
     "markdownToolbar": {
         "document": "Document",
         "frontmatter": "Properties",

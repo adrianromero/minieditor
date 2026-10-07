@@ -20,10 +20,11 @@ import Dialog from "./Dialog";
 import { TranslationKey, useI18N } from "./Localization";
 import { UserMessageError } from "./UserMessageError";
 import { MessageInfoKind } from "./messagesinfo";
-import AppShortcuts from "./AppShortcuts";
+import AppShortcuts, { type ShortcutDefinition } from "./AppShortcuts";
 
 export type SaveFileHandler = () => Promise<void>;
 export type ReloadFileHandler = () => Promise<void>;
+export type SearchFileHandler = () => void;
 export type OnunloadHandler = () => Promise<void>;
 
 export type AppContextValues = {
@@ -52,6 +53,8 @@ export type AppContextValues = {
         setSaveFile: (handler: SaveFileHandler | null) => void;
         reloadFile: Accessor<ReloadFileHandler | null>;
         setReloadFile: (handler: ReloadFileHandler | null) => void;
+        searchFile: Accessor<SearchFileHandler | null>;
+        setSearchFile: (handler: SearchFileHandler | null) => void;
         fileModified: Accessor<boolean>;
         setFileModified: Setter<boolean>;
     };
@@ -78,6 +81,7 @@ export function AppProvider(props: {
 
     const [saveFile, setSaveFileSignal] = createSignal<SaveFileHandler | null>(null);
     const [reloadFile, setReloadFileSignal] = createSignal<ReloadFileHandler | null>(null);
+    const [searchFile, setSearchFileSignal] = createSignal<SearchFileHandler | null>(null);
     const [onunload, setOnunloadSignal] = createSignal<OnunloadHandler | null>(null);
     const [fileModified, setFileModified] = createSignal(false);
     const [spinnerVisible, setSpinnerVisible] = createSignal(false);
@@ -99,6 +103,33 @@ export function AppProvider(props: {
     const setReloadFile = (handler: ReloadFileHandler | null) => {
         setReloadFileSignal(() => handler);
     };
+    const setSearchFile = (handler: SearchFileHandler | null) => {
+        setSearchFileSignal(() => handler);
+    };
+    const saveModifiedFile = (): void | Promise<void> => {
+        const handler = saveFile();
+        if (handler && fileModified()) {
+            return handler();
+        }
+    };
+    const shortcuts = [
+        {
+            id: "save",
+            key: "s",
+            getHandler: () => saveModifiedFile,
+        },
+        {
+            id: "reload",
+            key: "r",
+            getHandler: reloadFile,
+        },
+        {
+            id: "search",
+            key: "f",
+            phase: "capture",
+            getHandler: searchFile,
+        },
+    ] satisfies readonly ShortcutDefinition[];
 
     const showAppMessage: (msg: string, info?: MessageInfoKind) => Promise<void> = (msg, info) => {
         return new Promise((resolve) => {
@@ -227,6 +258,8 @@ export function AppProvider(props: {
                     setSaveFile,
                     reloadFile,
                     setReloadFile,
+                    searchFile,
+                    setSearchFile,
                     fileModified,
                     setFileModified,
                 },
@@ -234,9 +267,7 @@ export function AppProvider(props: {
         >
             {props.children}
             <AppShortcuts
-                saveFile={saveFile}
-                reloadFile={reloadFile}
-                fileModified={fileModified}
+                shortcuts={shortcuts}
                 interactionsBlocked={() => spinnerVisible() || appMessage() !== null}
             />
             <SpinnerPanel visible={spinnerVisible()} text={spinnerText()} />

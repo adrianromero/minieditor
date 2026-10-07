@@ -73,12 +73,20 @@ import Strikethrough from "lucide-solid/icons/strikethrough";
 import Table2 from "lucide-solid/icons/table-2";
 import { useI18N } from "../Localization";
 import Sidebar, { useSidebarDisabled } from "../commons/Sidebar";
+import SidebarTab from "../commons/SidebarTab";
+import SidebarTabSection from "../commons/SidebarTabSection";
+import SearchPanel from "../commons/SearchPanel";
+import type { SearchController } from "../search/SearchController";
 
 type EditorMarkdownSidebarProps = {
     getEditor: () => Editor | null;
     disabled?: boolean;
     frontmatterVisible: boolean;
     onToggleFrontmatter: () => void;
+    searchController: SearchController | null;
+    selectedTab: string;
+    onSelectedTabChange: (key: string) => void;
+    registerSearchFocus?: (focus: (() => void) | null) => void;
 };
 
 type ListKind = "bullet" | "ordered" | "task";
@@ -569,7 +577,11 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
 
     return (
         <Sidebar disabled={props.disabled}>
-            <div class="sidebarPanel">
+            <SidebarTab
+                selectedKey={props.selectedTab}
+                onSelectedKeyChange={(key) => key && props.onSelectedTabChange(key)}
+            >
+                <SidebarTabSection key="format" label={t("search.format")}>
                 <section class="sidebarSection">
                     <h2 class="sidebarSectionTitle">{t("markdownToolbar.blockStyle")}</h2>
                     <div class="sidebarButtonGrid sidebarButtonGrid--6">
@@ -822,7 +834,14 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                         onRun={props.onToggleFrontmatter}
                     />
                 </section>
-            </div>
+                </SidebarTabSection>
+                <SidebarTabSection key="search" label={t("search.title")}>
+                    <SearchPanel
+                        controller={props.searchController}
+                        registerFocus={props.registerSearchFocus}
+                    />
+                </SidebarTabSection>
+            </SidebarTab>
         </Sidebar>
     );
 }

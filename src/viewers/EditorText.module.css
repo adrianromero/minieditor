@@ -3,6 +3,15 @@
  * SPDX-License-Identifier: MIT
  */
 
+.studio {
+    display: flex;
+    flex: 1 1 0;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    background: var(--color-view-background);
+}
+
 .editorText > :global(.cm-editor) {
     color: var(--color-text);
 }
@@ -25,4 +34,18 @@
 
 .editorText :global(.cm-editor.cm-focused) {
     outline: none;
+}
+
+.editorText :global(.cm-searchMatch) {
+    background: var(--color-search-match);
+}
+
+.editorText :global(.cm-searchMatch.cm-searchMatch-selected) {
+    background: var(--color-search-match-active);
+}
+
+@media (max-width: 650px) {
+    .studio {
+        flex-direction: column;
+    }
 }
