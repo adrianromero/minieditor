@@ -51,7 +51,7 @@ export function EditorMarkdown(): JSX.Element {
     const { t } = useI18N();
     const {
         main: { basepath, filename, loadFilename, showAppMessage },
-        editor: { setSearchFile },
+        editor: { setSearchFile, setSidebarVisible },
     } = useAppContext();
 
     const navigateToAnchor = (href: string): boolean => {
@@ -275,6 +275,7 @@ export function EditorMarkdown(): JSX.Element {
         });
     };
     const openSearch = (): void => {
+        setSidebarVisible(true);
         setSelectedSidebarTab("search");
         requestAnimationFrame(() => focusSearch?.());
     };

@@ -43,6 +43,7 @@ describe("createFileEditorController", () => {
         const [basepath, setBasepath] = createSignal("/documents");
         const [filename, setFilename] = createSignal("notes.md");
         const [fileModified, setFileModified] = createSignal(false);
+        const [sidebarVisible, setSidebarVisible] = createSignal(true);
         saveFile = null;
         reloadFile = null;
         onunload = null;
@@ -83,6 +84,10 @@ describe("createFileEditorController", () => {
                 },
                 searchFile: () => null,
                 setSearchFile: vi.fn(),
+                sidebarVisible,
+                setSidebarVisible,
+                toggleSidebar: () => null,
+                setToggleSidebar: vi.fn(),
                 fileModified,
                 setFileModified,
             },

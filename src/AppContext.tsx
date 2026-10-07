@@ -25,6 +25,7 @@ import AppShortcuts, { type ShortcutDefinition } from "./AppShortcuts";
 export type SaveFileHandler = () => Promise<void>;
 export type ReloadFileHandler = () => Promise<void>;
 export type SearchFileHandler = () => void;
+export type ToggleSidebarHandler = () => void;
 export type OnunloadHandler = () => Promise<void>;
 
 export type AppContextValues = {
@@ -55,6 +56,10 @@ export type AppContextValues = {
         setReloadFile: (handler: ReloadFileHandler | null) => void;
         searchFile: Accessor<SearchFileHandler | null>;
         setSearchFile: (handler: SearchFileHandler | null) => void;
+        sidebarVisible: Accessor<boolean>;
+        setSidebarVisible: Setter<boolean>;
+        toggleSidebar: Accessor<ToggleSidebarHandler | null>;
+        setToggleSidebar: (handler: ToggleSidebarHandler | null) => void;
         fileModified: Accessor<boolean>;
         setFileModified: Setter<boolean>;
     };
@@ -82,6 +87,8 @@ export function AppProvider(props: {
     const [saveFile, setSaveFileSignal] = createSignal<SaveFileHandler | null>(null);
     const [reloadFile, setReloadFileSignal] = createSignal<ReloadFileHandler | null>(null);
     const [searchFile, setSearchFileSignal] = createSignal<SearchFileHandler | null>(null);
+    const [sidebarVisible, setSidebarVisible] = createSignal(true);
+    const [toggleSidebar, setToggleSidebarSignal] = createSignal<ToggleSidebarHandler | null>(null);
     const [onunload, setOnunloadSignal] = createSignal<OnunloadHandler | null>(null);
     const [fileModified, setFileModified] = createSignal(false);
     const [spinnerVisible, setSpinnerVisible] = createSignal(false);
@@ -105,6 +112,9 @@ export function AppProvider(props: {
     };
     const setSearchFile = (handler: SearchFileHandler | null) => {
         setSearchFileSignal(() => handler);
+    };
+    const setToggleSidebar = (handler: ToggleSidebarHandler | null) => {
+        setToggleSidebarSignal(() => handler);
     };
     const saveModifiedFile = (): void | Promise<void> => {
         const handler = saveFile();
@@ -260,6 +270,10 @@ export function AppProvider(props: {
                     setReloadFile,
                     searchFile,
                     setSearchFile,
+                    sidebarVisible,
+                    setSidebarVisible,
+                    toggleSidebar,
+                    setToggleSidebar,
                     fileModified,
                     setFileModified,
                 },

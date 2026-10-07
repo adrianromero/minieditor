@@ -13,7 +13,7 @@ import { useI18N } from "../Localization";
 
 import { UserMessageError } from "../UserMessageError";
 import Control from "../commons/Control";
-import Sidebar from "../commons/Sidebar";
+import AppSidebar from "../commons/AppSidebar";
 import SidebarTab from "../commons/SidebarTab";
 import SidebarTabSection from "../commons/SidebarTabSection";
 import ErrorView from "./ErrorView";
@@ -344,7 +344,7 @@ export function EditorImage(): JSX.Element {
                     <span>{settings().rotation}°</span>
                 </div>
             </div>
-            <Sidebar disabled={editorDisabled()}>
+            <AppSidebar disabled={editorDisabled()}>
                 <SidebarTab defaultKey="transform">
                     <SidebarTabSection key="transform" label={t("image.transform")}>
                         <Control label={t("image.zoom")} value={`${Math.round(zoom() * 100)}%`}>
@@ -505,7 +505,7 @@ export function EditorImage(): JSX.Element {
                         </div>
                     </SidebarTabSection>
                 </SidebarTab>
-            </Sidebar>
+            </AppSidebar>
         </section>
     );
 }

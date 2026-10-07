@@ -7,6 +7,8 @@
         "back": "Atrás",
         "reload": "Recargar",
         "save": "Guardar",
+        "showSidebar": "Mostrar panel lateral",
+        "hideSidebar": "Ocultar panel lateral",
         "unsavedChanges": "Cambios sin guardar",
         "basePath": "[ . ]",
         "pathNavigation": "Ruta del archivo actual"

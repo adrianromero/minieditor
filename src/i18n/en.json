@@ -7,6 +7,8 @@
         "back": "Back",
         "reload": "Reload",
         "save": "Save",
+        "showSidebar": "Show sidebar",
+        "hideSidebar": "Hide sidebar",
         "unsavedChanges": "Unsaved changes",
         "basePath": "[ . ]",
         "pathNavigation": "Current file path"

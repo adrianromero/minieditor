@@ -5,6 +5,7 @@
 
 import { Show } from "solid-js";
 import HardDriveDownload from "lucide-solid/icons/hard-drive-download";
+import PanelRight from "lucide-solid/icons/panel-right";
 import RefreshCw from "lucide-solid/icons/refresh-cw";
 import { useAppContext } from "./AppContext";
 import FileBreadcrumb from "./FileBreadcrumb";
@@ -15,7 +16,7 @@ import styles from "./Toolbar.module.css";
 export function Toolbar() {
     const { t } = useI18N();
     const {
-        editor: { saveFile, reloadFile, fileModified },
+        editor: { saveFile, reloadFile, toggleSidebar, sidebarVisible, fileModified },
     } = useAppContext();
     return (
         <header class={styles.editorToolbar}>
@@ -34,6 +35,23 @@ export function Toolbar() {
                 </Show>
             </div>
             <div class={styles.toolbarActions}>
+                <Show when={toggleSidebar()}>
+                    <button
+                        class={`stdButton toolbar ${sidebarVisible() ? "selected" : ""}`}
+                        type="button"
+                        aria-label={t(
+                            sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar"
+                        )}
+                        title={t(
+                            sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar"
+                        )}
+                        aria-pressed={sidebarVisible()}
+                        onClick={() => toggleSidebar()?.()}
+                    >
+                        <PanelRight aria-hidden="true" />
+                    </button>
+                    <span class={styles.actionSeparator} aria-hidden="true" />
+                </Show>
                 <Show when={reloadFile()}>
                     <button
                         class="stdButton toolbar"

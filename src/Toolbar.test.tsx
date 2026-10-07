@@ -26,14 +26,21 @@ describe("Toolbar", () => {
     let dispose: (() => void) | undefined;
     let setSaveFile: (handler: SaveFileHandler | null) => void;
     let setReloadFile: (handler: ReloadFileHandler | null) => void;
+    let setToggleSidebar: AppContextValues["editor"]["setToggleSidebar"];
+    let setSidebarVisible: (visible: boolean) => void;
     let setFileModified: (modified: boolean) => void;
 
     beforeEach(() => {
         const [saveFile, setSaveFileSignal] = createSignal<SaveFileHandler | null>(null);
         const [reloadFile, setReloadFileSignal] = createSignal<ReloadFileHandler | null>(null);
+        const [toggleSidebar, setToggleSidebarSignal] =
+            createSignal<ReturnType<AppContextValues["editor"]["toggleSidebar"]>>(null);
+        const [sidebarVisible, setSidebarVisibleSignal] = createSignal(true);
         const [fileModified, setFileModifiedSignal] = createSignal(false);
         setSaveFile = (handler) => setSaveFileSignal(() => handler);
         setReloadFile = (handler) => setReloadFileSignal(() => handler);
+        setToggleSidebar = (handler) => setToggleSidebarSignal(() => handler);
+        setSidebarVisible = setSidebarVisibleSignal;
         setFileModified = setFileModifiedSignal;
 
         editorContext = {
@@ -43,6 +50,10 @@ describe("Toolbar", () => {
             setReloadFile,
             searchFile: () => null,
             setSearchFile: vi.fn(),
+            sidebarVisible,
+            setSidebarVisible: setSidebarVisibleSignal,
+            toggleSidebar,
+            setToggleSidebar,
             fileModified,
             setFileModified: setFileModifiedSignal,
         };
@@ -77,5 +88,30 @@ describe("Toolbar", () => {
 
         saveButton?.click();
         expect(save).toHaveBeenCalledOnce();
+    });
+
+    it("shows the registered sidebar toggle before the action separator", () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+        dispose = render(() => <Toolbar />, root);
+
+        expect(root.querySelector('[aria-label="toolbar.hideSidebar"]')).toBeNull();
+
+        const toggle = vi.fn(() => setSidebarVisible(false));
+        setToggleSidebar(toggle);
+
+        const button = root.querySelector<HTMLButtonElement>(
+            '[aria-label="toolbar.hideSidebar"]'
+        );
+        expect(button?.classList.contains("selected")).toBe(true);
+        expect(button?.getAttribute("aria-pressed")).toBe("true");
+        expect(button?.nextElementSibling?.getAttribute("aria-hidden")).toBe("true");
+
+        button?.click();
+
+        expect(toggle).toHaveBeenCalledOnce();
+        expect(button?.classList.contains("selected")).toBe(false);
+        expect(button?.getAttribute("aria-label")).toBe("toolbar.showSidebar");
+        expect(button?.getAttribute("aria-pressed")).toBe("false");
     });
 });

@@ -15,7 +15,7 @@ import {
 import { useI18N } from "../Localization";
 import styles from "./EditorText.module.css";
 import type { LanguageSupport } from "@codemirror/language";
-import Sidebar from "../commons/Sidebar";
+import AppSidebar from "../commons/AppSidebar";
 import SidebarTab from "../commons/SidebarTab";
 import SidebarTabSection from "../commons/SidebarTabSection";
 import SearchPanel from "../commons/SearchPanel";
@@ -40,7 +40,7 @@ export function EditorText(props: EditorTextProps): JSX.Element {
 
     const { t } = useI18N();
     const {
-        editor: { setSearchFile },
+        editor: { setSearchFile, setSidebarVisible },
     } = useAppContext();
     const adapter: FileEditorAdapter = {
         getContent: () => Promise.resolve(editorView?.state.doc.toString() ?? null),
@@ -83,6 +83,7 @@ export function EditorText(props: EditorTextProps): JSX.Element {
     };
     const editorDisabled = (): boolean => state().status !== "ready";
     const openSearch = (): void => {
+        setSidebarVisible(true);
         setSelectedTab("search");
         requestAnimationFrame(() => focusSearch?.());
     };
@@ -100,7 +101,7 @@ export function EditorText(props: EditorTextProps): JSX.Element {
             <div class={`scrollingView ${error() ? "errorView" : ""}`}>
                 <div ref={editorRef} class={`contentView ${styles.editorText}`} />
             </div>
-            <Sidebar disabled={editorDisabled()}>
+            <AppSidebar disabled={editorDisabled()}>
                 <SidebarTab
                     selectedKey={selectedTab()}
                     onSelectedKeyChange={(key) => key && setSelectedTab(key)}
@@ -114,7 +115,7 @@ export function EditorText(props: EditorTextProps): JSX.Element {
                         />
                     </SidebarTabSection>
                 </SidebarTab>
-            </Sidebar>
+            </AppSidebar>
         </section>
     );
 }

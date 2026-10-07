@@ -15,7 +15,7 @@ import styles from "./EditorFolder.module.css";
 import { translateAppError } from "../AppError";
 import { Dynamic } from "solid-js/web";
 import type { DirectoryEntry } from "../rusttypes";
-import Sidebar from "../commons/Sidebar";
+import AppSidebar from "../commons/AppSidebar";
 
 type DirectoryResult =
     | { entries: DirectoryEntry[]; error?: never }
@@ -116,7 +116,7 @@ export function EditorFolder(): JSX.Element {
                     </Switch>
                 </Show>
             </div>
-            <Sidebar>
+            <AppSidebar>
                 <div class="sidebarPanel">
                     <div class="sidebarButtonGrid sidebarButtonGrid--1">
                         <button
@@ -130,7 +130,7 @@ export function EditorFolder(): JSX.Element {
                         </button>
                     </div>
                 </div>
-            </Sidebar>
+            </AppSidebar>
         </section>
     );
 }

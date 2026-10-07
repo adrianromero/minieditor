@@ -72,7 +72,8 @@ import SquareSigma from "lucide-solid/icons/square-sigma";
 import Strikethrough from "lucide-solid/icons/strikethrough";
 import Table2 from "lucide-solid/icons/table-2";
 import { useI18N } from "../Localization";
-import Sidebar, { useSidebarDisabled } from "../commons/Sidebar";
+import AppSidebar from "../commons/AppSidebar";
+import { useSidebarDisabled } from "../commons/Sidebar";
 import SidebarTab from "../commons/SidebarTab";
 import SidebarTabSection from "../commons/SidebarTabSection";
 import SearchPanel from "../commons/SearchPanel";
@@ -576,7 +577,7 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
     });
 
     return (
-        <Sidebar disabled={props.disabled}>
+        <AppSidebar disabled={props.disabled}>
             <SidebarTab
                 selectedKey={props.selectedTab}
                 onSelectedKeyChange={(key) => key && props.onSelectedTabChange(key)}
@@ -842,7 +843,7 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                     />
                 </SidebarTabSection>
             </SidebarTab>
-        </Sidebar>
+        </AppSidebar>
     );
 }
 

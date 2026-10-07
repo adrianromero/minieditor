@@ -30,6 +30,9 @@ vi.mock("../AppContext", () => ({
             setReloadFile: (handler: ReloadFileHandler | null) => {
                 reloadFile = handler;
             },
+            sidebarVisible: () => true,
+            setSidebarVisible: vi.fn(),
+            setToggleSidebar: vi.fn(),
         },
     }),
 }));

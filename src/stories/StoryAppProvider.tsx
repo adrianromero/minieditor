@@ -6,6 +6,7 @@ import {
     type ReloadFileHandler,
     type SaveFileHandler,
     type SearchFileHandler,
+    type ToggleSidebarHandler,
 } from "../AppContext";
 
 type StoryAppProviderProps = {
@@ -34,6 +35,8 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
         props.reloadAvailable === false ? null : defaultReloadFile
     );
     const [searchFile, setSearchFileSignal] = createSignal<SearchFileHandler | null>(null);
+    const [sidebarVisible, setSidebarVisible] = createSignal(true);
+    const [toggleSidebar, setToggleSidebarSignal] = createSignal<ToggleSidebarHandler | null>(null);
 
     const setOnunload = (handler: OnunloadHandler | null): void => {
         setOnunloadSignal(() => handler);
@@ -46,6 +49,9 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
     };
     const setSearchFile = (handler: SearchFileHandler | null): void => {
         setSearchFileSignal(() => handler);
+    };
+    const setToggleSidebar = (handler: ToggleSidebarHandler | null): void => {
+        setToggleSidebarSignal(() => handler);
     };
 
     const value: AppContextValues = {
@@ -74,6 +80,10 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
             setReloadFile,
             searchFile,
             setSearchFile,
+            sidebarVisible,
+            setSidebarVisible,
+            toggleSidebar,
+            setToggleSidebar,
             fileModified,
             setFileModified,
         },
