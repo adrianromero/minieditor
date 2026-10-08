@@ -23,7 +23,13 @@ export function SpinnerPanel(props: SpinnerPanelProps): JSX.Element {
             <div class={styles.spinnerContent} role="status">
                 <svg class={styles.spinnerIcon} viewBox="0 0 50 50" aria-hidden="true">
                     <circle class={styles.spinnerTrack} cx="25" cy="25" r="20" />
-                    <circle class={styles.spinnerIndicator} cx="25" cy="25" r="20" />
+                    <circle
+                        class={styles.spinnerIndicator}
+                        cx="25"
+                        cy="25"
+                        r="20"
+                        transform="rotate(-90 25 25)"
+                    />
                 </svg>
                 <span class={styles.spinnerText}>{props.text}</span>
             </div>
