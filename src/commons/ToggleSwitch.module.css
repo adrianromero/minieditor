@@ -1,0 +1,145 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.root {
+    --toggle-width: 2.75rem;
+    --toggle-height: 1.5rem;
+    --toggle-thumb-size: 1rem;
+    --toggle-inset: 0.1875rem;
+    --toggle-font-size: 0.875rem;
+    --toggle-gap: 0.625rem;
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--toggle-gap);
+    color: var(--color-text);
+    font-size: var(--toggle-font-size);
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.small {
+    --toggle-width: 2rem;
+    --toggle-height: 1.125rem;
+    --toggle-thumb-size: 0.75rem;
+    --toggle-inset: 0.125rem;
+    --toggle-font-size: 0.8rem;
+    --toggle-gap: 0.55rem;
+}
+
+.medium {
+    --toggle-width: 2.75rem;
+    --toggle-height: 1.5rem;
+    --toggle-thumb-size: 1rem;
+    --toggle-inset: 0.1875rem;
+    --toggle-font-size: 0.875rem;
+    --toggle-gap: 0.625rem;
+}
+
+.large {
+    --toggle-width: 3.5rem;
+    --toggle-height: 1.875rem;
+    --toggle-thumb-size: 1.375rem;
+    --toggle-inset: 0.1875rem;
+    --toggle-font-size: 1rem;
+    --toggle-gap: 0.75rem;
+}
+
+.input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    border: 0;
+    white-space: nowrap;
+}
+
+.track {
+    position: relative;
+    display: inline-block;
+    box-sizing: border-box;
+    flex: 0 0 auto;
+    width: var(--toggle-width);
+    height: var(--toggle-height);
+    background: var(--color-secondary);
+    border: 1px solid var(--color-border-secondary);
+    border-radius: 999px;
+    transition:
+        background-color 120ms ease,
+        border-color 120ms ease;
+}
+
+.thumb {
+    position: absolute;
+    top: 50%;
+    left: var(--toggle-inset);
+    width: var(--toggle-thumb-size);
+    height: var(--toggle-thumb-size);
+    background: var(--color-text-muted);
+    border-radius: 50%;
+    box-shadow: 0 1px 3px var(--color-border);
+    transform: translateY(-50%);
+    transition:
+        background-color 120ms ease,
+        transform 120ms ease;
+}
+
+.input:checked + .track {
+    background: var(--color-primary);
+    border-color: var(--color-border-primary);
+}
+
+.input:checked + .track .thumb {
+    background: var(--color-on-primary);
+    transform: translate(
+        calc(
+            var(--toggle-width) - var(--toggle-thumb-size) - var(--toggle-inset) -
+                var(--toggle-inset) - 2px
+        ),
+        -50%
+    );
+}
+
+.input:focus-visible + .track {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+}
+
+.disabled {
+    color: var(--color-disabled);
+    cursor: not-allowed;
+}
+
+.input:disabled + .track {
+    background: var(--color-on-disabled);
+    border-color: var(--color-border-disabled);
+}
+
+.input:disabled + .track .thumb {
+    background: var(--color-disabled);
+    box-shadow: none;
+}
+
+.input:disabled:checked + .track {
+    background: var(--color-disabled);
+    border-color: var(--color-border-disabled);
+}
+
+.input:disabled:checked + .track .thumb {
+    background: var(--color-on-disabled);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .track,
+    .thumb {
+        transition: none;
+    }
+}

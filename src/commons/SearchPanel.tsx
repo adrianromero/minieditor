@@ -13,6 +13,7 @@ import {
     type SearchStatus,
 } from "../search/SearchController";
 import styles from "./SearchPanel.module.css";
+import ToggleSwitch from "./ToggleSwitch";
 
 export type SearchPanelProps = {
     controller: SearchController | null;
@@ -81,58 +82,28 @@ export function SearchPanel(props: SearchPanelProps): JSX.Element {
                 </span>
             </div>
 
-            <input
-                class={styles.input}
-                type="text"
-                value={query().replacement}
-                aria-label={t("search.replaceWith")}
-                placeholder={t("search.replaceWith")}
-                onInput={(event) => updateQuery({ replacement: event.currentTarget.value })}
-                onKeyDown={(event) => {
-                    if (event.key !== "Enter" || !canReplaceCurrent()) return;
-                    event.preventDefault();
-                    props.controller?.replaceCurrent();
-                }}
-            />
-
             <div class={styles.options}>
-                <SwitchOption
+                <ToggleSwitch
                     label={t("search.matchCase")}
                     checked={query().caseSensitive}
+                    size="small"
                     onChange={(checked) => updateQuery({ caseSensitive: checked })}
                 />
-                <SwitchOption
+                <ToggleSwitch
                     label={t("search.wholeWord")}
                     checked={query().wholeWord}
+                    size="small"
                     onChange={(checked) => updateQuery({ wholeWord: checked })}
                 />
-                <SwitchOption
+                <ToggleSwitch
                     label={t("search.regexp")}
                     checked={query().regexp}
+                    size="small"
                     onChange={(checked) => updateQuery({ regexp: checked })}
                 />
                 {query().search.length > 0 && !status().valid ? (
                     <span class={styles.invalid}>{t("search.invalidRegexp")}</span>
                 ) : null}
-            </div>
-
-            <div class={styles.buttonRow}>
-                <button
-                    type="button"
-                    class={`stdButton secondary ${styles.textButton}`}
-                    disabled={!canReplaceCurrent()}
-                    onClick={() => props.controller?.replaceCurrent()}
-                >
-                    {t("search.replace")}
-                </button>
-                <button
-                    type="button"
-                    class={`stdButton secondary ${styles.textButton}`}
-                    disabled={!canNavigate()}
-                    onClick={() => props.controller?.replaceAll()}
-                >
-                    {t("search.replaceAll")}
-                </button>
             </div>
 
             <div class={styles.buttonRow}>
@@ -153,28 +124,40 @@ export function SearchPanel(props: SearchPanelProps): JSX.Element {
                     {t("search.next")}
                 </button>
             </div>
-        </section>
-    );
-}
 
-type SwitchOptionProps = {
-    label: string;
-    checked: boolean;
-    onChange: (checked: boolean) => void;
-};
-
-function SwitchOption(props: SwitchOptionProps): JSX.Element {
-    return (
-        <label class={styles.switchOption}>
             <input
-                class={styles.switch}
-                type="checkbox"
-                role="switch"
-                checked={props.checked}
-                onChange={(event) => props.onChange(event.currentTarget.checked)}
+                class={styles.input}
+                type="text"
+                value={query().replacement}
+                aria-label={t("search.replaceWith")}
+                placeholder={t("search.replaceWith")}
+                onInput={(event) => updateQuery({ replacement: event.currentTarget.value })}
+                onKeyDown={(event) => {
+                    if (event.key !== "Enter" || !canReplaceCurrent()) return;
+                    event.preventDefault();
+                    props.controller?.replaceCurrent();
+                }}
             />
-            <span>{props.label}</span>
-        </label>
+
+            <div class={styles.buttonRow}>
+                <button
+                    type="button"
+                    class={`stdButton secondary ${styles.textButton}`}
+                    disabled={!canReplaceCurrent()}
+                    onClick={() => props.controller?.replaceCurrent()}
+                >
+                    {t("search.replace")}
+                </button>
+                <button
+                    type="button"
+                    class={`stdButton secondary ${styles.textButton}`}
+                    disabled={!canNavigate()}
+                    onClick={() => props.controller?.replaceAll()}
+                >
+                    {t("search.replaceAll")}
+                </button>
+            </div>
+        </section>
     );
 }
 

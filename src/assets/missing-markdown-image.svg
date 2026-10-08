@@ -1,6 +1,93 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">
-  <rect width="160" height="160" rx="24" fill="#dbeafe"/>
-  <rect x="20" y="20" width="120" height="120" rx="16" fill="#cbfeff" stroke="#0d107c" stroke-width="14"/>
-  <path d="M140 100l-20.57-20.57a13.33 13.33 0 0 0-18.86 0L40 140" fill="none" stroke="#0d117e" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
-  <circle cx="60" cy="60" r="13" fill="#fbbf24" stroke="#d97706" stroke-width="10"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="256"
+   height="256"
+   viewBox="0 0 256 256"
+   fill="none"
+   version="1.1"
+   id="svg27"
+   sodipodi:docname="missing-markdown-image.svg"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview29"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="1.84375"
+     inkscape:cx="-45.288136"
+     inkscape:cy="157.55932"
+     inkscape:window-width="1920"
+     inkscape:window-height="1011"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg27" />
+  <defs
+     id="defs5">
+    <clipPath
+       id="picture-area">
+      <path
+         d="M30 45C55 28 184 25 211 39C238 53 245 83 246 127C247 165 240 195 219 211C195 228 73 231 43 216C17 203 9 168 10 128C11 86 15 57 30 45Z"
+         id="path2" />
+    </clipPath>
+  </defs>
+  <path
+     d="m 193.09322,113.75 -92.76801,96.59852 C 126.51623,159.21919 139.6962,65.299669 193.09322,113.75 Z"
+     fill="#ffffff"
+     id="path23"
+     sodipodi:nodetypes="ccc" />
+  <g
+     clip-path="url(#picture-area)"
+     id="g19">
+    <rect
+       width="256"
+       height="256"
+       fill="#DFF6FC"
+       id="rect7" />
+    <path
+       d="M176 28H213C235 42 245 76 246 125C247 163 240 195 219 211H166C184 185 196 154 198 116C200 77 202 51 176 28Z"
+       fill="#CFEAF4"
+       id="path9" />
+    <circle
+       cx="62.461864"
+       cy="94.656776"
+       r="22.5"
+       fill="#ff963d"
+       id="circle11" />
+    <path
+       d="M116 171L153 121C164 106 185 103 198 116L247 168V227H78L116 171Z"
+       fill="#54B634"
+       id="path13" />
+    <path
+       d="M13 198L52 150C63 137 81 138 91 150L109 172L143 132L216 218H13V198Z"
+       fill="#6BBE45"
+       id="path15" />
+    <path
+       d="M17 194C70 214 123 198 158 164L219 219H17V194Z"
+       fill="#4BAD2E"
+       id="path17" />
+  </g>
+  <path
+     d="M30 45C55 28 184 25 211 39C238 53 245 83 246 127C247 165 240 195 219 211C195 228 73 231 43 216C17 203 9 168 10 128C11 86 15 57 30 45Z"
+     stroke="#27263D"
+     stroke-width="19"
+     stroke-linecap="round"
+     stroke-linejoin="round"
+     id="path21" />
+  <path
+     d="M 14.653602,17.225636 243.09534,243.97987"
+     stroke="#27263d"
+     stroke-width="19"
+     stroke-linecap="round"
+     id="path25"
+     sodipodi:nodetypes="cc" />
 </svg>
