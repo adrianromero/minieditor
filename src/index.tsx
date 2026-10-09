@@ -10,6 +10,10 @@ import App from "./App";
 import type { InitialConfig } from "./rusttypes";
 import "./theme.css";
 
+// Import base styles first
+import "@milkdown/crepe/theme/common/style.css";
+import "./milkdowntheme.css";
+
 document.documentElement.dataset.theme = "light";
 
 function isEditableTarget(target: EventTarget | null): boolean {

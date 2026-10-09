@@ -24,7 +24,6 @@ import {
 } from "../FileEditorController";
 
 import styles from "./EditorMarkdown.module.css";
-import "./MilkdownTheme.css";
 import EditorMarkdownSidebar from "./EditorMarkdownSidebar";
 import { createMarkdownImageProxy, type MarkdownImageProxy } from "./MarkdownImageProxy";
 import MarkdownImageActions from "./MarkdownImageActions";

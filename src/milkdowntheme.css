@@ -1,0 +1,98 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ *
+ * Valores de referencia del tema Frame de Milkdown Crepe 7.21.2.
+ * Las reglas están agrupadas por formato para facilitar su personalización.
+ */
+
+.milkdown {
+    /* Background Colors */
+    --crepe-color-background: var(--color-surface); /* Main background color */
+    --crepe-color-surface: var(--color-status-background); /* Surface color for cards/panels */
+    --crepe-color-surface-low: var(--color-secondary); /* Lower surface color for depth */
+
+    /* Text Colors */
+    --crepe-color-on-background: var(--color-text); /* Text color on background */
+    --crepe-color-on-surface: var(--color-text); /* Text color on surface */
+    --crepe-color-on-surface-variant: var(--color-text-muted); /* Secondary text color */
+
+    /* Accent Colors */
+    --crepe-color-primary: var(--color-primary); /* Primary brand color */
+    --crepe-color-secondary: var(--color-secondary); /* Secondary accent color */
+    --crepe-color-on-secondary: var(--color-text); /* Text color on secondary */
+
+    /* UI Colors */
+    --crepe-color-outline: var(--color-text-subtle); /* Border/outline color */
+    --crepe-color-inverse: var(--color-text); /* Inverse color for contrast */
+    --crepe-color-on-inverse: var(--color-surface); /* Text color on inverse */
+    --crepe-color-inline-code: var(--crepe-color-on-background); /* Inline code color */
+    --crepe-color-error: var(--color-error); /* Error state color */
+
+    /* Interactive Colors */
+    --crepe-color-hover: var(--color-secondary-hover); /* Hover state color */
+    --crepe-color-selected: hsl(250, 45%, 85%); /* Selected state color */
+    --crepe-color-inline-area: var(--color-secondary); /* Inline editing area color */
+}
+
+.milkdown {
+    /* Font Families */
+    --crepe-font-title: "Open Sans", Arial, Helvetica, sans-serif;
+    --crepe-font-default: "Open Sans", Arial, Helvetica, sans-serif;
+    --crepe-font-code: Fira Code, Menlo, Monaco, "Courier New", Courier, monospace;
+}
+
+.milkdown {
+    /* Small Shadow */
+    --crepe-shadow-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+    /* Large Shadow */
+    --crepe-shadow-2: 0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+}
+
+/* Basic styling example */
+.milkdown .editor {
+    margin: 0 auto;
+    padding: 40px 80px;
+}
+
+.milkdown .milkdown-code-block {
+    background: var(--color-surface-subtle);
+    padding: 5px;
+}
+.milkdown .milkdown-code-block .cm-editor {
+    background: transparent;
+}
+.milkdown .milkdown-code-block .cm-gutters {
+    background: transparent;
+}
+.milkdown .milkdown-code-block .tools .language-button {
+    margin-bottom: 0;
+}
+.milkdown .milkdown-code-block .tools-button-group > button:hover {
+    background: var(--crepe-color-hover);
+}
+
+.milkdown span[data-type="math_inline"] {
+    color: var(--crepe-color-on-background);
+}
+
+.milkdown .ProseMirror blockquote::before {
+    background: var(--color-text-subtle);
+}
+
+.milkdown .milkdown-table-block table {
+    border-collapse: separate;
+    border-spacing: 0;
+    border-top: 1px solid hsl(0, 0%, 84%);
+    border-left: 1px solid hsl(0, 0%, 84%);
+}
+
+.milkdown .milkdown-table-block th,
+.milkdown .milkdown-table-block td {
+    border: 0;
+    border-right: 1px solid hsl(0, 0%, 84%);
+    border-bottom: 1px solid hsl(0, 0%, 84%);
+}
+.milkdown .milkdown-table-block th {
+    background: var(--color-surface-subtle);
+}

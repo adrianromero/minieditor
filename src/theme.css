@@ -12,9 +12,7 @@
     --color-primary: hsl(215 80% 42%);
     --color-primary-hover: hsl(215 82% 36%);
     --color-primary-active: hsl(215 84% 30%);
-    --color-primary-soft: rgba(0, 122, 255, 0.07);
-    --color-search-match: hsl(48 100% 72%);
-    --color-search-match-active: hsl(32 100% 62%);
+    --color-primary-soft: hsla(211, 100%, 50%, 0.07);
     --color-on-primary: hsl(0 0% 100%);
     --color-border-primary: hsl(215 85% 28%);
 
@@ -34,30 +32,41 @@
     --color-button-inner-border: hsl(0 0% 100%);
     --color-focus: hsl(215 90% 55%);
 
+    /* Typographics */
+    --color-text: hsl(210, 29%, 24%);
+    --color-text-muted: hsl(210, 14%, 44%);
+    --color-text-subtle: hsl(211, 12%, 59%);
+
     --color-background: #ffffff;
     --color-view-background: #fafafa;
     --color-surface: #ffffff;
-    --color-text: #2c3e50;
-    --color-text-muted: #607080;
-    --color-text-subtle: #8a96a3;
+    --color-surface-subtle: hsl(210, 0%, 98%);
 
+    /* Notifications */
     --color-warning: #e67e22;
+
     --color-error: hsl(6, 78%, 47%);
     --color-error-text: hsl(6, 78%, 57%);
     --color-error-background: hsl(0, 84%, 95%);
     --color-error-border: hsl(0, 84%, 84%);
+
     --color-status-text: hsl(6, 0%, 57%);
     --color-status-background: hsl(0, 0%, 95%);
     --color-status-border: hsl(0, 0%, 84%);
+
     --color-question-text: hsl(199, 78%, 47%);
     --color-question-background: hsl(199, 84%, 95%);
     --color-question-border: hsl(199, 84%, 84%);
-    --color-border: rgba(0, 0, 0, 0.25);
-    --color-border-subtle: rgba(0, 0, 0, 0.06);
 
-    --color-overlay: rgba(248, 250, 252, 0.58);
+    --color-border: hsla(0, 0%, 0%, 0.1);
+    --color-border-subtle: hsla(0, 0%, 0%, 0.06);
 
-    --view-padding: 1rem;
+    --color-search-match: hsl(48 100% 72%);
+    --color-search-match-active: hsl(32 100% 62%);
+
+    --color-overlay: hsla(210, 40%, 98%, 0.58);
+
+    --view-padding: 0.5rem;
     --content-max-width: 1024px;
     --radius-small: 4px;
     --radius-medium: 8px;
