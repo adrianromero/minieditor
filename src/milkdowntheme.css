@@ -65,6 +65,10 @@
 .milkdown .milkdown-code-block .cm-gutters {
     display: none;
 }
+.milkdown .milkdown-code-block .cm-activeLine,
+.milkdown .milkdown-code-block .cm-activeLineGutter {
+    background: transparent;
+}
 .milkdown .milkdown-code-block .tools .language-button {
     margin-bottom: 0;
 }
@@ -89,6 +93,19 @@
     max-width: 100%;
     height: auto;
     margin: 0 auto;
+}
+
+/* Mermaid inyecta blanco en las etiquetas de las conexiones dentro del SVG. */
+.milkdown .milkdown-code-block .preview svg .edgeLabel,
+.milkdown .milkdown-code-block .preview svg .edgeLabel p,
+.milkdown .milkdown-code-block .preview svg .labelBkg {
+    background-color: var(--color-surface-subtle) !important;
+}
+
+.milkdown .milkdown-code-block .preview svg .edgeLabel rect {
+    fill: var(--color-surface-subtle) !important;
+    background-color: var(--color-surface-subtle) !important;
+    opacity: 1 !important;
 }
 
 .milkdown span[data-type="math_inline"] {

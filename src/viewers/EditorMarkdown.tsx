@@ -179,6 +179,7 @@ export function EditorMarkdown(): JSX.Element {
                             ),
                         previewLabel: t("markdownToolbar.codePreviewLabel"),
                         previewLoading: t("markdownToolbar.codePreviewLoading"),
+                        previewOnlyByDefault: true,
                     },
                     [Crepe.Feature.ImageBlock]: {
                         proxyDomURL: nextImageProxy.proxyDomURL,

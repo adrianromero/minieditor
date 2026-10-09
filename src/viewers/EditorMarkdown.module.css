@@ -46,7 +46,7 @@
 
 .frontmatterEditor :global(.cm-activeLine),
 .frontmatterEditor :global(.cm-activeLineGutter) {
-    background: var(--color-primary-soft);
+    background: transparent;
 }
 
 .frontmatterEditor :global(.cm-editor.cm-focused) {
