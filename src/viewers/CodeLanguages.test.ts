@@ -27,6 +27,9 @@ describe("CodeLanguages", () => {
             "HTML",
             "CSS",
             "JSON",
+            "Mermaid",
+            "Markdown",
+            "LaTeX",
             "TOML",
             "YAML",
             "SQL",
@@ -43,6 +46,9 @@ describe("CodeLanguages", () => {
         ["Cargo.toml", "TOML"],
         ["config.yml", "YAML"],
         ["vector.svg", "XML"],
+        ["diagram.mmd", "Mermaid"],
+        ["README.md", "Markdown"],
+        ["formula.tex", "LaTeX"],
     ])("selecciona %s como %s", (filename, languageName) => {
         expect(LanguageDescription.matchFilename(CODE_LANGUAGES, filename)?.name).toBe(
             languageName
@@ -64,13 +70,29 @@ describe("CodeLanguages", () => {
         const root = document.createElement("div");
         document.body.append(root);
         const crepe = new Crepe({ root });
-        crepe.editor.config(configureCodeLanguages);
+        crepe.editor.config(configureCodeLanguages("No se ha podido generar el diagrama"));
 
         try {
             await crepe.create();
             crepe.editor.action((ctx) => {
                 expect(ctx.get(codeBlockConfig.key).languages).toEqual(CODE_LANGUAGES);
             });
+        } finally {
+            await crepe.destroy();
+            root.remove();
+        }
+    });
+
+    it("conserva los bloques Mermaid como bloques de código cercados", async () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+        const markdown = "```mermaid\ngraph TD;\n    A-->B;\n```";
+        const crepe = new Crepe({ root, defaultValue: markdown });
+        crepe.editor.config(configureCodeLanguages("No se ha podido generar el diagrama"));
+
+        try {
+            await crepe.create();
+            expect(crepe.getMarkdown().trim()).toBe(markdown);
         } finally {
             await crepe.destroy();
             root.remove();

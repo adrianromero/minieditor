@@ -63,13 +63,32 @@
     background: transparent;
 }
 .milkdown .milkdown-code-block .cm-gutters {
-    background: transparent;
+    display: none;
 }
 .milkdown .milkdown-code-block .tools .language-button {
     margin-bottom: 0;
 }
 .milkdown .milkdown-code-block .tools-button-group > button:hover {
     background: var(--crepe-color-hover);
+}
+.milkdown .milkdown-code-block .preview .mermaid-preview-loading {
+    padding: 1rem;
+    color: var(--color-text-muted);
+}
+.milkdown .milkdown-code-block .preview .mermaid-preview-error {
+    padding: 1rem;
+    color: var(--color-error-text);
+    background: var(--color-error-background);
+    border: 1px solid var(--color-error-border);
+    border-radius: var(--radius-small);
+    text-align: left;
+    white-space: pre-wrap;
+}
+.milkdown .milkdown-code-block .preview svg {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 0 auto;
 }
 
 .milkdown span[data-type="math_inline"] {

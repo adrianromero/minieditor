@@ -21,6 +21,7 @@ import { runCrepeMarkdownAction } from "../test/crepeMarkdownTest";
 import {
     getInlineStyleState,
     insertImage,
+    insertTypedCodeBlock,
     observeEditorState,
     toggleList,
 } from "./EditorMarkdownSidebar";
@@ -110,6 +111,14 @@ describe("acciones de EditorMarkdownSidebar", () => {
         const result = await runCrepeMarkdownAction("Antes\n\n[[]]\n\nDespués", insertImage);
 
         expect(result).toContain("![1.00]()");
+    });
+
+    it("inserta un bloque Mermaid desde la barra lateral", async () => {
+        const result = await runCrepeMarkdownAction("Antes[[]]", (ctx) =>
+            insertTypedCodeBlock(ctx, "Mermaid")
+        );
+
+        expect(result).toContain("```Mermaid\n[[]]\n```");
     });
 
     it("inserta una imagen en línea dentro de un párrafo con contenido", async () => {

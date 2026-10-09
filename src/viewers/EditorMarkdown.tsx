@@ -197,7 +197,9 @@ export function EditorMarkdown(): JSX.Element {
             crepeInstance = nextCrepe;
             setImageActionsCrepe(nextCrepe);
 
-            nextCrepe.editor.config(configureCodeLanguages);
+            nextCrepe.editor.config(
+                configureCodeLanguages(t("markdownToolbar.codePreviewMermaidError"))
+            );
             nextCrepe.editor.config(configureMarkdownSerialization);
 
             let firstUpdate = true;

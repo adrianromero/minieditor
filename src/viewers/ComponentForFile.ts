@@ -23,14 +23,12 @@ export function componentForFilename(filename: string): FileEditorSelection {
     const normalizedFilename = filename.toLowerCase();
     const extensionIndex = normalizedFilename.lastIndexOf(".");
     const extension = extensionIndex >= 0 ? normalizedFilename.slice(extensionIndex) : "";
-    const editorTextExtensions = editorTextExtensionsForFilename(normalizedFilename);
-
-    if (editorTextExtensions) {
-        return { component: EditorText, extensions: editorTextExtensions };
-    }
 
     switch (extension) {
         case ".md":
+        case ".markdown":
+        case ".mdown":
+        case ".mkd":
             return { component: EditorMarkdown };
         case ".avif":
         case ".bmp":
@@ -41,7 +39,12 @@ export function componentForFilename(filename: string): FileEditorSelection {
         case ".png":
         case ".webp":
             return { component: EditorImage };
-        default:
-            return { component: EditorExternalFile };
     }
+
+    const editorTextExtensions = editorTextExtensionsForFilename(normalizedFilename);
+    if (editorTextExtensions) {
+        return { component: EditorText, extensions: editorTextExtensions };
+    }
+
+    return { component: EditorExternalFile };
 }

@@ -9,15 +9,18 @@ import { html } from "@codemirror/lang-html";
 import { java } from "@codemirror/lang-java";
 import { javascript } from "@codemirror/lang-javascript";
 import { json } from "@codemirror/lang-json";
+import { markdown } from "@codemirror/lang-markdown";
 import { python } from "@codemirror/lang-python";
 import { rust } from "@codemirror/lang-rust";
 import { sql } from "@codemirror/lang-sql";
 import { xml } from "@codemirror/lang-xml";
 import { yaml } from "@codemirror/lang-yaml";
 import { LanguageDescription, LanguageSupport, StreamLanguage } from "@codemirror/language";
+import { stex } from "@codemirror/legacy-modes/mode/stex";
 import { toml } from "@codemirror/legacy-modes/mode/toml";
 import { codeBlockConfig } from "@milkdown/kit/component/code-block";
 import type { Ctx } from "@milkdown/kit/ctx";
+import { createMermaidPreviewRenderer } from "./MermaidPreview";
 
 const PLAIN_TEXT_LANGUAGE_NAME = "Text";
 const plainTextSupport = new LanguageSupport(
@@ -87,6 +90,24 @@ export const CODE_LANGUAGES: readonly LanguageDescription[] = [
     LanguageDescription.of({ name: "CSS", extensions: ["css"], support: css() }),
     LanguageDescription.of({ name: "JSON", extensions: ["json"], support: json() }),
     LanguageDescription.of({
+        name: "Mermaid",
+        alias: ["mmd"],
+        extensions: ["mmd", "mermaid"],
+        support: plainTextSupport,
+    }),
+    LanguageDescription.of({
+        name: "Markdown",
+        alias: ["md"],
+        extensions: ["md", "markdown", "mdown", "mkd"],
+        support: markdown(),
+    }),
+    LanguageDescription.of({
+        name: "LaTeX",
+        alias: ["tex"],
+        extensions: ["tex", "latex"],
+        support: new LanguageSupport(StreamLanguage.define(stex)),
+    }),
+    LanguageDescription.of({
         name: "TOML",
         extensions: ["toml"],
         support: new LanguageSupport(StreamLanguage.define(toml)),
@@ -127,9 +148,15 @@ export function editorTextExtensionsForFilename(
     return language.support ? [language.support] : null;
 }
 
-export function configureCodeLanguages(ctx: Ctx): void {
-    ctx.update(codeBlockConfig.key, (config) => ({
-        ...config,
-        languages: [...CODE_LANGUAGES],
-    }));
+export function configureCodeLanguages(previewErrorText: string): (ctx: Ctx) => void {
+    return (ctx) => {
+        ctx.update(codeBlockConfig.key, (config) => ({
+            ...config,
+            languages: [...CODE_LANGUAGES],
+            renderPreview: createMermaidPreviewRenderer(config.renderPreview, {
+                loading: config.previewLoading,
+                errorText: previewErrorText,
+            }),
+        }));
+    };
 }

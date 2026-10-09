@@ -71,6 +71,7 @@ import SquareCode from "lucide-solid/icons/square-code";
 import SquareSigma from "lucide-solid/icons/square-sigma";
 import Strikethrough from "lucide-solid/icons/strikethrough";
 import Table2 from "lucide-solid/icons/table-2";
+import Workflow from "lucide-solid/icons/workflow";
 import { useI18N } from "../Localization";
 import AppSidebar from "../commons/AppSidebar";
 import { useSidebarDisabled } from "../commons/Sidebar";
@@ -549,6 +550,13 @@ export function insertImage(ctx: Ctx): void {
     commands.call(insertImageCommand.key);
 }
 
+export function insertTypedCodeBlock(ctx: Ctx, language: string): void {
+    ctx.get(commandsCtx).call(addBlockTypeCommand.key, {
+        nodeType: codeBlockSchema.type(ctx),
+        attrs: { language },
+    });
+}
+
 export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.Element {
     const { t } = useI18N();
     const [selectedHeadingLevel, setSelectedHeadingLevel] = createSignal(0);
@@ -816,12 +824,13 @@ export function EditorMarkdownSidebar(props: EditorMarkdownSidebarProps): JSX.El
                         getEditor={props.getEditor}
                         icon={SquareSigma}
                         label={t("markdownToolbar.mathBlock")}
-                        onRun={(ctx) => {
-                            ctx.get(commandsCtx).call(addBlockTypeCommand.key, {
-                                nodeType: codeBlockSchema.type(ctx),
-                                attrs: { language: "LaTeX" },
-                            });
-                        }}
+                        onRun={(ctx) => insertTypedCodeBlock(ctx, "LaTeX")}
+                    />
+                    <SidebarButton
+                        getEditor={props.getEditor}
+                        icon={Workflow}
+                        label={t("markdownToolbar.mermaidBlock")}
+                        onRun={(ctx) => insertTypedCodeBlock(ctx, "Mermaid")}
                     />
                 </section>
                 <section class="sidebarSection">

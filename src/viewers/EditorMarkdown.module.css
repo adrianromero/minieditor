@@ -41,9 +41,7 @@
 }
 
 .frontmatterEditor :global(.cm-gutters) {
-    color: var(--color-text-subtle);
-    background: var(--color-surface);
-    border-right-color: var(--color-border-subtle);
+    display: none;
 }
 
 .frontmatterEditor :global(.cm-activeLine),

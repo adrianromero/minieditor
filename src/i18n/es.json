@@ -78,7 +78,9 @@
         "codePreviewHide": "Ocultar",
         "codePreviewLabel": "Vista previa",
         "codePreviewLoading": "Cargando...",
+        "codePreviewMermaidError": "No se ha podido generar el diagrama",
         "mathBlock": "Bloque matemático",
+        "mermaidBlock": "Diagrama Mermaid",
         "quote": "Cita",
         "divider": "Separador"
     },

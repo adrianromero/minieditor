@@ -23,6 +23,7 @@
         "@codemirror/lang-java": "^6.0.2",
         "@codemirror/lang-javascript": "^6.2.5",
         "@codemirror/lang-json": "^6.0.2",
+        "@codemirror/lang-markdown": "^6.5.2",
         "@codemirror/lang-python": "^6.2.1",
         "@codemirror/lang-rust": "^6.0.2",
         "@codemirror/lang-sql": "^6.10.0",
@@ -39,6 +40,7 @@
         "@tauri-apps/plugin-opener": "^2",
         "codemirror": "^6.0.2",
         "lucide-solid": "^1.47.0",
+        "mermaid": "^11.17.2",
         "prosemirror-search": "^1.1.1",
         "solid-js": "^1.9.3"
     },

@@ -78,7 +78,9 @@
         "codePreviewHide": "Hide",
         "codePreviewLabel": "Preview",
         "codePreviewLoading": "Loading...",
+        "codePreviewMermaidError": "The diagram could not be rendered",
         "mathBlock": "Math block",
+        "mermaidBlock": "Mermaid diagram",
         "quote": "Quote",
         "divider": "Divider"
     },
