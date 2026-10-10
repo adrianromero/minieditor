@@ -13,6 +13,8 @@
     --color-primary-hover: hsl(215 82% 36%);
     --color-primary-active: hsl(215 84% 30%);
     --color-primary-soft: hsla(211, 100%, 50%, 0.07);
+    --color-primary-soft-hover: hsla(211, 100%, 50%, 0.12);
+    --color-primary-soft-active: hsla(211, 100%, 50%, 0.18);
     --color-on-primary: hsl(0 0% 100%);
     --color-border-primary: hsl(215 85% 28%);
 
@@ -105,6 +107,10 @@ body {
     border-radius: var(--radius-small);
     /* box-shadow: inset 0 0 0 2px var(--color-button-inner-border); */
     cursor: pointer;
+    transition:
+        background-color 120ms ease-out,
+        color 120ms ease-out,
+        border-color 120ms ease-out;
 }
 
 .stdButton:hover {
@@ -149,9 +155,18 @@ body {
     background: var(--color-view-background);
 }
 
-.stdButton.toolbar.selected {
+.stdButton.toolbar.selected:not(:disabled) {
     color: var(--color-primary);
     border-color: var(--color-primary);
+    background: var(--color-primary-soft);
+}
+
+.stdButton.toolbar.selected:not(:disabled):hover {
+    background: var(--color-primary-soft-hover);
+}
+
+.stdButton.toolbar.selected:not(:disabled):active {
+    background: var(--color-primary-soft-active);
 }
 
 .stdButton.toolbar > .lucide {
@@ -170,9 +185,18 @@ body {
     background: var(--color-view-background);
 }
 
-.stdButton.small.selected {
+.stdButton.small.selected:not(:disabled) {
     color: var(--color-primary);
     border-color: var(--color-primary);
+    background: var(--color-primary-soft);
+}
+
+.stdButton.small.selected:not(:disabled):hover {
+    background: var(--color-primary-soft-hover);
+}
+
+.stdButton.small.selected:not(:disabled):active {
+    background: var(--color-primary-soft-active);
 }
 
 .stdButton.small > .lucide {
@@ -200,7 +224,7 @@ body {
     border-radius: var(--radius-small) var(--radius-small) 0 0;
 }
 
-.stdButton.tab.selected {
+.stdButton.tab.selected:not(:disabled) {
     color: var(--color-primary);
     border-bottom-color: var(--color-primary);
 }
@@ -222,6 +246,12 @@ body {
     border-color: var(--color-border-disabled);
     /* box-shadow: none; */
     cursor: not-allowed;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stdButton {
+        transition: none;
+    }
 }
 
 .actionIcon {

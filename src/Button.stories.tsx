@@ -42,7 +42,7 @@ function ButtonStates(props: ButtonStatesProps): JSX.Element {
                 {props.selected}
             </div>
             <div class={styles.state}>
-                <span class={styles.stateLabel}>Deshabilitado</span>
+                <span class={styles.stateLabel}>Selected + deshabilitado</span>
                 {props.disabled}
             </div>
         </div>
@@ -102,7 +102,8 @@ export const GlobalTheme: Story = {
                 <p class={styles.introduction}>
                     Variantes basadas exclusivamente en las clases globales de theme.css. El estado
                     seleccionado utiliza la clase persistente de selección disponible para cada
-                    variante, aunque todavía no tenga reglas visuales asociadas.
+                    variante. La última muestra comprueba que el estado deshabilitado siempre
+                    neutraliza la selección.
                 </p>
 
                 <Variant name="Primario" source=".stdButton">
@@ -110,7 +111,7 @@ export const GlobalTheme: Story = {
                         normal={<button class="stdButton">Continuar</button>}
                         selected={<button class="stdButton selected">Continuar</button>}
                         disabled={
-                            <button class="stdButton" disabled={true}>
+                            <button class="stdButton selected" aria-pressed="true" disabled={true}>
                                 Continuar
                             </button>
                         }
@@ -126,7 +127,11 @@ export const GlobalTheme: Story = {
                         normal={<button class="stdButton secondary">Cancelar</button>}
                         selected={<button class="stdButton secondary selected">Cancelar</button>}
                         disabled={
-                            <button class="stdButton secondary" disabled={true}>
+                            <button
+                                class="stdButton secondary selected"
+                                aria-pressed="true"
+                                disabled={true}
+                            >
                                 Cancelar
                             </button>
                         }
@@ -151,8 +156,9 @@ export const GlobalTheme: Story = {
                         }
                         disabled={
                             <button
-                                class="stdButton toolbar"
-                                aria-label="Actualizar deshabilitado"
+                                class="stdButton toolbar selected"
+                                aria-label="Actualizar seleccionado y deshabilitado"
+                                aria-pressed="true"
                                 disabled={true}
                             >
                                 <RefreshCw />
@@ -178,7 +184,11 @@ export const GlobalTheme: Story = {
                             </button>
                         }
                         disabled={
-                            <button class="stdButton small" disabled={true}>
+                            <button
+                                class="stdButton small selected"
+                                aria-pressed="true"
+                                disabled={true}
+                            >
                                 <Save /> Guardar
                             </button>
                         }
@@ -212,9 +222,9 @@ export const GlobalTheme: Story = {
                         disabled={
                             <div class={styles.tabStrip}>
                                 <button
-                                    class="stdButton tab"
+                                    class="stdButton tab selected"
                                     role="tab"
-                                    aria-selected="false"
+                                    aria-selected="true"
                                     disabled={true}
                                 >
                                     Ajustar
