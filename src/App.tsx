@@ -12,7 +12,6 @@ import I18NProvider from "./Localization";
 type AppProps = {
     initialBasepath: string;
     initialFilename: string;
-    initialSidebarVisible: boolean;
 };
 
 function App(props: AppProps) {
@@ -21,7 +20,6 @@ function App(props: AppProps) {
             <AppProvider
                 initialBasepath={props.initialBasepath}
                 initialFilename={props.initialFilename}
-                initialSidebarVisible={props.initialSidebarVisible}
             >
                 <main class={styles.appMain}>
                     <Toolbar />

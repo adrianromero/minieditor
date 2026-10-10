@@ -13,14 +13,8 @@ const PROPERTIES_FILENAME: &str = "properties.toml";
 pub(crate) struct Properties {
     pub(crate) width: u32,
     pub(crate) height: u32,
-    #[serde(default = "default_sidebar_visible")]
-    pub(crate) sidebar_visible: bool,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     basepaths: BTreeMap<String, String>,
-}
-
-fn default_sidebar_visible() -> bool {
-    true
 }
 
 impl Properties {
@@ -28,7 +22,6 @@ impl Properties {
         Self {
             width,
             height,
-            sidebar_visible: true,
             basepaths: BTreeMap::new(),
         }
     }
@@ -153,7 +146,6 @@ mod tests {
 
         assert_eq!(properties.width, 1024);
         assert_eq!(properties.height, 768);
-        assert!(properties.sidebar_visible);
         assert_eq!(properties.filename_for(Path::new("/missing")), None);
         fs::remove_dir_all(home).unwrap();
     }
@@ -176,15 +168,17 @@ mod tests {
     }
 
     #[test]
-    fn sidebar_visibility_is_created_and_loaded() {
+    fn legacy_sidebar_visibility_is_ignored() {
         let home = test_home();
         let path = properties_path(&home);
-        let mut expected = Properties::default();
-        expected.sidebar_visible = false;
+        fs::create_dir_all(path.parent().unwrap()).unwrap();
+        fs::write(
+            &path,
+            "width = 1024\nheight = 768\nsidebar_visible = false\n",
+        )
+        .unwrap();
 
-        save(&path, &expected).unwrap();
-
-        assert_eq!(load(&path).unwrap(), Some(expected));
+        assert_eq!(load(&path).unwrap(), Some(Properties::new(1024, 768)));
         fs::remove_dir_all(home).unwrap();
     }
 }

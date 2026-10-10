@@ -42,7 +42,6 @@ async function bootstrap(): Promise<void> {
             <App
                 initialBasepath={config.basepath}
                 initialFilename={config.filename}
-                initialSidebarVisible={config.sidebarVisible}
             />
         ),
         document.getElementById("root") as HTMLElement

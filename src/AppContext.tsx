@@ -21,6 +21,7 @@ import { TranslationKey, useI18N } from "./Localization";
 import { UserMessageError } from "./UserMessageError";
 import { MessageInfoKind } from "./messagesinfo";
 import AppShortcuts, { type ShortcutDefinition } from "./AppShortcuts";
+import { loadSidebarVisible, saveSidebarVisible } from "./SidebarPreferences";
 
 export type SaveFileHandler = () => Promise<void>;
 export type ReloadFileHandler = () => Promise<void>;
@@ -78,7 +79,6 @@ export function useAppContext() {
 export function AppProvider(props: {
     initialBasepath: string;
     initialFilename: string;
-    initialSidebarVisible: boolean;
     children: JSX.Element;
 }): JSX.Element {
     const { t } = useI18N();
@@ -88,7 +88,7 @@ export function AppProvider(props: {
     const [saveFile, setSaveFileSignal] = createSignal<SaveFileHandler | null>(null);
     const [reloadFile, setReloadFileSignal] = createSignal<ReloadFileHandler | null>(null);
     const [searchFile, setSearchFileSignal] = createSignal<SearchFileHandler | null>(null);
-    const [sidebarVisible, setSidebarVisibleSignal] = createSignal(props.initialSidebarVisible);
+    const [sidebarVisible, setSidebarVisibleSignal] = createSignal(loadSidebarVisible());
     const [toggleSidebar, setToggleSidebarSignal] = createSignal<ToggleSidebarHandler | null>(null);
     const [onunload, setOnunloadSignal] = createSignal<OnunloadHandler | null>(null);
     const [fileModified, setFileModified] = createSignal(false);
@@ -117,19 +117,11 @@ export function AppProvider(props: {
     const setToggleSidebar = (handler: ToggleSidebarHandler | null) => {
         setToggleSidebarSignal(() => handler);
     };
-    let pendingSidebarUpdate = Promise.resolve();
-    const queueSidebarUpdate = (visible: boolean): void => {
-        pendingSidebarUpdate = pendingSidebarUpdate
-            .then(() => invoke<void>("set_sidebar_visible", { visible }))
-            .catch((error: unknown) => {
-                console.error("Unable to update sidebar visibility:", error);
-            });
-    };
     const setSidebarVisible: Setter<boolean> = (value) => {
         const previous = sidebarVisible();
         const visible = setSidebarVisibleSignal(value);
         if (visible !== previous) {
-            queueSidebarUpdate(visible);
+            saveSidebarVisible(visible);
         }
         return visible;
     };
@@ -242,7 +234,6 @@ export function AppProvider(props: {
                     }
                     setOnunload(null);
                 }
-                await pendingSidebarUpdate;
                 await getCurrentWindow().destroy();
             })
             .then((unlisten) => {
