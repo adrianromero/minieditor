@@ -9,14 +9,18 @@ import PanelRight from "lucide-solid/icons/panel-right";
 import RefreshCw from "lucide-solid/icons/refresh-cw";
 import Moon from "lucide-solid/icons/moon";
 import Sun from "lucide-solid/icons/sun";
+import Languages from "lucide-solid/icons/languages";
 import { useAppContext } from "./AppContext";
 import FileBreadcrumb from "./FileBreadcrumb";
 import FileNavigation from "./FileNavigation";
+import ToolbarMenu, { type ToolbarMenuChoiceItem } from "./ToolbarMenu";
 import { useI18N } from "./Localization";
+import type { Locale } from "./Localization";
+import type { AppTheme } from "./ThemePreferences";
 import styles from "./Toolbar.module.css";
 
 export function Toolbar() {
-    const { t } = useI18N();
+    const { t, locale, setLocale } = useI18N();
     const {
         editor: {
             saveFile,
@@ -24,7 +28,7 @@ export function Toolbar() {
             toggleSidebar,
             sidebarVisible,
             theme,
-            toggleTheme,
+            setTheme,
             fileModified,
         },
     } = useAppContext();
@@ -46,34 +50,24 @@ export function Toolbar() {
             </div>
             <div class={styles.toolbarActions}>
                 <Show when={toggleSidebar()}>
-                    <button
-                        class={`stdButton toolbar ${sidebarVisible() ? "selected" : ""}`}
-                        type="button"
-                        aria-label={t(
-                            sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar"
-                        )}
-                        title={t(sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar")}
-                        aria-pressed={sidebarVisible()}
-                        onClick={() => toggleSidebar()?.()}
-                    >
-                        <PanelRight aria-hidden="true" />
-                    </button>
+                    <>
+                        <button
+                            class={`stdButton toolbar ${sidebarVisible() ? "selected" : ""}`}
+                            type="button"
+                            aria-label={t(
+                                sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar"
+                            )}
+                            title={t(
+                                sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar"
+                            )}
+                            aria-pressed={sidebarVisible()}
+                            onClick={() => toggleSidebar()?.()}
+                        >
+                            <PanelRight aria-hidden="true" />
+                        </button>
+                        <span class={styles.actionSeparator} aria-hidden="true" />
+                    </>
                 </Show>
-                <button
-                    class="stdButton toolbar"
-                    type="button"
-                    aria-label={t(
-                        theme() === "dark" ? "toolbar.useLightTheme" : "toolbar.useDarkTheme"
-                    )}
-                    title={t(theme() === "dark" ? "toolbar.useLightTheme" : "toolbar.useDarkTheme")}
-                    aria-pressed={theme() === "dark"}
-                    onClick={toggleTheme}
-                >
-                    <Show when={theme() === "dark"} fallback={<Moon aria-hidden="true" />}>
-                        <Sun aria-hidden="true" />
-                    </Show>
-                </button>
-                <span class={styles.actionSeparator} aria-hidden="true" />
                 <Show when={reloadFile()}>
                     <button
                         class="stdButton toolbar"
@@ -99,6 +93,72 @@ export function Toolbar() {
                         <HardDriveDownload aria-hidden="true" />
                     </button>
                 </Show>
+                <ToolbarMenu
+                    label={t("toolbar.moreOptions")}
+                    items={[
+                        {
+                            kind: "choice",
+                            id: "theme",
+                            label: t("toolbar.theme"),
+                            value: theme,
+                            options: [
+                                {
+                                    value: "light",
+                                    label: t("toolbar.lightTheme"),
+                                    icon: Sun,
+                                },
+                                {
+                                    value: "dark",
+                                    label: t("toolbar.darkTheme"),
+                                    icon: Moon,
+                                },
+                            ],
+                            onChange: (nextTheme): void => {
+                                setTheme(nextTheme);
+                            },
+                        } satisfies ToolbarMenuChoiceItem<AppTheme>,
+                        {
+                            kind: "choice",
+                            id: "language",
+                            label: t("toolbar.language"),
+                            currentIcon: Languages,
+                            value: locale,
+                            options: [
+                                {
+                                    value: "en",
+                                    label: "English",
+                                    description: "English",
+                                },
+                                {
+                                    value: "es",
+                                    label: "Español",
+                                    description: "Spanish",
+                                },
+                            ],
+                            onChange: (nextLocale): void => {
+                                setLocale(nextLocale);
+                            },
+                        } satisfies ToolbarMenuChoiceItem<Locale>,
+                        {
+                            kind: "action",
+                            id: "dummy-1",
+                            label: t("toolbar.dummyOption1"),
+                            onSelect: () => undefined,
+                        },
+                        {
+                            kind: "action",
+                            id: "dummy-2",
+                            label: t("toolbar.dummyOption2"),
+                            onSelect: () => undefined,
+                        },
+                        {
+                            kind: "action",
+                            id: "dummy-3",
+                            label: t("toolbar.dummyOption3"),
+                            onSelect: () => undefined,
+                        },
+                    ]}
+                />
             </div>
         </header>
     );

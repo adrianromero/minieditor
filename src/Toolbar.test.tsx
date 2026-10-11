@@ -3,21 +3,24 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { createSignal } from "solid-js";
+import { createSignal, type Accessor, type Setter } from "solid-js";
 import { render } from "solid-js/web";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AppContextValues, ReloadFileHandler, SaveFileHandler } from "./AppContext";
 import Toolbar from "./Toolbar";
+import type { Locale } from "./Localization";
 import type { AppTheme } from "./ThemePreferences";
 
 let editorContext: AppContextValues["editor"];
+let locale: Accessor<Locale>;
+let setLocale: Setter<Locale>;
 
 vi.mock("./AppContext", () => ({
     useAppContext: () => ({ editor: editorContext }),
 }));
 
 vi.mock("./Localization", () => ({
-    useI18N: () => ({ t: (key: string) => key }),
+    useI18N: () => ({ t: (key: string) => key, locale, setLocale }),
 }));
 
 vi.mock("./FileNavigation", () => ({ default: () => null }));
@@ -40,6 +43,7 @@ describe("Toolbar", () => {
         const [sidebarVisible, setSidebarVisibleSignal] = createSignal(true);
         const [fileModified, setFileModifiedSignal] = createSignal(false);
         const [theme, setThemeSignal] = createSignal<AppTheme>("light");
+        [locale, setLocale] = createSignal<Locale>("en");
         setSaveFile = (handler) => setSaveFileSignal(() => handler);
         setReloadFile = (handler) => setReloadFileSignal(() => handler);
         setToggleSidebar = (handler) => setToggleSidebarSignal(() => handler);
@@ -112,9 +116,7 @@ describe("Toolbar", () => {
         );
         expect(button?.classList.contains("selected")).toBe(true);
         expect(button?.getAttribute("aria-pressed")).toBe("true");
-        expect(button?.nextElementSibling?.getAttribute("aria-label")).toBe(
-            "toolbar.useDarkTheme"
-        );
+        expect(button?.nextElementSibling?.getAttribute("aria-hidden")).toBe("true");
 
         button?.click();
 
@@ -124,22 +126,78 @@ describe("Toolbar", () => {
         expect(button?.getAttribute("aria-pressed")).toBe("false");
     });
 
-    it("toggles the application theme", () => {
+    it("selects the application theme from the nested choice menu", () => {
         const root = document.createElement("div");
         document.body.append(root);
         dispose = render(() => <Toolbar />, root);
 
-        const button = root.querySelector<HTMLButtonElement>(
-            '[aria-label="toolbar.useDarkTheme"]'
+        expect(root.querySelector('[aria-label="toolbar.useDarkTheme"]')).toBeNull();
+
+        const themeEntry = root.querySelector<HTMLButtonElement>(
+            '[data-toolbar-menu-entry="theme"]'
         );
-        expect(button?.getAttribute("aria-pressed")).toBe("false");
+        const light = root.querySelector<HTMLButtonElement>('[data-choice-option="light"]');
+        const dark = root.querySelector<HTMLButtonElement>('[data-choice-option="dark"]');
 
-        button?.click();
+        expect(themeEntry?.textContent).toContain("toolbar.lightTheme");
+        expect(light?.getAttribute("aria-checked")).toBe("true");
+        expect(dark?.getAttribute("aria-checked")).toBe("false");
 
-        expect(root.querySelector('[aria-label="toolbar.useLightTheme"]')).toBe(button);
-        expect(button?.getAttribute("aria-pressed")).toBe("true");
+        dark?.click();
+
+        expect(themeEntry?.textContent).toContain("toolbar.darkTheme");
+        expect(light?.getAttribute("aria-checked")).toBe("false");
+        expect(dark?.getAttribute("aria-checked")).toBe("true");
 
         setTheme("light");
-        expect(button?.getAttribute("aria-label")).toBe("toolbar.useDarkTheme");
+        expect(themeEntry?.textContent).toContain("toolbar.lightTheme");
+    });
+
+    it("selects the application language from the nested choice menu", () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+        dispose = render(() => <Toolbar />, root);
+
+        const languageEntry = root.querySelector<HTMLButtonElement>(
+            '[data-toolbar-menu-entry="language"]'
+        );
+        const english = root.querySelector<HTMLButtonElement>('[data-choice-option="en"]');
+        const spanish = root.querySelector<HTMLButtonElement>('[data-choice-option="es"]');
+
+        expect(languageEntry?.textContent).toContain("English");
+        expect(languageEntry?.querySelector(".lucide-languages")).not.toBeNull();
+        expect(english?.textContent).toBe("EnglishEnglish");
+        expect(spanish?.textContent).toBe("EspañolSpanish");
+        expect(english?.querySelector(".lucide-languages")).toBeNull();
+        expect(spanish?.querySelector(".lucide-languages")).toBeNull();
+        expect(english?.getAttribute("aria-checked")).toBe("true");
+        expect(spanish?.getAttribute("aria-checked")).toBe("false");
+        expect(root.querySelector(".lucide-check")).toBeNull();
+
+        spanish?.click();
+
+        expect(locale()).toBe("es");
+        expect(languageEntry?.textContent).toContain("Español");
+        expect(english?.getAttribute("aria-checked")).toBe("false");
+        expect(spanish?.getAttribute("aria-checked")).toBe("true");
+    });
+
+    it("renders the native popover menu with two choices and three dummy options", () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+        dispose = render(() => <Toolbar />, root);
+
+        const trigger = root.querySelector<HTMLButtonElement>(
+            '[aria-label="toolbar.moreOptions"][popovertarget]'
+        );
+        const menuId = trigger?.getAttribute("popovertarget");
+        const menu = menuId ? root.querySelector<HTMLElement>(`#${menuId}`) : null;
+
+        expect(trigger).not.toBeNull();
+        expect(trigger?.getAttribute("aria-haspopup")).toBe("menu");
+        expect(menu?.getAttribute("popover")).toBe("auto");
+        expect(menu?.getAttribute("role")).toBe("menu");
+        expect(menu?.querySelectorAll('[role="menuitem"]')).toHaveLength(5);
+        expect(menu?.querySelectorAll('[role="menuitemradio"]')).toHaveLength(4);
     });
 });

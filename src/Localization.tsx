@@ -17,10 +17,11 @@ import {
 
 import en from "./i18n/en.json";
 import es from "./i18n/es.json";
+import { loadLocale, saveLocale, type AppLocale } from "./LocalePreferences";
 
 const dictionaries = { en, es };
 const englishDictionary = i18n.flatten(en) as Record<string, unknown>;
-export type Locale = keyof typeof dictionaries;
+export type Locale = AppLocale;
 
 type Dictionary = i18n.Flatten<typeof en>;
 export type TranslationKey = {
@@ -29,13 +30,6 @@ export type TranslationKey = {
 
 export function hasTranslationKey(key: string): key is TranslationKey {
     return typeof englishDictionary[key] === "string";
-}
-
-function getSystemLocale(): Locale {
-    const systemLocale = navigator.languages[0] ?? navigator.language;
-    const language = systemLocale.split("-")[0].toLowerCase();
-
-    return language in dictionaries ? (language as Locale) : "en";
 }
 
 type I18NContextValue = {
@@ -49,7 +43,15 @@ export type Translator = I18NContextValue["t"];
 const I18NContext = createContext<I18NContextValue>();
 
 const I18NProvider: ParentComponent = props => {
-    const [locale, setLocale] = createSignal<Locale>(getSystemLocale());
+    const [locale, setLocaleSignal] = createSignal<Locale>(loadLocale());
+    const setLocale: Setter<Locale> = value => {
+        const previous = locale();
+        const nextLocale = setLocaleSignal(value);
+        if (nextLocale !== previous) {
+            saveLocale(nextLocale);
+        }
+        return nextLocale;
+    };
     const dictionary = createMemo(() => i18n.flatten(dictionaries[locale()]));
     const t = i18n.translator(dictionary, i18n.resolveTemplate);
 

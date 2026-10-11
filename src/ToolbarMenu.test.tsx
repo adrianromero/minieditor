@@ -1,0 +1,134 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+import { createSignal } from "solid-js";
+import { render } from "solid-js/web";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import ToolbarMenu from "./ToolbarMenu";
+
+describe("ToolbarMenu", () => {
+    let dispose: (() => void) | undefined;
+
+    afterEach(() => {
+        dispose?.();
+        dispose = undefined;
+        document.body.replaceChildren();
+    });
+
+    it("runs an item action and closes the popover", () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+        const onSelect = vi.fn();
+        const hidePopover = vi.fn();
+
+        dispose = render(
+            () => (
+                <ToolbarMenu
+                    label="More options"
+                    items={[
+                        { kind: "action", id: "one", label: "One", onSelect },
+                        { kind: "action", id: "two", label: "Two", onSelect: vi.fn() },
+                    ]}
+                />
+            ),
+            root
+        );
+
+        const menu = root.querySelector<HTMLDivElement>('[role="menu"]');
+        Object.defineProperty(menu, "hidePopover", { value: hidePopover });
+        menu?.querySelector<HTMLButtonElement>('[role="menuitem"]')?.click();
+
+        expect(onSelect).toHaveBeenCalledOnce();
+        expect(hidePopover).toHaveBeenCalledOnce();
+    });
+
+    it("moves focus through enabled items with the keyboard", () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+
+        dispose = render(
+            () => (
+                <ToolbarMenu
+                    label="More options"
+                    items={[
+                        { kind: "action", id: "one", label: "One", onSelect: vi.fn() },
+                        {
+                            kind: "action",
+                            id: "disabled",
+                            label: "Disabled",
+                            onSelect: vi.fn(),
+                            disabled: true,
+                        },
+                        { kind: "action", id: "three", label: "Three", onSelect: vi.fn() },
+                    ]}
+                />
+            ),
+            root
+        );
+
+        const menu = root.querySelector<HTMLDivElement>('[role="menu"]');
+        const enabledItems = menu?.querySelectorAll<HTMLButtonElement>(
+            '[role="menuitem"]:not(:disabled)'
+        );
+        enabledItems?.[0]?.focus();
+        menu?.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+
+        expect(document.activeElement).toBe(enabledItems?.[1]);
+
+        menu?.dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true }));
+        expect(document.activeElement).toBe(enabledItems?.[0]);
+    });
+
+    it("renders and changes a single-choice entry", () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+        const [value, setValue] = createSignal<"first" | "second">("first");
+
+        dispose = render(
+            () => (
+                <ToolbarMenu
+                    label="More options"
+                    items={[
+                        {
+                            kind: "choice",
+                            id: "choice",
+                            label: "Choice",
+                            value,
+                            options: [
+                                {
+                                    value: "first",
+                                    label: "First",
+                                    description: "First description",
+                                },
+                                { value: "second", label: "Second" },
+                            ],
+                            onChange: setValue,
+                        },
+                    ]}
+                />
+            ),
+            root
+        );
+
+        const entry = root.querySelector<HTMLButtonElement>(
+            '[data-toolbar-menu-entry="choice"]'
+        );
+        const first = root.querySelector<HTMLButtonElement>('[data-choice-option="first"]');
+        const second = root.querySelector<HTMLButtonElement>('[data-choice-option="second"]');
+
+        expect(entry?.textContent).toContain("First");
+        expect(first?.textContent).toBe("FirstFirst description");
+        expect(first?.getAttribute("aria-checked")).toBe("true");
+        expect(second?.getAttribute("aria-checked")).toBe("false");
+        expect(root.querySelector(".lucide-check")).toBeNull();
+
+        second?.click();
+
+        expect(value()).toBe("second");
+        expect(entry?.textContent).toContain("Second");
+        expect(first?.getAttribute("aria-checked")).toBe("false");
+        expect(second?.getAttribute("aria-checked")).toBe("true");
+    });
+});

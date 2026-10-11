@@ -1,0 +1,162 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
+.menu {
+    position: fixed;
+    inset: var(--toolbar-menu-top, 4rem) var(--toolbar-menu-right, 1.5rem) auto auto;
+    box-sizing: border-box;
+    min-width: 12rem;
+    margin: 0;
+    padding: 0.3rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-medium);
+    box-shadow: var(--shadow-dialog);
+}
+
+.menu::backdrop {
+    background: transparent;
+}
+
+.menuItem {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-start;
+    padding: 0.5rem 0.65rem;
+    color: inherit;
+    font: inherit;
+    font-size: 0.8rem;
+    line-height: 1.25;
+    text-align: left;
+    background: transparent;
+    border: 0;
+    border-radius: var(--radius-small);
+    cursor: pointer;
+}
+
+.choiceEntry {
+    display: contents;
+}
+
+.choiceEntry > .menuItem {
+    display: grid;
+    grid-template-columns: 3.75rem minmax(0, 1fr) auto;
+    column-gap: 0.5rem;
+}
+
+.choiceLabel {
+    min-width: 0;
+}
+
+.currentChoice {
+    display: inline-flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.35rem;
+    justify-self: start;
+    color: var(--color-text-muted);
+}
+
+.itemIcon,
+.chevron {
+    width: 1rem;
+    height: 1rem;
+    flex: 0 0 auto;
+    stroke-width: 1.6px;
+}
+
+.chevron {
+    width: 0.8rem;
+    height: 0.8rem;
+    justify-self: end;
+}
+
+.optionText {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+}
+
+.optionDescription {
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    line-height: 1.35;
+}
+
+.submenu {
+    inset: var(--toolbar-submenu-top, 4rem) var(--toolbar-submenu-right, 12rem) auto auto;
+    min-width: 9.5rem;
+}
+
+.menuItem:hover,
+.menuItem:focus-visible {
+    color: var(--color-on-secondary);
+    background: var(--color-secondary-hover);
+    outline: none;
+}
+
+.menuItem:active {
+    background: var(--color-secondary-active);
+}
+
+.choiceOption:hover {
+    color: var(--color-text);
+    background: var(--color-primary-soft-hover);
+}
+
+.choiceOption:focus-visible {
+    color: var(--color-text);
+    background: var(--color-primary-soft-hover);
+    outline: 2px solid var(--color-focus);
+    outline-offset: -2px;
+}
+
+.choiceOption:active,
+.choiceOption[aria-checked="true"] {
+    color: var(--color-primary);
+    background: var(--color-primary-soft-active);
+}
+
+.menuItem:disabled {
+    color: var(--color-on-disabled);
+    cursor: not-allowed;
+}
+
+@supports (top: anchor(bottom)) {
+    .menu {
+        position: absolute;
+        inset: auto;
+        top: calc(anchor(bottom) + 0.4rem);
+        right: anchor(right);
+    }
+
+    .submenu {
+        inset: auto;
+        top: anchor(bottom);
+        right: anchor(right);
+        position-try-fallbacks: flip-block;
+    }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .menu:popover-open {
+        animation: menu-in 100ms ease-out;
+        transform-origin: top right;
+    }
+
+    .submenu:popover-open {
+        transform-origin: top right;
+    }
+}
+
+@keyframes menu-in {
+    from {
+        opacity: 0;
+        transform: translateY(-0.2rem) scale(0.98);
+    }
+}
