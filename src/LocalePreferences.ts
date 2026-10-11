@@ -3,7 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-export type AppLocale = "en" | "es";
+export const APP_LOCALES = ["en", "es", "ca", "gl", "eu"] as const;
+export type AppLocale = (typeof APP_LOCALES)[number];
 
 const LOCALE_KEY = "minieditor.locale";
 
@@ -12,7 +13,7 @@ type LocalePreferenceWriter = Pick<Storage, "setItem">;
 type SystemLocaleSource = Pick<Navigator, "language" | "languages">;
 
 function isAppLocale(value: string | null): value is AppLocale {
-    return value === "en" || value === "es";
+    return APP_LOCALES.some(locale => locale === value);
 }
 
 export function getSystemLocale(source: SystemLocaleSource = navigator): AppLocale {

@@ -134,6 +134,21 @@ export function Toolbar() {
                                     label: "Español",
                                     description: "Spanish",
                                 },
+                                {
+                                    value: "ca",
+                                    label: "Català",
+                                    description: "Catalan",
+                                },
+                                {
+                                    value: "gl",
+                                    label: "Galego",
+                                    description: "Galician",
+                                },
+                                {
+                                    value: "eu",
+                                    label: "Euskara",
+                                    description: "Basque",
+                                },
                             ],
                             onChange: (nextLocale): void => {
                                 setLocale(nextLocale);

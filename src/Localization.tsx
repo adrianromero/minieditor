@@ -17,9 +17,12 @@ import {
 
 import en from "./i18n/en.json";
 import es from "./i18n/es.json";
+import ca from "./i18n/ca.json";
+import gl from "./i18n/gl.json";
+import eu from "./i18n/eu.json";
 import { loadLocale, saveLocale, type AppLocale } from "./LocalePreferences";
 
-const dictionaries = { en, es };
+const dictionaries = { en, es, ca, gl, eu } satisfies Record<AppLocale, typeof en>;
 const englishDictionary = i18n.flatten(en) as Record<string, unknown>;
 export type Locale = AppLocale;
 

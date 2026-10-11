@@ -163,11 +163,17 @@ describe("Toolbar", () => {
         );
         const english = root.querySelector<HTMLButtonElement>('[data-choice-option="en"]');
         const spanish = root.querySelector<HTMLButtonElement>('[data-choice-option="es"]');
+        const catalan = root.querySelector<HTMLButtonElement>('[data-choice-option="ca"]');
+        const galician = root.querySelector<HTMLButtonElement>('[data-choice-option="gl"]');
+        const basque = root.querySelector<HTMLButtonElement>('[data-choice-option="eu"]');
 
         expect(languageEntry?.textContent).toContain("English");
         expect(languageEntry?.querySelector(".lucide-languages")).not.toBeNull();
         expect(english?.textContent).toBe("EnglishEnglish");
         expect(spanish?.textContent).toBe("EspañolSpanish");
+        expect(catalan?.textContent).toBe("CatalàCatalan");
+        expect(galician?.textContent).toBe("GalegoGalician");
+        expect(basque?.textContent).toBe("EuskaraBasque");
         expect(english?.querySelector(".lucide-languages")).toBeNull();
         expect(spanish?.querySelector(".lucide-languages")).toBeNull();
         expect(english?.getAttribute("aria-checked")).toBe("true");
@@ -198,6 +204,6 @@ describe("Toolbar", () => {
         expect(menu?.getAttribute("popover")).toBe("auto");
         expect(menu?.getAttribute("role")).toBe("menu");
         expect(menu?.querySelectorAll('[role="menuitem"]')).toHaveLength(5);
-        expect(menu?.querySelectorAll('[role="menuitemradio"]')).toHaveLength(4);
+        expect(menu?.querySelectorAll('[role="menuitemradio"]')).toHaveLength(7);
     });
 });

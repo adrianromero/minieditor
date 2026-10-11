@@ -14,7 +14,10 @@ function LocaleControl() {
         <>
             <span data-testid="locale">{locale()}</span>
             <span data-testid="translation">{t("toolbar.language")}</span>
-            <button type="button" onClick={() => setLocale("es")}>Spanish</button>
+            <button type="button" data-locale="es" onClick={() => setLocale("es")}>Spanish</button>
+            <button type="button" data-locale="ca" onClick={() => setLocale("ca")}>Catalan</button>
+            <button type="button" data-locale="gl" onClick={() => setLocale("gl")}>Galician</button>
+            <button type="button" data-locale="eu" onClick={() => setLocale("eu")}>Basque</button>
         </>
     );
 }
@@ -49,11 +52,26 @@ describe("I18NProvider", () => {
         expect(root.querySelector('[data-testid="locale"]')?.textContent).toBe("en");
         expect(root.querySelector('[data-testid="translation"]')?.textContent).toBe("Language");
 
-        root.querySelector<HTMLButtonElement>("button")?.click();
+        root.querySelector<HTMLButtonElement>('[data-locale="es"]')?.click();
 
         expect(root.querySelector('[data-testid="locale"]')?.textContent).toBe("es");
         expect(root.querySelector('[data-testid="translation"]')?.textContent).toBe("Idioma");
         expect(document.documentElement.lang).toBe("es");
         expect(window.localStorage.getItem("minieditor.locale")).toBe("es");
+
+        for (const [nextLocale, translation] of [
+            ["ca", "Idioma"],
+            ["gl", "Idioma"],
+            ["eu", "Hizkuntza"],
+        ] as const) {
+            root.querySelector<HTMLButtonElement>(`[data-locale="${nextLocale}"]`)?.click();
+
+            expect(root.querySelector('[data-testid="locale"]')?.textContent).toBe(nextLocale);
+            expect(root.querySelector('[data-testid="translation"]')?.textContent).toBe(
+                translation
+            );
+            expect(document.documentElement.lang).toBe(nextLocale);
+            expect(window.localStorage.getItem("minieditor.locale")).toBe(nextLocale);
+        }
     });
 });

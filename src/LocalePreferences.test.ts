@@ -16,6 +16,9 @@ describe("locale preferences", () => {
         const storage = { getItem: vi.fn(() => null) };
 
         expect(loadLocale(storage, systemLocale("es-ES"))).toBe("es");
+        expect(loadLocale(storage, systemLocale("ca-ES"))).toBe("ca");
+        expect(loadLocale(storage, systemLocale("gl-ES"))).toBe("gl");
+        expect(loadLocale(storage, systemLocale("eu-ES"))).toBe("eu");
         expect(loadLocale(storage, systemLocale("fr-FR"))).toBe("en");
     });
 
