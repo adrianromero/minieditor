@@ -7,6 +7,8 @@ import { Show } from "solid-js";
 import HardDriveDownload from "lucide-solid/icons/hard-drive-download";
 import PanelRight from "lucide-solid/icons/panel-right";
 import RefreshCw from "lucide-solid/icons/refresh-cw";
+import Moon from "lucide-solid/icons/moon";
+import Sun from "lucide-solid/icons/sun";
 import { useAppContext } from "./AppContext";
 import FileBreadcrumb from "./FileBreadcrumb";
 import FileNavigation from "./FileNavigation";
@@ -16,7 +18,15 @@ import styles from "./Toolbar.module.css";
 export function Toolbar() {
     const { t } = useI18N();
     const {
-        editor: { saveFile, reloadFile, toggleSidebar, sidebarVisible, fileModified },
+        editor: {
+            saveFile,
+            reloadFile,
+            toggleSidebar,
+            sidebarVisible,
+            theme,
+            toggleTheme,
+            fileModified,
+        },
     } = useAppContext();
     return (
         <header class={styles.editorToolbar}>
@@ -42,16 +52,28 @@ export function Toolbar() {
                         aria-label={t(
                             sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar"
                         )}
-                        title={t(
-                            sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar"
-                        )}
+                        title={t(sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar")}
                         aria-pressed={sidebarVisible()}
                         onClick={() => toggleSidebar()?.()}
                     >
                         <PanelRight aria-hidden="true" />
                     </button>
-                    <span class={styles.actionSeparator} aria-hidden="true" />
                 </Show>
+                <button
+                    class="stdButton toolbar"
+                    type="button"
+                    aria-label={t(
+                        theme() === "dark" ? "toolbar.useLightTheme" : "toolbar.useDarkTheme"
+                    )}
+                    title={t(theme() === "dark" ? "toolbar.useLightTheme" : "toolbar.useDarkTheme")}
+                    aria-pressed={theme() === "dark"}
+                    onClick={toggleTheme}
+                >
+                    <Show when={theme() === "dark"} fallback={<Moon aria-hidden="true" />}>
+                        <Sun aria-hidden="true" />
+                    </Show>
+                </button>
+                <span class={styles.actionSeparator} aria-hidden="true" />
                 <Show when={reloadFile()}>
                     <button
                         class="stdButton toolbar"

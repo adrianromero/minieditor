@@ -22,11 +22,13 @@ import { UserMessageError } from "./UserMessageError";
 import { MessageInfoKind } from "./messagesinfo";
 import AppShortcuts, { type ShortcutDefinition } from "./AppShortcuts";
 import { loadSidebarVisible, saveSidebarVisible } from "./SidebarPreferences";
+import { applyTheme, loadTheme, saveTheme, type AppTheme } from "./ThemePreferences";
 
 export type SaveFileHandler = () => Promise<void>;
 export type ReloadFileHandler = () => Promise<void>;
 export type SearchFileHandler = () => void;
 export type ToggleSidebarHandler = () => void;
+export type ToggleThemeHandler = () => void;
 export type OnunloadHandler = () => Promise<void>;
 
 export type AppContextValues = {
@@ -61,6 +63,9 @@ export type AppContextValues = {
         setSidebarVisible: Setter<boolean>;
         toggleSidebar: Accessor<ToggleSidebarHandler | null>;
         setToggleSidebar: (handler: ToggleSidebarHandler | null) => void;
+        theme: Accessor<AppTheme>;
+        setTheme: Setter<AppTheme>;
+        toggleTheme: ToggleThemeHandler;
         fileModified: Accessor<boolean>;
         setFileModified: Setter<boolean>;
     };
@@ -90,6 +95,9 @@ export function AppProvider(props: {
     const [searchFile, setSearchFileSignal] = createSignal<SearchFileHandler | null>(null);
     const [sidebarVisible, setSidebarVisibleSignal] = createSignal(loadSidebarVisible());
     const [toggleSidebar, setToggleSidebarSignal] = createSignal<ToggleSidebarHandler | null>(null);
+    const initialTheme = loadTheme();
+    applyTheme(initialTheme);
+    const [theme, setThemeSignal] = createSignal<AppTheme>(initialTheme);
     const [onunload, setOnunloadSignal] = createSignal<OnunloadHandler | null>(null);
     const [fileModified, setFileModified] = createSignal(false);
     const [spinnerVisible, setSpinnerVisible] = createSignal(false);
@@ -124,6 +132,18 @@ export function AppProvider(props: {
             saveSidebarVisible(visible);
         }
         return visible;
+    };
+    const setTheme: Setter<AppTheme> = (value) => {
+        const previous = theme();
+        const nextTheme = setThemeSignal(value);
+        if (nextTheme !== previous) {
+            applyTheme(nextTheme);
+            saveTheme(nextTheme);
+        }
+        return nextTheme;
+    };
+    const toggleTheme = (): void => {
+        setTheme((current) => (current === "light" ? "dark" : "light"));
     };
     const saveModifiedFile = (): void | Promise<void> => {
         const handler = saveFile();
@@ -283,6 +303,9 @@ export function AppProvider(props: {
                     setSidebarVisible,
                     toggleSidebar,
                     setToggleSidebar,
+                    theme,
+                    setTheme,
+                    toggleTheme,
                     fileModified,
                     setFileModified,
                 },

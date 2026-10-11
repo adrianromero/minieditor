@@ -10,31 +10,108 @@
     pointer-events: none;
 }
 
-.actions > .crepeButtonHost {
-    display: contents;
+.actions,
+.actions * {
+    box-sizing: border-box;
 }
 
-.actions > .crepeButtonHost > :global(.tools) > .buttonGroup {
+.buttonGroup {
     position: absolute;
+    display: flex;
+    gap: 2px;
     pointer-events: auto;
 }
 
-.actions > .crepeButtonHost > :global(.tools) > .buttonGroup[hidden] {
+.buttonGroup[hidden] {
     display: none;
 }
 
-.actions > .crepeButtonHost > :global(.tools) > .buttonGroup > .fltButton {
-    opacity: 1;
+.actionButton,
+.linkEditorButton {
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    color: var(--color-on-secondary);
+    background: var(--color-secondary);
+    border: 0;
+    font: inherit;
+    cursor: pointer;
+    transition:
+        color 120ms ease-out,
+        background-color 120ms ease-out;
 }
 
-.actions
-    > .crepeButtonHost
-    > :global(.tools)
-    > .buttonGroup
-    > .fltButton
-    > :global(.lucide) {
+.actionButton:hover:not(:disabled),
+.linkEditorButton:hover:not(:disabled) {
+    background: var(--color-secondary-hover);
+}
+
+.actionButton:active:not(:disabled),
+.linkEditorButton:active:not(:disabled) {
+    background: var(--color-secondary-active);
+}
+
+.actionButton:focus,
+.linkEditorButton:focus {
+    outline: none;
+}
+
+.actionButton:focus-visible,
+.linkEditorButton:focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 1px;
+}
+
+.actionButton:disabled,
+.linkEditorButton:disabled {
+    color: var(--color-on-disabled);
+    background: var(--color-disabled);
+    cursor: not-allowed;
+}
+
+.actionButton {
+    gap: 4px;
+    padding: 4px 10px;
+    border-radius: var(--radius-small);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 16px;
+}
+
+.actionButton:first-of-type {
+    border-top-left-radius: 100px;
+    border-bottom-left-radius: 100px;
+}
+
+.actionButton:last-of-type {
+    border-top-right-radius: 100px;
+    border-bottom-right-radius: 100px;
+}
+
+.actionButton[aria-pressed="true"]:not(:disabled) {
+    color: var(--color-primary);
+    background: var(--color-primary-soft);
+}
+
+.actionButton[aria-pressed="true"]:hover:not(:disabled) {
+    background: var(--color-primary-soft-hover);
+}
+
+.actionButton[aria-pressed="true"]:active:not(:disabled) {
+    background: var(--color-primary-soft-active);
+}
+
+.actionButton > :global(.lucide),
+.linkEditorButton > :global(.lucide) {
     fill: none;
     stroke: currentColor;
+}
+
+.actionButton > :global(.lucide) {
+    width: 14px;
+    height: 14px;
 }
 
 .buttonGroup > .linkEditor {
@@ -46,6 +123,7 @@
     gap: 0.35rem;
     box-sizing: border-box;
     width: min(25rem, calc(100vw - 3rem));
+    margin: 0;
     padding: 0.4rem;
     color: var(--color-text);
     background: var(--color-surface);
@@ -57,11 +135,13 @@
 .linkInput {
     min-width: 0;
     flex: 1;
+    margin: 0;
     padding: 0.35rem 0.5rem;
     color: var(--color-text);
     background: var(--color-view-background);
     border: 1px solid var(--color-border);
     border-radius: var(--radius-small);
+    font: inherit;
     outline: none;
 }
 
@@ -71,31 +151,23 @@
     outline-offset: -1px;
 }
 
-.actions
-    > .crepeButtonHost
-    > :global(.tools)
-    > .buttonGroup
-    > .linkEditor
-    > .linkEditorButton {
+.linkEditorButton {
     width: 1.8rem;
     height: 1.8rem;
-    flex: 0 0 auto;
     padding: 0.3rem;
-    opacity: 1;
     border-radius: var(--radius-small);
 }
 
-.actions
-    > .crepeButtonHost
-    > :global(.tools)
-    > .buttonGroup
-    > .linkEditor
-    > .linkEditorButton
-    > :global(.lucide) {
+.linkEditorButton > :global(.lucide) {
     width: 1rem;
     height: 1rem;
-    fill: none;
-    stroke: currentColor;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .actionButton,
+    .linkEditorButton {
+        transition: none;
+    }
 }
 
 :global(.milkdowntheme > .milkdown .milkdown-image-block > .image-wrapper > .operation) {

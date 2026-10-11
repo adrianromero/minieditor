@@ -302,127 +302,123 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
     });
 
     return (
-        <div ref={actionsRef} class={`${styles.actions} milkdown`}>
-            <div class={`milkdown-code-block ${styles.crepeButtonHost}`}>
-                <div class="tools">
-                    <div
-                        class={`tools-button-group ${styles.buttonGroup}`}
-                        hidden={!activeImage()}
-                        onPointerLeave={handleActionPointerLeave}
-                        style={{
-                            left: `${buttonPosition().left}px`,
-                            top: `${buttonPosition().top}px`,
+        <div ref={actionsRef} class={styles.actions}>
+            <div
+                class={styles.buttonGroup}
+                hidden={!activeImage()}
+                onPointerLeave={handleActionPointerLeave}
+                style={{
+                    left: `${buttonPosition().left}px`,
+                    top: `${buttonPosition().top}px`,
+                }}
+            >
+                <button
+                    ref={navigationButtonRef}
+                    class={styles.actionButton}
+                    type="button"
+                    aria-label={t("markdownToolbar.openImage")}
+                    title={t("markdownToolbar.openImage")}
+                    onPointerDown={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }}
+                    onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        const image = activeImage();
+                        if (image) void navigateToImage(image);
+                    }}
+                >
+                    <LinkIcon aria-hidden="true" />
+                    {t("markdownToolbar.openImage")}
+                </button>
+                <button
+                    ref={editButtonRef}
+                    class={styles.actionButton}
+                    type="button"
+                    aria-label={t("markdownToolbar.editImageLink")}
+                    title={t("markdownToolbar.editImageLink")}
+                    onPointerDown={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }}
+                    onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                        const image = activeImage();
+                        if (image) startEditingLink(image);
+                    }}
+                >
+                    <Pencil aria-hidden="true" />
+                    {t("markdownToolbar.editImageLink")}
+                </button>
+                <Show when={activeImage()?.closest(".milkdown-image-block")}>
+                    <button
+                        ref={captionButtonRef}
+                        class={styles.actionButton}
+                        type="button"
+                        aria-label={t("markdownToolbar.toggleImageCaption")}
+                        title={t("markdownToolbar.toggleImageCaption")}
+                        onPointerDown={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }}
+                        onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            const image = activeImage();
+                            if (image) toggleImageCaption(image);
                         }}
                     >
+                        <Captions aria-hidden="true" />
+                        {t("markdownToolbar.imageCaption")}
+                    </button>
+                </Show>
+                <Show when={editingImage()}>
+                    <form
+                        ref={linkEditorRef}
+                        class={styles.linkEditor}
+                        onSubmit={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            saveEditedLink();
+                        }}
+                        onPointerDown={(event) => event.stopPropagation()}
+                    >
+                        <input
+                            ref={linkInputRef}
+                            class={styles.linkInput}
+                            aria-label={t("markdownToolbar.imageLink")}
+                            placeholder={t("markdownToolbar.imageLinkPlaceholder")}
+                            value={draftSource()}
+                            onInput={(event) => setDraftSource(event.currentTarget.value)}
+                            onKeyDown={(event) => {
+                                event.stopPropagation();
+                                if (event.key === "Escape") {
+                                    event.preventDefault();
+                                    stopEditingLink();
+                                }
+                            }}
+                        />
                         <button
-                            ref={navigationButtonRef}
-                            class={`copy-button ${styles.fltButton}`}
-                            type="button"
-                            aria-label={t("markdownToolbar.openImage")}
-                            title={t("markdownToolbar.openImage")}
-                            onPointerDown={(event) => {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }}
-                            onClick={(event) => {
-                                event.preventDefault();
-                                event.stopPropagation();
-                                const image = activeImage();
-                                if (image) void navigateToImage(image);
-                            }}
+                            class={styles.linkEditorButton}
+                            type="submit"
+                            aria-label={t("markdownToolbar.imageLinkConfirm")}
+                            title={t("markdownToolbar.imageLinkConfirm")}
                         >
-                            <LinkIcon aria-hidden="true" />
-                            {t("markdownToolbar.openImage")}
+                            <Check aria-hidden="true" />
                         </button>
                         <button
-                            ref={editButtonRef}
-                            class={`preview-toggle-button ${styles.fltButton}`}
+                            class={styles.linkEditorButton}
                             type="button"
-                            aria-label={t("markdownToolbar.editImageLink")}
-                            title={t("markdownToolbar.editImageLink")}
-                            onPointerDown={(event) => {
-                                event.preventDefault();
-                                event.stopPropagation();
-                            }}
-                            onClick={(event) => {
-                                event.preventDefault();
-                                event.stopPropagation();
-                                const image = activeImage();
-                                if (image) startEditingLink(image);
-                            }}
+                            aria-label={t("markdownToolbar.cancelImageLink")}
+                            title={t("markdownToolbar.cancelImageLink")}
+                            onClick={() => stopEditingLink()}
                         >
-                            <Pencil aria-hidden="true" />
-                            {t("markdownToolbar.editImageLink")}
+                            <X aria-hidden="true" />
                         </button>
-                        <Show when={activeImage()?.closest(".milkdown-image-block")}>
-                            <button
-                                ref={captionButtonRef}
-                                class={`preview-toggle-button ${styles.fltButton}`}
-                                type="button"
-                                aria-label={t("markdownToolbar.toggleImageCaption")}
-                                title={t("markdownToolbar.toggleImageCaption")}
-                                onPointerDown={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                }}
-                                onClick={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    const image = activeImage();
-                                    if (image) toggleImageCaption(image);
-                                }}
-                            >
-                                <Captions aria-hidden="true" />
-                                {t("markdownToolbar.imageCaption")}
-                            </button>
-                        </Show>
-                        <Show when={editingImage()}>
-                            <form
-                                ref={linkEditorRef}
-                                class={styles.linkEditor}
-                                onSubmit={(event) => {
-                                    event.preventDefault();
-                                    event.stopPropagation();
-                                    saveEditedLink();
-                                }}
-                                onPointerDown={(event) => event.stopPropagation()}
-                            >
-                                <input
-                                    ref={linkInputRef}
-                                    class={styles.linkInput}
-                                    aria-label={t("markdownToolbar.imageLink")}
-                                    placeholder={t("markdownToolbar.imageLinkPlaceholder")}
-                                    value={draftSource()}
-                                    onInput={(event) => setDraftSource(event.currentTarget.value)}
-                                    onKeyDown={(event) => {
-                                        event.stopPropagation();
-                                        if (event.key === "Escape") {
-                                            event.preventDefault();
-                                            stopEditingLink();
-                                        }
-                                    }}
-                                />
-                                <button
-                                    class={styles.linkEditorButton}
-                                    type="submit"
-                                    aria-label={t("markdownToolbar.imageLinkConfirm")}
-                                    title={t("markdownToolbar.imageLinkConfirm")}
-                                >
-                                    <Check aria-hidden="true" />
-                                </button>
-                                <button
-                                    class={styles.linkEditorButton}
-                                    type="button"
-                                    aria-label={t("markdownToolbar.cancelImageLink")}
-                                    title={t("markdownToolbar.cancelImageLink")}
-                                    onClick={() => stopEditingLink()}
-                                >
-                                    <X aria-hidden="true" />
-                                </button>
-                            </form>
-                        </Show>
-                    </div>
-                </div>
+                    </form>
+                </Show>
             </div>
         </div>
     );

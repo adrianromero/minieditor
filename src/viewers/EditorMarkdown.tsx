@@ -32,6 +32,7 @@ import { configureCodeLanguages } from "./CodeLanguages";
 import { joinMarkdownFrontmatter, splitMarkdownFrontmatter } from "./MarkdownFrontmatter";
 import { ProseMirrorSearchController } from "../search/ProseMirrorSearchController";
 import type { SearchController } from "../search/SearchController";
+import { codeMirrorSyntaxTheme } from "./CodeMirrorTheme";
 
 export function EditorMarkdown(): JSX.Element {
     let editorRef!: HTMLDivElement;
@@ -146,6 +147,7 @@ export function EditorMarkdown(): JSX.Element {
                 doc: document.frontmatter,
                 extensions: [
                     basicSetup,
+                    codeMirrorSyntaxTheme,
                     CodeMirrorEditorView.lineWrapping,
                     yaml(),
                     CodeMirrorEditorView.contentAttributes.of({
@@ -165,9 +167,9 @@ export function EditorMarkdown(): JSX.Element {
                 defaultValue: document.markdown,
                 featureConfigs: {
                     [Crepe.Feature.CodeMirror]: {
-                        // Crepe uses oneDark by default. A neutral view theme lets
-                        // basicSetup provide CodeMirror's default light highlighting.
-                        theme: CodeMirrorEditorView.theme({}),
+                        // Crepe defaults to oneDark. Token classes keep its embedded
+                        // editors synchronized with the application theme instead.
+                        theme: [CodeMirrorEditorView.theme({}), codeMirrorSyntaxTheme],
                         copyText: t("markdownToolbar.codeCopy"),
                         searchPlaceholder: t("markdownToolbar.codeLanguageSearch"),
                         noResultText: t("markdownToolbar.codeLanguageNoResult"),

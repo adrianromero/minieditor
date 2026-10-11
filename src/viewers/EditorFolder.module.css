@@ -64,11 +64,11 @@
 }
 
 .directoryIcon {
-    color: hsl(40 85% 45%);
+    color: var(--color-folder);
 }
 
 .fileIcon {
-    color: hsl(215 70% 52%);
+    color: var(--color-file);
 }
 
 .entryName {

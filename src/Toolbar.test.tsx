@@ -8,6 +8,7 @@ import { render } from "solid-js/web";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { AppContextValues, ReloadFileHandler, SaveFileHandler } from "./AppContext";
 import Toolbar from "./Toolbar";
+import type { AppTheme } from "./ThemePreferences";
 
 let editorContext: AppContextValues["editor"];
 
@@ -29,6 +30,7 @@ describe("Toolbar", () => {
     let setToggleSidebar: AppContextValues["editor"]["setToggleSidebar"];
     let setSidebarVisible: (visible: boolean) => void;
     let setFileModified: (modified: boolean) => void;
+    let setTheme: (theme: AppTheme) => void;
 
     beforeEach(() => {
         const [saveFile, setSaveFileSignal] = createSignal<SaveFileHandler | null>(null);
@@ -37,11 +39,13 @@ describe("Toolbar", () => {
             createSignal<ReturnType<AppContextValues["editor"]["toggleSidebar"]>>(null);
         const [sidebarVisible, setSidebarVisibleSignal] = createSignal(true);
         const [fileModified, setFileModifiedSignal] = createSignal(false);
+        const [theme, setThemeSignal] = createSignal<AppTheme>("light");
         setSaveFile = (handler) => setSaveFileSignal(() => handler);
         setReloadFile = (handler) => setReloadFileSignal(() => handler);
         setToggleSidebar = (handler) => setToggleSidebarSignal(() => handler);
         setSidebarVisible = setSidebarVisibleSignal;
         setFileModified = setFileModifiedSignal;
+        setTheme = setThemeSignal;
 
         editorContext = {
             saveFile,
@@ -54,6 +58,9 @@ describe("Toolbar", () => {
             setSidebarVisible: setSidebarVisibleSignal,
             toggleSidebar,
             setToggleSidebar,
+            theme,
+            setTheme: setThemeSignal,
+            toggleTheme: () => setThemeSignal((current) => current === "light" ? "dark" : "light"),
             fileModified,
             setFileModified: setFileModifiedSignal,
         };
@@ -105,7 +112,9 @@ describe("Toolbar", () => {
         );
         expect(button?.classList.contains("selected")).toBe(true);
         expect(button?.getAttribute("aria-pressed")).toBe("true");
-        expect(button?.nextElementSibling?.getAttribute("aria-hidden")).toBe("true");
+        expect(button?.nextElementSibling?.getAttribute("aria-label")).toBe(
+            "toolbar.useDarkTheme"
+        );
 
         button?.click();
 
@@ -113,5 +122,24 @@ describe("Toolbar", () => {
         expect(button?.classList.contains("selected")).toBe(false);
         expect(button?.getAttribute("aria-label")).toBe("toolbar.showSidebar");
         expect(button?.getAttribute("aria-pressed")).toBe("false");
+    });
+
+    it("toggles the application theme", () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+        dispose = render(() => <Toolbar />, root);
+
+        const button = root.querySelector<HTMLButtonElement>(
+            '[aria-label="toolbar.useDarkTheme"]'
+        );
+        expect(button?.getAttribute("aria-pressed")).toBe("false");
+
+        button?.click();
+
+        expect(root.querySelector('[aria-label="toolbar.useLightTheme"]')).toBe(button);
+        expect(button?.getAttribute("aria-pressed")).toBe("true");
+
+        setTheme("light");
+        expect(button?.getAttribute("aria-label")).toBe("toolbar.useDarkTheme");
     });
 });

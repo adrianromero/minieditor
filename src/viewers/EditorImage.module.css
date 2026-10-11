@@ -19,12 +19,12 @@
     overflow: hidden;
     cursor: grab;
     touch-action: none;
-    background-color: #fff;
+    background-color: var(--color-image-canvas);
     background-image:
-        linear-gradient(to right, #d7d9dc 1px, transparent 1px),
-        linear-gradient(to bottom, #d7d9dc 1px, transparent 1px),
-        radial-gradient(circle at 0 0, #cfd2d5 1px, transparent 1.25px),
-        radial-gradient(circle at 0 0, #cfd2d5 1px, transparent 1.25px);
+        linear-gradient(to right, var(--color-image-grid) 1px, transparent 1px),
+        linear-gradient(to bottom, var(--color-image-grid) 1px, transparent 1px),
+        radial-gradient(circle at 0 0, var(--color-image-grid-dot) 1px, transparent 1.25px),
+        radial-gradient(circle at 0 0, var(--color-image-grid-dot) 1px, transparent 1.25px);
     background-size:
         72px 72px,
         72px 72px,

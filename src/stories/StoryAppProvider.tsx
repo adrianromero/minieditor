@@ -1,4 +1,4 @@
-import { createSignal, type JSX } from "solid-js";
+import { createEffect, createSignal, type JSX } from "solid-js";
 import {
     AppContext,
     type AppContextValues,
@@ -8,6 +8,7 @@ import {
     type SearchFileHandler,
     type ToggleSidebarHandler,
 } from "../AppContext";
+import { applyTheme } from "../ThemePreferences";
 
 type StoryAppProviderProps = {
     children: JSX.Element;
@@ -37,6 +38,10 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
     const [searchFile, setSearchFileSignal] = createSignal<SearchFileHandler | null>(null);
     const [sidebarVisible, setSidebarVisible] = createSignal(true);
     const [toggleSidebar, setToggleSidebarSignal] = createSignal<ToggleSidebarHandler | null>(null);
+    const initialTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+    const [theme, setTheme] = createSignal<"light" | "dark">(initialTheme);
+
+    createEffect(() => applyTheme(theme()));
 
     const setOnunload = (handler: OnunloadHandler | null): void => {
         setOnunloadSignal(() => handler);
@@ -84,6 +89,9 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
             setSidebarVisible,
             toggleSidebar,
             setToggleSidebar,
+            theme,
+            setTheme,
+            toggleTheme: () => setTheme((current) => current === "light" ? "dark" : "light"),
             fileModified,
             setFileModified,
         },

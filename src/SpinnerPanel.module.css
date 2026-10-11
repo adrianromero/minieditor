@@ -9,7 +9,7 @@
     z-index: 1000;
     display: grid;
     place-items: center;
-    background: rgba(248, 250, 252, 0);
+    background: var(--color-overlay-transparent);
     backdrop-filter: blur(0);
     -webkit-backdrop-filter: blur(0);
     opacity: 0;

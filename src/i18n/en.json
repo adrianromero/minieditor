@@ -9,6 +9,8 @@
         "save": "Save",
         "showSidebar": "Show sidebar",
         "hideSidebar": "Hide sidebar",
+        "useDarkTheme": "Use dark theme",
+        "useLightTheme": "Use light theme",
         "unsavedChanges": "Unsaved changes",
         "basePath": "[ . ]",
         "pathNavigation": "Current file path"

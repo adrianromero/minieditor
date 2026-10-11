@@ -9,6 +9,8 @@
         "save": "Guardar",
         "showSidebar": "Mostrar panel lateral",
         "hideSidebar": "Ocultar panel lateral",
+        "useDarkTheme": "Usar tema oscuro",
+        "useLightTheme": "Usar tema claro",
         "unsavedChanges": "Cambios sin guardar",
         "basePath": "[ . ]",
         "pathNavigation": "Ruta del archivo actual"

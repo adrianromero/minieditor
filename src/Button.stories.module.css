@@ -89,16 +89,12 @@
     height: 2.5rem;
 }
 
-.floatingStage > div {
-    height: auto;
+.floatingStage .floatingButtonGroup {
+    position: static;
 }
 
-.floatingStage button {
-    position: static !important;
-}
-
-.externalStage {
-    min-height: auto !important;
+.variant .externalStage {
+    min-height: auto;
     justify-content: flex-start;
 }
 

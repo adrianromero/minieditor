@@ -1,6 +1,4 @@
 import type { Meta, StoryObj } from "storybook-solidjs-vite";
-import "@milkdown/crepe/theme/common/style.css";
-import "@milkdown/crepe/theme/frame.css";
 import ExternalLink from "lucide-solid/icons/external-link";
 import File from "lucide-solid/icons/file";
 import Folder from "lucide-solid/icons/folder";
@@ -72,22 +70,18 @@ function FloatingImageButton(props: {
 }): JSX.Element {
     return (
         <div class={styles.floatingStage}>
-            <div class={`${floatingStyles.actions} milkdown`}>
-                <div class={`milkdown-code-block ${floatingStyles.crepeButtonHost}`}>
-                    <div class="tools">
-                        <div class={`tools-button-group ${floatingStyles.buttonGroup}`}>
-                            <button
-                                class={`copy-button ${floatingStyles.fltButton} ${props.selected ? "selected" : ""}`}
-                                aria-label={props.label}
-                                aria-pressed={props.selected}
-                                disabled={props.disabled}
-                            >
-                                <LinkIcon />
-                                Abrir
-                            </button>
-                        </div>
-                    </div>
-                </div>
+            <div
+                class={`${floatingStyles.buttonGroup} ${styles.floatingButtonGroup}`}
+            >
+                <button
+                    class={floatingStyles.actionButton}
+                    aria-label={props.label}
+                    aria-pressed={props.selected}
+                    disabled={props.disabled}
+                >
+                    <LinkIcon />
+                    Abrir
+                </button>
             </div>
         </div>
     );
@@ -317,8 +311,8 @@ export const ComponentScoped: Story = {
 
                 <Variant
                     name="Acción flotante de imagen"
-                    source="Crepe · .milkdown-code-block .tools .tools-button-group"
-                    note="Reutiliza directamente la estructura y los estilos de los botones de acción de los bloques de código de Crepe."
+                    source="MarkdownImageActions.module.css · .actionButton"
+                    note="El componente define su propia estructura y todos sus estados; no depende del DOM ni de los estilos internos de Crepe."
                 >
                     <ButtonStates
                         normal={<FloatingImageButton label="Abrir imagen" />}

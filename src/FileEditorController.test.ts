@@ -44,6 +44,7 @@ describe("createFileEditorController", () => {
         const [filename, setFilename] = createSignal("notes.md");
         const [fileModified, setFileModified] = createSignal(false);
         const [sidebarVisible, setSidebarVisible] = createSignal(true);
+        const [theme, setTheme] = createSignal<"light" | "dark">("light");
         saveFile = null;
         reloadFile = null;
         onunload = null;
@@ -88,6 +89,9 @@ describe("createFileEditorController", () => {
                 setSidebarVisible,
                 toggleSidebar: () => null,
                 setToggleSidebar: vi.fn(),
+                theme,
+                setTheme,
+                toggleTheme: vi.fn(),
                 fileModified,
                 setFileModified,
             },

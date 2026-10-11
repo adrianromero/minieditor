@@ -25,6 +25,7 @@ import {
 } from "../search/CodeMirrorSearchController";
 import type { SearchController } from "../search/SearchController";
 import { useAppContext } from "../AppContext";
+import { codeMirrorSyntaxTheme } from "./CodeMirrorTheme";
 
 type EditorTextProps = {
     extensions?: readonly LanguageSupport[];
@@ -53,6 +54,7 @@ export function EditorText(props: EditorTextProps): JSX.Element {
                 doc: content,
                 extensions: [
                     basicSetup,
+                    codeMirrorSyntaxTheme,
                     externalCodeMirrorSearch(),
                     EditorView.lineWrapping,
                     ...(props.extensions ?? []),

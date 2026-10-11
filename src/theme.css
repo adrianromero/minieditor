@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-/* Theme tokens. Add a [data-theme="dark"] block here when the dark palette exists. */
+/* Light is the default palette and remains the fallback when no preference exists. */
 :root,
 [data-theme="light"] {
     color-scheme: light;
@@ -67,17 +67,218 @@
     --color-search-match-active: hsl(32 100% 62%);
 
     --color-overlay: hsla(210, 40%, 98%, 0.58);
+    --color-overlay-transparent: hsla(210, 40%, 98%, 0);
+    --color-dialog-backdrop: hsla(0, 0%, 0%, 0.3);
+    --color-selection: hsl(250 45% 85%);
+    --color-image-canvas: #ffffff;
+    --color-image-grid: #d7d9dc;
+    --color-image-grid-dot: #cfd2d5;
+    --color-folder: hsl(40 85% 45%);
+    --color-file: hsl(215 70% 52%);
+
+    /* Syntax highlighting shared by standalone and Milkdown CodeMirror editors. */
+    --syntax-keyword: #708;
+    --syntax-atom: #219;
+    --syntax-literal: #164;
+    --syntax-string: #a11;
+    --syntax-number: #164;
+    --syntax-variable: #00f;
+    --syntax-type: #085;
+    --syntax-property: #00c;
+    --syntax-operator: #000;
+    --syntax-comment: #940;
+    --syntax-meta: #555;
+    --syntax-invalid: #f00;
 
     --view-padding: 0.5rem;
     --content-max-width: 1024px;
     --radius-small: 4px;
     --radius-medium: 8px;
     --shadow-surface: 0 8px 24px rgba(0, 0, 0, 0.04);
+    --shadow-toolbar: 0 1px 3px rgba(0, 0, 0, 0.02);
+    --shadow-dialog: 0 18px 48px rgba(0, 0, 0, 0.18);
+    --shadow-crepe-1: 0 1px 3px 1px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-crepe-2: 0 2px 6px 2px rgba(0, 0, 0, 0.15), 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+
+    --color-primary: hsl(211 90% 67%);
+    --color-primary-hover: hsl(211 92% 73%);
+    --color-primary-active: hsl(211 94% 79%);
+    --color-primary-soft: hsla(211, 90%, 62%, 0.14);
+    --color-primary-soft-hover: hsla(211, 90%, 62%, 0.21);
+    --color-primary-soft-active: hsla(211, 90%, 62%, 0.28);
+    --color-on-primary: hsl(214 45% 12%);
+    --color-border-primary: hsl(211 78% 58%);
+
+    --color-secondary: hsl(211 22% 22%);
+    --color-secondary-hover: hsl(211 22% 28%);
+    --color-secondary-active: hsl(211 22% 34%);
+    --color-on-secondary: hsl(210 24% 88%);
+    --color-border-secondary: hsl(211 17% 39%);
+
+    --color-disabled: hsl(211 12% 32%);
+    --color-on-disabled: hsl(211 11% 58%);
+    --color-border-disabled: hsl(211 12% 35%);
+    --color-button-inner-border: hsl(211 26% 34%);
+    --color-focus: hsl(211 95% 72%);
+
+    --color-text: hsl(210 24% 90%);
+    --color-text-muted: hsl(211 15% 69%);
+    --color-text-subtle: hsl(211 12% 55%);
+    --color-background: hsl(212 28% 10%);
+    --color-view-background: hsl(212 25% 12%);
+    --color-surface: hsl(212 24% 16%);
+    --color-surface-subtle: hsl(212 22% 19%);
+
+    --color-warning: hsl(32 92% 64%);
+    --color-error: hsl(4 82% 68%);
+    --color-error-text: hsl(4 88% 75%);
+    --color-error-background: hsl(4 35% 20%);
+    --color-error-border: hsl(4 42% 38%);
+    --color-status-text: hsl(210 14% 72%);
+    --color-status-background: hsl(211 15% 21%);
+    --color-status-border: hsl(211 13% 36%);
+    --color-question-text: hsl(196 82% 72%);
+    --color-question-background: hsl(198 34% 20%);
+    --color-question-border: hsl(198 42% 36%);
+
+    --color-border: hsla(210, 30%, 92%, 0.16);
+    --color-border-subtle: hsla(210, 30%, 92%, 0.09);
+    --color-search-match: hsl(47 72% 34%);
+    --color-search-match-active: hsl(30 82% 46%);
+    --color-overlay: hsla(212, 35%, 7%, 0.66);
+    --color-overlay-transparent: hsla(212, 35%, 7%, 0);
+    --color-dialog-backdrop: hsla(212, 45%, 4%, 0.64);
+    --color-selection: hsl(217 48% 38%);
+    --color-image-canvas: hsl(212 22% 14%);
+    --color-image-grid: hsl(211 15% 25%);
+    --color-image-grid-dot: hsl(211 14% 31%);
+    --color-folder: hsl(40 88% 62%);
+    --color-file: hsl(211 88% 69%);
+
+    --syntax-keyword: hsl(286 71% 73%);
+    --syntax-atom: hsl(264 80% 75%);
+    --syntax-literal: hsl(168 62% 64%);
+    --syntax-string: hsl(94 48% 67%);
+    --syntax-number: hsl(29 78% 70%);
+    --syntax-variable: hsl(207 88% 72%);
+    --syntax-type: hsl(180 54% 65%);
+    --syntax-property: hsl(203 72% 72%);
+    --syntax-operator: hsl(210 22% 84%);
+    --syntax-comment: hsl(210 11% 56%);
+    --syntax-meta: hsl(45 70% 68%);
+    --syntax-invalid: hsl(2 92% 72%);
+
+    --shadow-surface: 0 8px 28px rgba(0, 0, 0, 0.28);
+    --shadow-toolbar: 0 1px 4px rgba(0, 0, 0, 0.24);
+    --shadow-dialog: 0 18px 52px rgba(0, 0, 0, 0.5);
+    --shadow-crepe-1: 0 1px 4px 1px rgba(0, 0, 0, 0.34), 0 1px 2px rgba(0, 0, 0, 0.45);
+    --shadow-crepe-2: 0 3px 9px 2px rgba(0, 0, 0, 0.38), 0 1px 3px rgba(0, 0, 0, 0.5);
 }
 
 /* Fixes WEBKIT awful bold rendering */
 body {
     -webkit-font-smoothing: antialiased;
+}
+
+/* CodeMirror uses these stable classes in every editor, including Crepe code blocks. */
+.cm-editor {
+    background-color: transparent;
+}
+
+.cm-editor .cm-cursor,
+.cm-editor .cm-dropCursor {
+    border-left-color: var(--color-text);
+}
+
+[data-theme] .cm-editor .cm-selectionBackground,
+[data-theme]
+    .cm-editor.cm-focused
+    > .cm-scroller
+    > .cm-selectionLayer
+    .cm-selectionBackground {
+    background: var(--color-selection);
+}
+
+.cm-tooltip,
+.cm-panels {
+    color: var(--color-text);
+    background: var(--color-surface);
+    border-color: var(--color-border);
+}
+
+.cm-tooltip-autocomplete > ul > li[aria-selected] {
+    color: var(--color-text);
+    background: var(--color-primary-soft);
+}
+
+.cm-editor .tok-link,
+.cm-editor .tok-heading {
+    color: var(--color-primary);
+}
+
+.cm-editor .tok-keyword {
+    color: var(--syntax-keyword);
+}
+
+.cm-editor .tok-atom,
+.cm-editor .tok-bool {
+    color: var(--syntax-atom);
+}
+
+.cm-editor .tok-literal,
+.cm-editor .tok-inserted {
+    color: var(--syntax-literal);
+}
+
+.cm-editor .tok-string,
+.cm-editor .tok-url {
+    color: var(--syntax-string);
+}
+
+.cm-editor .tok-number {
+    color: var(--syntax-number);
+}
+
+.cm-editor .tok-string2 {
+    color: var(--syntax-meta);
+}
+
+.cm-editor .tok-variableName,
+.cm-editor .tok-labelName {
+    color: var(--syntax-variable);
+}
+
+.cm-editor .tok-typeName,
+.cm-editor .tok-namespace,
+.cm-editor .tok-className,
+.cm-editor .tok-macroName {
+    color: var(--syntax-type);
+}
+
+.cm-editor .tok-propertyName {
+    color: var(--syntax-property);
+}
+
+.cm-editor .tok-operator,
+.cm-editor .tok-punctuation {
+    color: var(--syntax-operator);
+}
+
+.cm-editor .tok-comment {
+    color: var(--syntax-comment);
+}
+
+.cm-editor .tok-meta {
+    color: var(--syntax-meta);
+}
+
+.cm-editor .tok-deleted,
+.cm-editor .tok-invalid {
+    color: var(--syntax-invalid);
 }
 /*
 [contenteditable] {

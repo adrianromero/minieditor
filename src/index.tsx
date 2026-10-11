@@ -8,13 +8,14 @@ import { invoke } from "@tauri-apps/api/core";
 import { render } from "solid-js/web";
 import App from "./App";
 import type { InitialConfig } from "./rusttypes";
+import { applyTheme, loadTheme } from "./ThemePreferences";
 import "./theme.css";
 
 // Import base styles first
 import "@milkdown/crepe/theme/common/style.css";
 import "./milkdowntheme.css";
 
-document.documentElement.dataset.theme = "light";
+applyTheme(loadTheme());
 
 function isEditableTarget(target: EventTarget | null): boolean {
     if (!(target instanceof Element)) {

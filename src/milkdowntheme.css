@@ -31,7 +31,7 @@
 
     /* Interactive Colors */
     --crepe-color-hover: var(--color-secondary-hover); /* Hover state color */
-    --crepe-color-selected: hsl(250, 45%, 85%); /* Selected state color */
+    --crepe-color-selected: var(--color-selection); /* Selected state color */
     --crepe-color-inline-area: var(--color-secondary); /* Inline editing area color */
 }
 
@@ -44,9 +44,9 @@
 
 .milkdown {
     /* Small Shadow */
-    --crepe-shadow-1: 0px 1px 3px 1px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+    --crepe-shadow-1: var(--shadow-crepe-1);
     /* Large Shadow */
-    --crepe-shadow-2: 0px 2px 6px 2px rgba(0, 0, 0, 0.15), 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+    --crepe-shadow-2: var(--shadow-crepe-2);
 }
 
 /* Basic styling example */
@@ -119,15 +119,15 @@
 .milkdown .milkdown-table-block table {
     border-collapse: separate;
     border-spacing: 0;
-    border-top: 1px solid hsl(0, 0%, 84%);
-    border-left: 1px solid hsl(0, 0%, 84%);
+    border-top: 1px solid var(--color-border);
+    border-left: 1px solid var(--color-border);
 }
 
 .milkdown .milkdown-table-block th,
 .milkdown .milkdown-table-block td {
     border: 0;
-    border-right: 1px solid hsl(0, 0%, 84%);
-    border-bottom: 1px solid hsl(0, 0%, 84%);
+    border-right: 1px solid var(--color-border);
+    border-bottom: 1px solid var(--color-border);
 }
 .milkdown .milkdown-table-block th {
     background: var(--color-surface-subtle);
