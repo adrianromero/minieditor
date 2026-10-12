@@ -198,7 +198,6 @@ export function EditorMarkdown(): JSX.Element {
             });
             imageProxy = nextImageProxy;
             crepeInstance = nextCrepe;
-            setImageActionsCrepe(nextCrepe);
 
             nextCrepe.editor.config(
                 configureCodeLanguages(t("markdownToolbar.codePreviewMermaidError"))
@@ -225,6 +224,10 @@ export function EditorMarkdown(): JSX.Element {
             });
 
             await nextCrepe.create();
+            // Markdown image actions read editorViewCtx. Expose Crepe only after
+            // create() has populated that context; an image-first document can
+            // otherwise emit a selection update during editor initialization.
+            setImageActionsCrepe(nextCrepe);
             nextCrepe.editor.action((ctx) => ctx.get(editorViewCtx).focus());
             nextCrepe.editor.action((ctx) => {
                 currentSearchController = new ProseMirrorSearchController(ctx.get(editorViewCtx));

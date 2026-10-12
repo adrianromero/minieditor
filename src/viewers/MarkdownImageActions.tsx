@@ -180,7 +180,10 @@ export default function MarkdownImageActions(props: MarkdownImageActionsProps): 
     ): HTMLImageElement | null => {
         if (!(selection instanceof NodeSelection)) return null;
 
-        const nodeDOM = ctx.get(editorViewCtx).nodeDOM(selection.from);
+        const editorView = ctx.get(editorViewCtx);
+        if (typeof editorView.nodeDOM !== "function") return null;
+
+        const nodeDOM = editorView.nodeDOM(selection.from);
         if (!(nodeDOM instanceof Element)) return null;
 
         return navigableImageFromTarget(
