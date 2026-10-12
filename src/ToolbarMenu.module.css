@@ -7,7 +7,7 @@
     position: fixed;
     inset: var(--toolbar-menu-top, 4rem) var(--toolbar-menu-right, 1.5rem) auto auto;
     box-sizing: border-box;
-    min-width: 12rem;
+    min-width: 16rem;
     margin: 0;
     padding: 0.3rem;
     color: var(--color-text);
@@ -45,7 +45,7 @@
 
 .choiceEntry > .menuItem {
     display: grid;
-    grid-template-columns: 3.75rem minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) 5rem auto;
     column-gap: 0.5rem;
 }
 

@@ -99,6 +99,7 @@ describe("Toolbar", () => {
         const saveButton = root.querySelector<HTMLButtonElement>('[aria-label="toolbar.save"]');
         expect(saveButton).not.toBeNull();
         expect(saveButton?.disabled).toBe(true);
+        expect(saveButton?.nextElementSibling?.getAttribute("aria-hidden")).toBe("true");
 
         setFileModified(true);
         expect(saveButton?.disabled).toBe(false);
@@ -121,7 +122,6 @@ describe("Toolbar", () => {
         const button = root.querySelector<HTMLButtonElement>('[aria-label="toolbar.hideSidebar"]');
         expect(button?.classList.contains("selected")).toBe(true);
         expect(button?.getAttribute("aria-pressed")).toBe("true");
-        expect(button?.nextElementSibling?.getAttribute("aria-hidden")).toBe("true");
 
         button?.click();
 

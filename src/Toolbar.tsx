@@ -53,25 +53,6 @@ export function Toolbar() {
                 </Show>
             </div>
             <div class={styles.toolbarActions}>
-                <Show when={toggleSidebar()}>
-                    <>
-                        <button
-                            class={`stdButton toolbar ${sidebarVisible() ? "selected" : ""}`}
-                            type="button"
-                            aria-label={t(
-                                sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar"
-                            )}
-                            title={t(
-                                sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar"
-                            )}
-                            aria-pressed={sidebarVisible()}
-                            onClick={() => toggleSidebar()?.()}
-                        >
-                            <PanelRight aria-hidden="true" />
-                        </button>
-                        <span class={styles.actionSeparator} aria-hidden="true" />
-                    </>
-                </Show>
                 <Show when={reloadFile()}>
                     <button
                         class="stdButton toolbar"
@@ -95,6 +76,23 @@ export function Toolbar() {
                         }}
                     >
                         <HardDriveDownload aria-hidden="true" />
+                    </button>
+                </Show>
+                <Show when={reloadFile() || saveFile()}>
+                    <span class={styles.actionSeparator} aria-hidden="true" />
+                </Show>
+                <Show when={toggleSidebar()}>
+                    <button
+                        class={`stdButton toolbar ${sidebarVisible() ? "selected" : ""}`}
+                        type="button"
+                        aria-label={t(
+                            sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar"
+                        )}
+                        title={t(sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar")}
+                        aria-pressed={sidebarVisible()}
+                        onClick={() => toggleSidebar()?.()}
+                    >
+                        <PanelRight aria-hidden="true" />
                     </button>
                 </Show>
                 <ToolbarMenu
