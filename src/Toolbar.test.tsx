@@ -10,10 +10,12 @@ import type { AppContextValues, ReloadFileHandler, SaveFileHandler } from "./App
 import Toolbar from "./Toolbar";
 import type { Locale } from "./Localization";
 import type { AppTheme } from "./ThemePreferences";
+import type { AppTypography } from "./TypographyPreferences";
 
 let editorContext: AppContextValues["editor"];
 let locale: Accessor<Locale>;
 let setLocale: Setter<Locale>;
+let typography: Accessor<AppTypography>;
 
 vi.mock("./AppContext", () => ({
     useAppContext: () => ({ editor: editorContext }),
@@ -43,6 +45,9 @@ describe("Toolbar", () => {
         const [sidebarVisible, setSidebarVisibleSignal] = createSignal(true);
         const [fileModified, setFileModifiedSignal] = createSignal(false);
         const [theme, setThemeSignal] = createSignal<AppTheme>("light");
+        const [typographySignal, setTypographySignal] =
+            createSignal<AppTypography>("sans-serif");
+        typography = typographySignal;
         [locale, setLocale] = createSignal<Locale>("en");
         setSaveFile = (handler) => setSaveFileSignal(() => handler);
         setReloadFile = (handler) => setReloadFileSignal(() => handler);
@@ -65,6 +70,8 @@ describe("Toolbar", () => {
             theme,
             setTheme: setThemeSignal,
             toggleTheme: () => setThemeSignal((current) => current === "light" ? "dark" : "light"),
+            typography,
+            setTypography: setTypographySignal,
             fileModified,
             setFileModified: setFileModifiedSignal,
         };
@@ -188,7 +195,39 @@ describe("Toolbar", () => {
         expect(spanish?.getAttribute("aria-checked")).toBe("true");
     });
 
-    it("renders the native popover menu with two choices and three dummy options", () => {
+    it("selects the Markdown typography from the nested choice menu", () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+        dispose = render(() => <Toolbar />, root);
+
+        const typographyEntry = root.querySelector<HTMLButtonElement>(
+            '[data-toolbar-menu-entry="typography"]'
+        );
+        const sansSerif = root.querySelector<HTMLButtonElement>(
+            '[data-choice-option="sans-serif"]'
+        );
+        const reading = root.querySelector<HTMLButtonElement>(
+            '[data-choice-option="reading"]'
+        );
+
+        expect(typographyEntry?.textContent).toContain("toolbar.sansSerifTypography");
+        expect(typographyEntry?.querySelector(".lucide-type")).not.toBeNull();
+        expect(sansSerif?.textContent).toContain(
+            "toolbar.sansSerifTypographyDescription"
+        );
+        expect(reading?.textContent).toContain("toolbar.readingTypographyDescription");
+        expect(sansSerif?.getAttribute("aria-checked")).toBe("true");
+        expect(reading?.getAttribute("aria-checked")).toBe("false");
+
+        reading?.click();
+
+        expect(typography()).toBe("reading");
+        expect(typographyEntry?.textContent).toContain("toolbar.readingTypography");
+        expect(sansSerif?.getAttribute("aria-checked")).toBe("false");
+        expect(reading?.getAttribute("aria-checked")).toBe("true");
+    });
+
+    it("renders the native popover menu with three choices and three dummy options", () => {
         const root = document.createElement("div");
         document.body.append(root);
         dispose = render(() => <Toolbar />, root);
@@ -203,7 +242,7 @@ describe("Toolbar", () => {
         expect(trigger?.getAttribute("aria-haspopup")).toBe("menu");
         expect(menu?.getAttribute("popover")).toBe("auto");
         expect(menu?.getAttribute("role")).toBe("menu");
-        expect(menu?.querySelectorAll('[role="menuitem"]')).toHaveLength(5);
-        expect(menu?.querySelectorAll('[role="menuitemradio"]')).toHaveLength(7);
+        expect(menu?.querySelectorAll('[role="menuitem"]')).toHaveLength(6);
+        expect(menu?.querySelectorAll('[role="menuitemradio"]')).toHaveLength(11);
     });
 });

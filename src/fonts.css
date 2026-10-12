@@ -1,0 +1,79 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ *
+ * Bundled font files are distributed by Fontsource under the SIL Open Font
+ * License 1.1. Only the Latin variable subsets used by the editor are loaded.
+ */
+
+@font-face {
+    font-family: "Open Sans Variable";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 300 800;
+    src: url("@fontsource-variable/open-sans/files/open-sans-latin-wght-normal.woff2")
+        format("woff2-variations");
+}
+
+@font-face {
+    font-family: "Open Sans Variable";
+    font-style: italic;
+    font-display: swap;
+    font-weight: 300 800;
+    src: url("@fontsource-variable/open-sans/files/open-sans-latin-wght-italic.woff2")
+        format("woff2-variations");
+}
+
+@font-face {
+    font-family: "Source Serif 4 Variable";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 200 900;
+    src: url("@fontsource-variable/source-serif-4/files/source-serif-4-latin-wght-normal.woff2")
+        format("woff2-variations");
+}
+
+@font-face {
+    font-family: "Source Serif 4 Variable";
+    font-style: italic;
+    font-display: swap;
+    font-weight: 200 900;
+    src: url("@fontsource-variable/source-serif-4/files/source-serif-4-latin-wght-italic.woff2")
+        format("woff2-variations");
+}
+
+@font-face {
+    font-family: "Inter Variable";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 100 900;
+    src: url("@fontsource-variable/inter/files/inter-latin-wght-normal.woff2")
+        format("woff2-variations");
+}
+
+@font-face {
+    font-family: "Inter Variable";
+    font-style: italic;
+    font-display: swap;
+    font-weight: 100 900;
+    src: url("@fontsource-variable/inter/files/inter-latin-wght-italic.woff2")
+        format("woff2-variations");
+}
+
+@font-face {
+    font-family: "Literata Variable";
+    font-style: normal;
+    font-display: swap;
+    font-weight: 200 900;
+    src: url("@fontsource-variable/literata/files/literata-latin-wght-normal.woff2")
+        format("woff2-variations");
+}
+
+@font-face {
+    font-family: "Literata Variable";
+    font-style: italic;
+    font-display: swap;
+    font-weight: 200 900;
+    src: url("@fontsource-variable/literata/files/literata-latin-wght-italic.woff2")
+        format("woff2-variations");
+}

@@ -6,6 +6,8 @@
  * Las reglas están agrupadas por formato para facilitar su personalización.
  */
 
+@import "./fonts.css";
+
 .milkdown {
     /* Background Colors */
     --crepe-color-background: var(--color-surface); /* Main background color */
@@ -35,10 +37,37 @@
     --crepe-color-inline-area: var(--color-secondary); /* Inline editing area color */
 }
 
+:root,
+[data-typography="sans-serif"] {
+    --markdown-font-title: "Open Sans Variable", "Open Sans", Arial, Helvetica, sans-serif;
+    --markdown-font-default: "Open Sans Variable", "Open Sans", Arial, Helvetica, sans-serif;
+}
+
+[data-typography="serif"] {
+    --markdown-font-title: "Source Serif 4 Variable", Georgia, "Times New Roman", Times,
+        serif;
+    --markdown-font-default: "Source Serif 4 Variable", Georgia, "Times New Roman", Times,
+        serif;
+}
+
+[data-typography="modern"] {
+    --markdown-font-title: "Inter Variable", Inter, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --markdown-font-default: "Inter Variable", Inter, system-ui, -apple-system,
+        BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+[data-typography="reading"] {
+    --markdown-font-title: "Literata Variable", "Iowan Old Style", "Palatino Linotype",
+        Georgia, serif;
+    --markdown-font-default: "Literata Variable", "Iowan Old Style", "Palatino Linotype",
+        Georgia, serif;
+}
+
 .milkdown {
     /* Font Families */
-    --crepe-font-title: "Open Sans", Arial, Helvetica, sans-serif;
-    --crepe-font-default: "Open Sans", Arial, Helvetica, sans-serif;
+    --crepe-font-title: var(--markdown-font-title);
+    --crepe-font-default: var(--markdown-font-default);
     --crepe-font-code: Fira Code, Menlo, Monaco, "Courier New", Courier, monospace;
 }
 

@@ -10,6 +10,7 @@ import RefreshCw from "lucide-solid/icons/refresh-cw";
 import Moon from "lucide-solid/icons/moon";
 import Sun from "lucide-solid/icons/sun";
 import Languages from "lucide-solid/icons/languages";
+import TypeIcon from "lucide-solid/icons/type";
 import { useAppContext } from "./AppContext";
 import FileBreadcrumb from "./FileBreadcrumb";
 import FileNavigation from "./FileNavigation";
@@ -17,6 +18,7 @@ import ToolbarMenu, { type ToolbarMenuChoiceItem } from "./ToolbarMenu";
 import { useI18N } from "./Localization";
 import type { Locale } from "./Localization";
 import type { AppTheme } from "./ThemePreferences";
+import type { AppTypography } from "./TypographyPreferences";
 import styles from "./Toolbar.module.css";
 
 export function Toolbar() {
@@ -29,6 +31,8 @@ export function Toolbar() {
             sidebarVisible,
             theme,
             setTheme,
+            typography,
+            setTypography,
             fileModified,
         },
     } = useAppContext();
@@ -117,6 +121,38 @@ export function Toolbar() {
                                 setTheme(nextTheme);
                             },
                         } satisfies ToolbarMenuChoiceItem<AppTheme>,
+                        {
+                            kind: "choice",
+                            id: "typography",
+                            label: t("toolbar.typography"),
+                            currentIcon: TypeIcon,
+                            value: typography,
+                            options: [
+                                {
+                                    value: "sans-serif",
+                                    label: t("toolbar.sansSerifTypography"),
+                                    description: t("toolbar.sansSerifTypographyDescription"),
+                                },
+                                {
+                                    value: "serif",
+                                    label: t("toolbar.serifTypography"),
+                                    description: t("toolbar.serifTypographyDescription"),
+                                },
+                                {
+                                    value: "modern",
+                                    label: t("toolbar.modernTypography"),
+                                    description: t("toolbar.modernTypographyDescription"),
+                                },
+                                {
+                                    value: "reading",
+                                    label: t("toolbar.readingTypography"),
+                                    description: t("toolbar.readingTypographyDescription"),
+                                },
+                            ],
+                            onChange: (nextTypography): void => {
+                                setTypography(nextTypography);
+                            },
+                        } satisfies ToolbarMenuChoiceItem<AppTypography>,
                         {
                             kind: "choice",
                             id: "language",

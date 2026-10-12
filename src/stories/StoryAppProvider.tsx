@@ -9,6 +9,11 @@ import {
     type ToggleSidebarHandler,
 } from "../AppContext";
 import { applyTheme } from "../ThemePreferences";
+import {
+    applyTypography,
+    isAppTypography,
+    type AppTypography,
+} from "../TypographyPreferences";
 
 type StoryAppProviderProps = {
     children: JSX.Element;
@@ -40,8 +45,14 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
     const [toggleSidebar, setToggleSidebarSignal] = createSignal<ToggleSidebarHandler | null>(null);
     const initialTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
     const [theme, setTheme] = createSignal<"light" | "dark">(initialTheme);
+    const storedTypography = document.documentElement.dataset.typography ?? null;
+    const initialTypography: AppTypography = isAppTypography(storedTypography)
+        ? storedTypography
+        : "sans-serif";
+    const [typography, setTypography] = createSignal<AppTypography>(initialTypography);
 
     createEffect(() => applyTheme(theme()));
+    createEffect(() => applyTypography(typography()));
 
     const setOnunload = (handler: OnunloadHandler | null): void => {
         setOnunloadSignal(() => handler);
@@ -92,6 +103,8 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
             theme,
             setTheme,
             toggleTheme: () => setTheme((current) => current === "light" ? "dark" : "light"),
+            typography,
+            setTypography,
             fileModified,
             setFileModified,
         },

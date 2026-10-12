@@ -23,6 +23,12 @@ import { MessageInfoKind } from "./messagesinfo";
 import AppShortcuts, { type ShortcutDefinition } from "./AppShortcuts";
 import { loadSidebarVisible, saveSidebarVisible } from "./SidebarPreferences";
 import { applyTheme, loadTheme, saveTheme, type AppTheme } from "./ThemePreferences";
+import {
+    applyTypography,
+    loadTypography,
+    saveTypography,
+    type AppTypography,
+} from "./TypographyPreferences";
 
 export type SaveFileHandler = () => Promise<void>;
 export type ReloadFileHandler = () => Promise<void>;
@@ -66,6 +72,8 @@ export type AppContextValues = {
         theme: Accessor<AppTheme>;
         setTheme: Setter<AppTheme>;
         toggleTheme: ToggleThemeHandler;
+        typography: Accessor<AppTypography>;
+        setTypography: Setter<AppTypography>;
         fileModified: Accessor<boolean>;
         setFileModified: Setter<boolean>;
     };
@@ -98,6 +106,9 @@ export function AppProvider(props: {
     const initialTheme = loadTheme();
     applyTheme(initialTheme);
     const [theme, setThemeSignal] = createSignal<AppTheme>(initialTheme);
+    const initialTypography = loadTypography();
+    applyTypography(initialTypography);
+    const [typography, setTypographySignal] = createSignal<AppTypography>(initialTypography);
     const [onunload, setOnunloadSignal] = createSignal<OnunloadHandler | null>(null);
     const [fileModified, setFileModified] = createSignal(false);
     const [spinnerVisible, setSpinnerVisible] = createSignal(false);
@@ -144,6 +155,15 @@ export function AppProvider(props: {
     };
     const toggleTheme = (): void => {
         setTheme((current) => (current === "light" ? "dark" : "light"));
+    };
+    const setTypography: Setter<AppTypography> = value => {
+        const previous = typography();
+        const nextTypography = setTypographySignal(value);
+        if (nextTypography !== previous) {
+            applyTypography(nextTypography);
+            saveTypography(nextTypography);
+        }
+        return nextTypography;
     };
     const saveModifiedFile = (): void | Promise<void> => {
         const handler = saveFile();
@@ -306,6 +326,8 @@ export function AppProvider(props: {
                     theme,
                     setTheme,
                     toggleTheme,
+                    typography,
+                    setTypography,
                     fileModified,
                     setFileModified,
                 },

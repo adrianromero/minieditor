@@ -27,6 +27,9 @@
     "copyright": "Copyright (c) 2026 Adrián Romero",
     "license": "MIT",
     "licenseFile": "../LICENSE",
+    "resources": {
+      "../THIRD_PARTY_NOTICES.md": "THIRD_PARTY_NOTICES.md"
+    },
     "icon": [
       "icons/32x32.png",
       "icons/128x128.png",

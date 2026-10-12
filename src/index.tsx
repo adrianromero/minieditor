@@ -9,6 +9,7 @@ import { render } from "solid-js/web";
 import App from "./App";
 import type { InitialConfig } from "./rusttypes";
 import { applyTheme, loadTheme } from "./ThemePreferences";
+import { applyTypography, loadTypography } from "./TypographyPreferences";
 import "./theme.css";
 
 // Import base styles first
@@ -16,6 +17,7 @@ import "@milkdown/crepe/theme/common/style.css";
 import "./milkdowntheme.css";
 
 applyTheme(loadTheme());
+applyTypography(loadTypography());
 
 function isEditableTarget(target: EventTarget | null): boolean {
     if (!(target instanceof Element)) {

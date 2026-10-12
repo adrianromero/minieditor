@@ -45,6 +45,9 @@ describe("createFileEditorController", () => {
         const [fileModified, setFileModified] = createSignal(false);
         const [sidebarVisible, setSidebarVisible] = createSignal(true);
         const [theme, setTheme] = createSignal<"light" | "dark">("light");
+        const [typography, setTypography] = createSignal<
+            "sans-serif" | "serif" | "modern" | "reading"
+        >("sans-serif");
         saveFile = null;
         reloadFile = null;
         onunload = null;
@@ -92,6 +95,8 @@ describe("createFileEditorController", () => {
                 theme,
                 setTheme,
                 toggleTheme: vi.fn(),
+                typography,
+                setTypography,
                 fileModified,
                 setFileModified,
             },
