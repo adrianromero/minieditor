@@ -190,24 +190,6 @@ export function Toolbar() {
                                 setLocale(nextLocale);
                             },
                         } satisfies ToolbarMenuChoiceItem<Locale>,
-                        {
-                            kind: "action",
-                            id: "dummy-1",
-                            label: t("toolbar.dummyOption1"),
-                            onSelect: () => undefined,
-                        },
-                        {
-                            kind: "action",
-                            id: "dummy-2",
-                            label: t("toolbar.dummyOption2"),
-                            onSelect: () => undefined,
-                        },
-                        {
-                            kind: "action",
-                            id: "dummy-3",
-                            label: t("toolbar.dummyOption3"),
-                            onSelect: () => undefined,
-                        },
                     ]}
                 />
             </div>

@@ -25,9 +25,6 @@
         "readingTypography": "Lectura",
         "readingTypographyDescription": "Cómoda para textos largos",
         "language": "Idioma",
-        "dummyOption1": "Opción dummy 1",
-        "dummyOption2": "Opción dummy 2",
-        "dummyOption3": "Opción dummy 3",
         "unsavedChanges": "Cambios sin guardar",
         "basePath": "[ . ]",
         "pathNavigation": "Ruta del archivo actual"

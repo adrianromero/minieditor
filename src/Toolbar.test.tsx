@@ -45,8 +45,7 @@ describe("Toolbar", () => {
         const [sidebarVisible, setSidebarVisibleSignal] = createSignal(true);
         const [fileModified, setFileModifiedSignal] = createSignal(false);
         const [theme, setThemeSignal] = createSignal<AppTheme>("light");
-        const [typographySignal, setTypographySignal] =
-            createSignal<AppTypography>("sans-serif");
+        const [typographySignal, setTypographySignal] = createSignal<AppTypography>("sans-serif");
         typography = typographySignal;
         [locale, setLocale] = createSignal<Locale>("en");
         setSaveFile = (handler) => setSaveFileSignal(() => handler);
@@ -69,7 +68,8 @@ describe("Toolbar", () => {
             setToggleSidebar,
             theme,
             setTheme: setThemeSignal,
-            toggleTheme: () => setThemeSignal((current) => current === "light" ? "dark" : "light"),
+            toggleTheme: () =>
+                setThemeSignal((current) => (current === "light" ? "dark" : "light")),
             typography,
             setTypography: setTypographySignal,
             fileModified,
@@ -118,9 +118,7 @@ describe("Toolbar", () => {
         const toggle = vi.fn(() => setSidebarVisible(false));
         setToggleSidebar(toggle);
 
-        const button = root.querySelector<HTMLButtonElement>(
-            '[aria-label="toolbar.hideSidebar"]'
-        );
+        const button = root.querySelector<HTMLButtonElement>('[aria-label="toolbar.hideSidebar"]');
         expect(button?.classList.contains("selected")).toBe(true);
         expect(button?.getAttribute("aria-pressed")).toBe("true");
         expect(button?.nextElementSibling?.getAttribute("aria-hidden")).toBe("true");
@@ -206,15 +204,11 @@ describe("Toolbar", () => {
         const sansSerif = root.querySelector<HTMLButtonElement>(
             '[data-choice-option="sans-serif"]'
         );
-        const reading = root.querySelector<HTMLButtonElement>(
-            '[data-choice-option="reading"]'
-        );
+        const reading = root.querySelector<HTMLButtonElement>('[data-choice-option="reading"]');
 
         expect(typographyEntry?.textContent).toContain("toolbar.sansSerifTypography");
         expect(typographyEntry?.querySelector(".lucide-type")).not.toBeNull();
-        expect(sansSerif?.textContent).toContain(
-            "toolbar.sansSerifTypographyDescription"
-        );
+        expect(sansSerif?.textContent).toContain("toolbar.sansSerifTypographyDescription");
         expect(reading?.textContent).toContain("toolbar.readingTypographyDescription");
         expect(sansSerif?.getAttribute("aria-checked")).toBe("true");
         expect(reading?.getAttribute("aria-checked")).toBe("false");
@@ -227,7 +221,7 @@ describe("Toolbar", () => {
         expect(reading?.getAttribute("aria-checked")).toBe("true");
     });
 
-    it("renders the native popover menu with three choices and three dummy options", () => {
+    it("renders the native popover menu with three choices", () => {
         const root = document.createElement("div");
         document.body.append(root);
         dispose = render(() => <Toolbar />, root);
@@ -242,7 +236,7 @@ describe("Toolbar", () => {
         expect(trigger?.getAttribute("aria-haspopup")).toBe("menu");
         expect(menu?.getAttribute("popover")).toBe("auto");
         expect(menu?.getAttribute("role")).toBe("menu");
-        expect(menu?.querySelectorAll('[role="menuitem"]')).toHaveLength(6);
+        expect(menu?.querySelectorAll('[role="menuitem"]')).toHaveLength(3);
         expect(menu?.querySelectorAll('[role="menuitemradio"]')).toHaveLength(11);
     });
 });

@@ -25,9 +25,6 @@
         "readingTypography": "Lectura",
         "readingTypographyDescription": "Còmoda per a textos llargs",
         "language": "Idioma",
-        "dummyOption1": "Opció de prova 1",
-        "dummyOption2": "Opció de prova 2",
-        "dummyOption3": "Opció de prova 3",
         "unsavedChanges": "Canvis sense desar",
         "basePath": "[ . ]",
         "pathNavigation": "Ruta del fitxer actual"
