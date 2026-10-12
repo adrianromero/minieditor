@@ -21,16 +21,6 @@ describe("typography preferences", () => {
         }
     });
 
-    it("migrates the legacy book typography to reading", () => {
-        const storage = {
-            getItem: vi.fn(() => "book"),
-            setItem: vi.fn(),
-        };
-
-        expect(loadTypography(storage)).toBe("reading");
-        expect(storage.setItem).toHaveBeenCalledWith("minieditor.typography", "reading");
-    });
-
     it("ignores an invalid stored typography", () => {
         const storage = { getItem: vi.fn(() => "unknown") };
 

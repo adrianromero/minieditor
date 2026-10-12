@@ -10,26 +10,15 @@ const TYPOGRAPHY_KEY = "minieditor.typography";
 
 type TypographyPreferenceReader = Pick<Storage, "getItem">;
 type TypographyPreferenceWriter = Pick<Storage, "setItem">;
-type TypographyPreferenceStorage = TypographyPreferenceReader
-    & Partial<TypographyPreferenceWriter>;
+type TypographyPreferenceStorage = TypographyPreferenceReader & Partial<TypographyPreferenceWriter>;
 
 export function isAppTypography(value: string | null): value is AppTypography {
-    return APP_TYPOGRAPHIES.some(typography => typography === value);
+    return APP_TYPOGRAPHIES.some((typography) => typography === value);
 }
 
 export function loadTypography(storage?: TypographyPreferenceStorage): AppTypography {
-    const preferenceStorage = storage ?? window.localStorage;
-
     try {
-        const storedTypography = preferenceStorage.getItem(TYPOGRAPHY_KEY);
-        if (storedTypography === "book") {
-            try {
-                preferenceStorage.setItem?.(TYPOGRAPHY_KEY, "reading");
-            } catch (error: unknown) {
-                console.error("Unable to migrate typography:", error);
-            }
-            return "reading";
-        }
+        const storedTypography = (storage ?? window.localStorage).getItem(TYPOGRAPHY_KEY);
         return isAppTypography(storedTypography) ? storedTypography : "sans-serif";
     } catch (error: unknown) {
         console.error("Unable to load typography:", error);
