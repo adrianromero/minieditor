@@ -1,11 +1,10 @@
-![0.33](./minieditor-logo.png)
-
 # MiniEditor
+
+![0.33](./minieditor-logo.png)
 
 A lightweight desktop Markdown editor built with Tauri, SolidJS, and Mikldown Crepe.
 
-> \[!NOTE]
-> MiniEditor is under active development. Features and interfaces may change before the first stable release.‎
+> 🔵 MiniEditor is under active development. Features and interfaces may change before the first stable release.
 
 ## Features
 
