@@ -43,6 +43,7 @@
     --color-view-background: #fafafa;
     --color-surface: #ffffff;
     --color-surface-subtle: hsl(210, 0%, 98%);
+    --color-surface-subtle-variant: hsla(210, 0%, 20%, 0.02);
 
     /* Notifications */
     --color-warning: #e67e22;
@@ -132,6 +133,7 @@
     --color-view-background: hsl(212 25% 12%);
     --color-surface: hsl(212 24% 16%);
     --color-surface-subtle: hsl(212 22% 19%);
+    --color-surface-subtle-variant: hsla(210, 0%, 80%, 0.05);
 
     --color-warning: hsl(32 92% 64%);
     --color-error: hsl(4 82% 68%);
@@ -195,11 +197,7 @@ body {
 }
 
 [data-theme] .cm-editor .cm-selectionBackground,
-[data-theme]
-    .cm-editor.cm-focused
-    > .cm-scroller
-    > .cm-selectionLayer
-    .cm-selectionBackground {
+[data-theme] .cm-editor.cm-focused > .cm-scroller > .cm-selectionLayer .cm-selectionBackground {
     background: var(--color-selection);
 }
 
