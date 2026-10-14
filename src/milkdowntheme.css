@@ -161,3 +161,11 @@
 .milkdown .milkdown-table-block th {
     background: var(--color-surface-subtle-variant);
 }
+
+.milkdown .ProseMirror-search-match {
+    background: var(--color-search-match);
+}
+
+.milkdown .ProseMirror-active-search-match {
+    background: var(--color-search-match-active);
+}
