@@ -6,7 +6,7 @@
 export const APP_TYPOGRAPHIES = ["sans-serif", "serif", "modern", "reading"] as const;
 export type AppTypography = (typeof APP_TYPOGRAPHIES)[number];
 
-const TYPOGRAPHY_KEY = "minieditor.typography";
+const TYPOGRAPHY_KEY = "plunibio.typography";
 
 type TypographyPreferenceReader = Pick<Storage, "getItem">;
 type TypographyPreferenceWriter = Pick<Storage, "setItem">;

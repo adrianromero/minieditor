@@ -5,7 +5,7 @@
 
 export type AppTheme = "light" | "dark";
 
-const THEME_KEY = "minieditor.theme";
+const THEME_KEY = "plunibio.theme";
 
 type ThemePreferenceReader = Pick<Storage, "getItem">;
 type ThemePreferenceWriter = Pick<Storage, "setItem">;

@@ -1,10 +1,10 @@
-# MiniEditor
+# Plunibio
 
-![0.33](./minieditor-logo.png)
+![0.33](./plunibio-logo.png)
 
 A lightweight desktop Markdown editor built with Tauri, SolidJS, and Mikldown Crepe.
 
-> 🔵 MiniEditor is under active development. Features and interfaces may change before the first stable release.
+> 🔵 Plunibio is under active development. Features and interfaces may change before the first stable release.
 
 ## Features
 
@@ -37,7 +37,7 @@ A lightweight desktop Markdown editor built with Tauri, SolidJS, and Mikldown Cr
 
 ## Prerequisites
 
-Install the following before building MiniEditor:
+Install the following before building Plunibio:
 
 - A current [Node.js](https://nodejs.org/) LTS release and npm.
 
@@ -72,7 +72,7 @@ The extra separators are required because npm and the Tauri CLI each process the
 The packaged executable accepts an optional relative filename and an optional base path:
 
 ```text
-minieditor [FILENAME] [--base-path BASEPATH]
+plunibio [FILENAME] [--base-path BASEPATH]
 ```
 
 - `FILENAME` is a file or folder path relative to the base path. Absolute paths and paths containing `..` are rejected.
@@ -83,11 +83,11 @@ minieditor [FILENAME] [--base-path BASEPATH]
 
 - `BASEPATH` must identify an existing directory. It may be absolute or relative; a relative base path is resolved against the process working directory.
 
-- When `FILENAME` is omitted, MiniEditor restores the last filename opened for that base path. If the base path has no saved filename, it opens with no selected filename.
+- When `FILENAME` is omitted, Plunibio restores the last filename opened for that base path. If the base path has no saved filename, it opens with no selected filename.
 
-- When `BASEPATH` is omitted, MiniEditor uses the process working directory.
+- When `BASEPATH` is omitted, Plunibio uses the process working directory.
 
-- When both are omitted, MiniEditor uses the process working directory and restores its saved filename when available.
+- When both are omitted, Plunibio uses the process working directory and restores its saved filename when available.
 
 - The selected base path is canonicalized before the application starts.
 
@@ -101,19 +101,19 @@ The arguments resolve as follows:
 | Both, with an absolute `BASEPATH` | Relative file or folder path                            | Absolute `BASEPATH`                                    |
 | Both, with a relative `BASEPATH`  | Relative file or folder path                            | `BASEPATH` resolved from the process working directory |
 
-On a normal shutdown, MiniEditor stores the last filename for the current canonical base path in `~/.minieditor/properties.toml`, alongside the window dimensions. An explicitly supplied `FILENAME` always takes precedence over the saved value. Configuration read, window sizing, and configuration write failures are logged without displaying an error to the user.
+On a normal shutdown, Plunibio stores the last filename for the current canonical base path in `~/.plunibio/properties.toml`, alongside the window dimensions. An explicitly supplied `FILENAME` always takes precedence over the saved value. Configuration read, window sizing, and configuration write failures are logged without displaying an error to the user.
 
 Examples:
 
 ```bash
-minieditor
-minieditor README.md
-minieditor guides
-minieditor --base-path /home/user/Documents/notes
-minieditor daily/today.md --base-path ./notes
+plunibio
+plunibio README.md
+plunibio guides
+plunibio --base-path /home/user/Documents/notes
+plunibio daily/today.md --base-path ./notes
 ```
 
-Run `minieditor --help` to display the built-in command-line help.
+Run `plunibio --help` to display the built-in command-line help.
 
 ## Building
 
@@ -154,17 +154,17 @@ cargo check --manifest-path src-tauri/Cargo.toml
 cargo fmt --manifest-path src-tauri/Cargo.toml -- --check
 ```
 
-Regenerate all application icons from `minieditor-logo.png` with:
+Regenerate all application icons from `plunibio-logo.png` with:
 
 ```bash
-npm run tauri icon minieditor-logo.png
+npm run tauri icon plunibio-logo.png
 ```
 
 ## Security model
 
-MiniEditor treats `BASEPATH` as the root of the accessible file tree. Filenames exchanged with the frontend are relative to that directory. The Rust backend rejects absolute filenames, parent-directory traversal, and resolved paths outside the configured base directory.
+Plunibio treats `BASEPATH` as the root of the accessible file tree. Filenames exchanged with the frontend are relative to that directory. The Rust backend rejects absolute filenames, parent-directory traversal, and resolved paths outside the configured base directory.
 
-Do not use MiniEditor to open untrusted Markdown files until the project has completed a dedicated security review.
+Do not use Plunibio to open untrusted Markdown files until the project has completed a dedicated security review.
 
 ## Contributing
 
@@ -176,11 +176,11 @@ Contributions and bug reports are welcome. Before submitting a pull request:
 4. Run the validation commands listed above.
 5. Describe what changed and how it was tested in the pull request.
 
-Use GitHub Issues to report bugs, request features, or ask project-related questions. Include the operating system, MiniEditor version, reproduction steps, and relevant logs when reporting a bug.
+Use GitHub Issues to report bugs, request features, or ask project-related questions. Include the operating system, Plunibio version, reproduction steps, and relevant logs when reporting a bug.
 
 ## License
 
-MiniEditor is released under the [MIT License](./LICENSE).
+Plunibio is released under the [MIT License](./LICENSE).
 
 Copyright (c) 2026 Adrián Romero.
 

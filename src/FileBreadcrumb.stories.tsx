@@ -39,6 +39,6 @@ export const ShortPath: Story = {};
 
 export const LongPath: Story = {
     args: {
-        filename: "projects/minieditor/docs/guides/getting-started/configuration.md",
+        filename: "projects/plunibio/docs/guides/getting-started/configuration.md",
     },
 };

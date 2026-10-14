@@ -11,7 +11,7 @@ fn missing_file_is_unsaved_until_written() {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let base = std::env::temp_dir().join(format!("minieditor-read-file-{unique}"));
+        let base = std::env::temp_dir().join(format!("plunibio-read-file-{unique}"));
         std::fs::create_dir(&base).unwrap();
         let path = base.join("new.md");
         let basepath = base.to_string_lossy().into_owned();
@@ -48,7 +48,7 @@ fn empty_missing_file_is_only_created_by_explicit_save() {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let base = std::env::temp_dir().join(format!("minieditor-empty-file-{unique}"));
+        let base = std::env::temp_dir().join(format!("plunibio-empty-file-{unique}"));
         std::fs::create_dir(&base).unwrap();
         let path = base.join("empty.md");
         let basepath = base.to_string_lossy().into_owned();
@@ -86,7 +86,7 @@ fn link_paths_accept_new_files_and_directories_but_remain_inside_base() {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let base = std::env::temp_dir().join(format!("minieditor-links-{unique}"));
+        let base = std::env::temp_dir().join(format!("plunibio-links-{unique}"));
         std::fs::create_dir_all(base.join("docs")).unwrap();
         std::fs::write(base.join("existing.md"), "Existing").unwrap();
         let basepath = base.to_string_lossy().into_owned();
@@ -155,7 +155,7 @@ fn list_directory_respects_show_hidden_flag() {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let base = std::env::temp_dir().join(format!("minieditor-list-directory-{unique}"));
+        let base = std::env::temp_dir().join(format!("plunibio-list-directory-{unique}"));
         std::fs::create_dir(&base).unwrap();
         std::fs::write(base.join("visible.md"), "Visible").unwrap();
         std::fs::write(base.join(".hidden.md"), "Hidden").unwrap();
@@ -194,7 +194,7 @@ fn missing_binary_file_is_empty_and_new_until_explicitly_saved() {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let base = std::env::temp_dir().join(format!("minieditor-binary-file-{unique}"));
+        let base = std::env::temp_dir().join(format!("plunibio-binary-file-{unique}"));
         std::fs::create_dir(&base).unwrap();
         let basepath = base.to_string_lossy().into_owned();
         let filename = "new.png".to_owned();
@@ -242,7 +242,7 @@ fn linked_binary_file_is_read_relative_to_the_markdown_document() {
             .duration_since(UNIX_EPOCH)
             .unwrap()
             .as_nanos();
-        let base = std::env::temp_dir().join(format!("minieditor-linked-file-{unique}"));
+        let base = std::env::temp_dir().join(format!("plunibio-linked-file-{unique}"));
         std::fs::create_dir_all(base.join("docs")).unwrap();
         std::fs::create_dir_all(base.join("images")).unwrap();
         std::fs::write(base.join("images/logo.png"), [0_u8, 128, 255]).unwrap();

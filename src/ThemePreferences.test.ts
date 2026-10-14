@@ -22,7 +22,7 @@ describe("theme preferences", () => {
         expect(loadTheme({ getItem: vi.fn(() => "dark") })).toBe("dark");
         saveTheme("dark", writer);
 
-        expect(writer.setItem).toHaveBeenCalledWith("minieditor.theme", "dark");
+        expect(writer.setItem).toHaveBeenCalledWith("plunibio.theme", "dark");
     });
 
     it("applies the theme to the supplied root", () => {

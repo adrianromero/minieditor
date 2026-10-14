@@ -10,8 +10,8 @@ import type { Node as ProseMirrorNode } from "@milkdown/kit/prose/model";
 import { TextSelection } from "@milkdown/kit/prose/state";
 import { configureMarkdownSerialization } from "../viewers/MarkdownSerialization";
 
-const SELECTION_START = "MINIEDITORSELECTIONSTART7F3A";
-const SELECTION_END = "MINIEDITORSELECTIONEND7F3A";
+const SELECTION_START = "PLUNIBIOSELECTIONSTART7F3A";
+const SELECTION_END = "PLUNIBIOSELECTIONEND7F3A";
 
 type EditorAction = (ctx: Ctx) => void;
 

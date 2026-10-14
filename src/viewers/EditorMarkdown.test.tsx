@@ -13,7 +13,7 @@ vi.mock("@tauri-apps/api/core", () => ({
     invoke: vi.fn((command: string) => {
         if (command === "read_file") {
             return Promise.resolve({
-                content: "![0.33](./minieditor-logo.png)\n\n# MiniEditor\n",
+                content: "![0.33](./plunibio-logo.png)\n\n# Plunibio\n",
                 isNew: false,
             });
         }
@@ -53,7 +53,7 @@ describe("EditorMarkdown", () => {
 
         await vi.waitFor(() => {
             expect(root?.querySelector(".ProseMirror")).not.toBeNull();
-            expect(root?.querySelector("h1")?.textContent).toBe("MiniEditor");
+            expect(root?.querySelector("h1")?.textContent).toBe("Plunibio");
         });
     });
 });

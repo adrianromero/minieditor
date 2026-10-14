@@ -39,7 +39,7 @@ describe("locale preferences", () => {
 
         saveLocale("es", storage);
 
-        expect(storage.setItem).toHaveBeenCalledWith("minieditor.locale", "es");
+        expect(storage.setItem).toHaveBeenCalledWith("plunibio.locale", "es");
     });
 
     it("prefers the first locale in the system language list", () => {

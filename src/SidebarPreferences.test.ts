@@ -34,7 +34,7 @@ describe("sidebar preferences", () => {
 
         saveSidebarVisible(false, storage);
 
-        expect(storage.setItem).toHaveBeenCalledWith("minieditor.sidebarVisible", "false");
+        expect(storage.setItem).toHaveBeenCalledWith("plunibio.sidebarVisible", "false");
     });
 
     it("falls back safely when storage is unavailable", () => {

@@ -86,11 +86,11 @@ fn main() {
     });
 
     info!(
-        "Starting MiniEditor with base path {} and filename {}",
+        "Starting Plunibio with base path {} and filename {}",
         basepath.display(),
         filename
     );
-    minieditor_lib::run_with_path(basepath, filename)
+    plunibio_lib::run_with_path(basepath, filename)
 }
 
 #[cfg(test)]

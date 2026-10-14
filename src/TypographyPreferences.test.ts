@@ -34,7 +34,7 @@ describe("typography preferences", () => {
         saveTypography("reading", storage);
         applyTypography("reading", root);
 
-        expect(storage.setItem).toHaveBeenCalledWith("minieditor.typography", "reading");
+        expect(storage.setItem).toHaveBeenCalledWith("plunibio.typography", "reading");
         expect(root.dataset.typography).toBe("reading");
     });
 });

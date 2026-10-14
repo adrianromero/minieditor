@@ -1,5 +1,5 @@
 {
-    "name": "minieditor",
+    "name": "plunibio",
     "version": "0.1.0",
     "description": "A lightweight desktop Markdown editor built with Tauri and SolidJS.",
     "type": "module",

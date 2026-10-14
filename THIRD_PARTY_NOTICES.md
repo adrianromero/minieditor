@@ -1,6 +1,6 @@
 # Third-party notices
 
-MiniEditor incorporates third-party software, fonts and icons. These components
+Plunibio incorporates third-party software, fonts and icons. These components
 remain subject to their own licenses. Version and license information below is
 derived from direct dependencies declared in `package.json` and
 `src-tauri/Cargo.toml`, with exact versions resolved from the lockfiles.
@@ -12,7 +12,7 @@ choice of licenses; an expression containing `AND` requires all listed terms.
 
 ## Bundled fonts
 
-MiniEditor self-hosts Latin variable-font subsets supplied by Fontsource. It
+Plunibio self-hosts Latin variable-font subsets supplied by Fontsource. It
 does not fetch fonts from a CDN at runtime.
 
 | Component | Version | Declared license |
@@ -125,7 +125,7 @@ OTHER DEALINGS IN THE FONT SOFTWARE.
 
 ## Lucide and Feather icons
 
-MiniEditor uses `lucide-solid@1.47.0`. The
+Plunibio uses `lucide-solid@1.47.0`. The
 following notice is reproduced verbatim from that package:
 
 ```text
@@ -227,7 +227,7 @@ SOFTWARE.
 
 ## Direct development and build tools
 
-These packages are used to build, test or document MiniEditor and are not
+These packages are used to build, test or document Plunibio and are not
 normally shipped as JavaScript runtime code in the desktop application.
 
 | Component | Version | Declared license |
@@ -260,13 +260,13 @@ crate identified above.
 ## External toolchains and system runtimes
 
 The following third-party tools or operating-system components are used during
-development or at runtime but are not redistributed by MiniEditor as application
+development or at runtime but are not redistributed by Plunibio as application
 assets: Node.js, npm, the Rust toolchain (rustc, Cargo and rustup), WebKitGTK on
 Linux, WKWebView/WebKit on macOS, and Microsoft Edge WebView2 on Windows. Their
 licenses and notices are supplied by their respective distributors.
 
 ## Project-owned artwork
 
-The MiniEditor logo, generated application icons and
-`src/assets/missing-markdown-image.svg` are maintained as MiniEditor project
+The Plunibio logo, generated application icons and
+`src/assets/missing-markdown-image.svg` are maintained as Plunibio project
 assets and are not recorded as third-party resources in this inventory.

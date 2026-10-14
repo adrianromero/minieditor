@@ -20,7 +20,7 @@ const meta = {
     render: (args) => (
         <StoryAppProvider
             basepath="/home/adrian/documents"
-            filename="projects/minieditor/README.md"
+            filename="projects/plunibio/README.md"
             modified={args.modified}
             reloadAvailable={args.reloadAvailable}
         >

@@ -54,7 +54,7 @@ describe("MermaidPreview", () => {
             expect(applyPreview).toHaveBeenCalledWith('<svg aria-label="diagram"></svg>');
         });
         expect(render).toHaveBeenCalledWith(
-            expect.stringMatching(/^minieditor-mermaid-diagram-/),
+            expect.stringMatching(/^plunibio-mermaid-diagram-/),
             "graph TD; A-->B;"
         );
     });

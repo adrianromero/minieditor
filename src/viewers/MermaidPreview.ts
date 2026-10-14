@@ -88,8 +88,8 @@ export function createMermaidPreviewRenderer(
         }
 
         const id = ++previewId;
-        const placeholderId = `minieditor-mermaid-preview-${id}`;
-        const diagramId = `minieditor-mermaid-diagram-${id}`;
+        const placeholderId = `plunibio-mermaid-preview-${id}`;
+        const diagramId = `plunibio-mermaid-diagram-${id}`;
         const placeholder = createPlaceholder(placeholderId, options.loading);
 
         void enqueueRender(async () => {

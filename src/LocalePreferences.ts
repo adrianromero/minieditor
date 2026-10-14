@@ -6,7 +6,7 @@
 export const APP_LOCALES = ["en", "es", "ca", "gl", "eu"] as const;
 export type AppLocale = (typeof APP_LOCALES)[number];
 
-const LOCALE_KEY = "minieditor.locale";
+const LOCALE_KEY = "plunibio.locale";
 
 type LocalePreferenceReader = Pick<Storage, "getItem">;
 type LocalePreferenceWriter = Pick<Storage, "setItem">;

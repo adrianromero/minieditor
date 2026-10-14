@@ -6,7 +6,7 @@ use std::collections::BTreeMap;
 use std::fs;
 use std::path::{Path, PathBuf};
 
-const CONFIG_DIRECTORY: &str = ".minieditor";
+const CONFIG_DIRECTORY: &str = ".plunibio";
 const PROPERTIES_FILENAME: &str = "properties.toml";
 
 #[derive(Clone, Debug, Deserialize, PartialEq, Serialize)]
@@ -91,7 +91,7 @@ mod tests {
     fn test_home() -> PathBuf {
         let sequence = NEXT_TEST_DIRECTORY.fetch_add(1, Ordering::Relaxed);
         std::env::temp_dir().join(format!(
-            "minieditor-properties-{}-{sequence}",
+            "plunibio-properties-{}-{sequence}",
             std::process::id()
         ))
     }

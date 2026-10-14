@@ -27,7 +27,7 @@ describe("I18NProvider", () => {
 
     beforeEach(() => {
         window.localStorage.clear();
-        window.localStorage.setItem("minieditor.locale", "en");
+        window.localStorage.setItem("plunibio.locale", "en");
     });
 
     afterEach(() => {
@@ -57,7 +57,7 @@ describe("I18NProvider", () => {
         expect(root.querySelector('[data-testid="locale"]')?.textContent).toBe("es");
         expect(root.querySelector('[data-testid="translation"]')?.textContent).toBe("Idioma");
         expect(document.documentElement.lang).toBe("es");
-        expect(window.localStorage.getItem("minieditor.locale")).toBe("es");
+        expect(window.localStorage.getItem("plunibio.locale")).toBe("es");
 
         for (const [nextLocale, translation] of [
             ["ca", "Idioma"],
@@ -71,7 +71,7 @@ describe("I18NProvider", () => {
                 translation
             );
             expect(document.documentElement.lang).toBe(nextLocale);
-            expect(window.localStorage.getItem("minieditor.locale")).toBe(nextLocale);
+            expect(window.localStorage.getItem("plunibio.locale")).toBe(nextLocale);
         }
     });
 });

@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
-const SIDEBAR_VISIBLE_KEY = "minieditor.sidebarVisible";
+const SIDEBAR_VISIBLE_KEY = "plunibio.sidebarVisible";
 
 type SidebarPreferenceReader = Pick<Storage, "getItem">;
 type SidebarPreferenceWriter = Pick<Storage, "setItem">;
