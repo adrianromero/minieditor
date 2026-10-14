@@ -160,12 +160,6 @@ Regenerate all application icons from `plunibio-logo.png` with:
 npm run tauri icon plunibio-logo.png
 ```
 
-## Security model
-
-Plunibio treats `BASEPATH` as the root of the accessible file tree. Filenames exchanged with the frontend are relative to that directory. The Rust backend rejects absolute filenames, parent-directory traversal, and resolved paths outside the configured base directory.
-
-Do not use Plunibio to open untrusted Markdown files until the project has completed a dedicated security review.
-
 ## Contributing
 
 Contributions and bug reports are welcome. Before submitting a pull request:
