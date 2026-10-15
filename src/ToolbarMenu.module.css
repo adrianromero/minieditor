@@ -85,6 +85,13 @@
     stroke-width: 1.6px;
 }
 
+.shortcut {
+    margin-left: auto;
+    color: var(--color-text-muted);
+    font-size: 0.7rem;
+    white-space: nowrap;
+}
+
 .chevron {
     width: 0.8rem;
     height: 0.8rem;
@@ -138,8 +145,13 @@
 }
 
 .menuItem:disabled {
-    color: var(--color-on-disabled);
+    color: var(--color-menu-disabled);
     cursor: not-allowed;
+}
+
+.menuItem:disabled .shortcut {
+    color: var(--color-menu-disabled);
+    font-weight: 500;
 }
 
 @supports (top: anchor(bottom)) {

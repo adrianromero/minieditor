@@ -14,6 +14,7 @@ describe("AppShortcuts", () => {
     let reloadFile: ReturnType<typeof vi.fn<() => Promise<void>>>;
     let searchFile: ReturnType<typeof vi.fn<() => void>>;
     let customAction: ReturnType<typeof vi.fn<() => void>>;
+    let openWorkspace: ReturnType<typeof vi.fn<() => void>>;
     let setSaveAvailable: (available: boolean) => void;
     let setReloadAvailable: (available: boolean) => void;
     let setSearchAvailable: (available: boolean) => void;
@@ -25,6 +26,7 @@ describe("AppShortcuts", () => {
         reloadFile = vi.fn(() => Promise.resolve());
         searchFile = vi.fn();
         customAction = vi.fn();
+        openWorkspace = vi.fn();
         const [saveAvailable, setSaveAvailableSignal] = createSignal(false);
         const [reloadAvailable, setReloadAvailableSignal] = createSignal(false);
         const [searchAvailable, setSearchAvailableSignal] = createSignal(false);
@@ -49,6 +51,13 @@ describe("AppShortcuts", () => {
             () => (
                 <AppShortcuts
                     shortcuts={[
+                        {
+                            id: "open-workspace",
+                            key: "o",
+                            shift: true,
+                            phase: "capture",
+                            getHandler: () => openWorkspace,
+                        },
                         {
                             id: "save",
                             key: "s",
@@ -135,6 +144,15 @@ describe("AppShortcuts", () => {
 
         expect(event.defaultPrevented).toBe(true);
         expect(customAction).toHaveBeenCalledOnce();
+    });
+
+    it("opens a workspace with Mod+Shift+O", () => {
+        const plainOpen = press("o");
+        const workspaceOpen = press("O", { shiftKey: true });
+
+        expect(plainOpen.defaultPrevented).toBe(false);
+        expect(workspaceOpen.defaultPrevented).toBe(true);
+        expect(openWorkspace).toHaveBeenCalledOnce();
     });
 
     it("leaves editor shortcuts and modified variants untouched", () => {

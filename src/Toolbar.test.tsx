@@ -13,12 +13,13 @@ import type { AppTheme } from "./ThemePreferences";
 import type { AppTypography } from "./TypographyPreferences";
 
 let editorContext: AppContextValues["editor"];
+const openWorkspace = vi.fn();
 let locale: Accessor<Locale>;
 let setLocale: Setter<Locale>;
 let typography: Accessor<AppTypography>;
 
 vi.mock("./AppContext", () => ({
-    useAppContext: () => ({ editor: editorContext }),
+    useAppContext: () => ({ main: { openWorkspace }, editor: editorContext }),
 }));
 
 vi.mock("./Localization", () => ({
@@ -39,6 +40,7 @@ describe("Toolbar", () => {
     let showHiddenFiles: Accessor<boolean>;
 
     beforeEach(() => {
+        openWorkspace.mockClear();
         const [saveFile, setSaveFileSignal] = createSignal<SaveFileHandler | null>(null);
         const [reloadFile, setReloadFileSignal] = createSignal<ReloadFileHandler | null>(null);
         const [toggleSidebar, setToggleSidebarSignal] =
@@ -88,33 +90,43 @@ describe("Toolbar", () => {
         document.body.replaceChildren();
     });
 
-    it("only shows Save when a save handler is available", () => {
+    it("always shows Reload and Save in the menu with their availability", () => {
         const root = document.createElement("div");
         document.body.append(root);
         dispose = render(() => <Toolbar />, root);
 
-        expect(root.querySelector('[aria-label="toolbar.save"]')).toBeNull();
+        const reloadEntry = root.querySelector<HTMLButtonElement>(
+            '[data-toolbar-menu-entry="reload"]'
+        );
+        const saveEntry = root.querySelector<HTMLButtonElement>(
+            '[data-toolbar-menu-entry="save"]'
+        );
+        expect(reloadEntry?.disabled).toBe(true);
+        expect(saveEntry?.disabled).toBe(true);
+        expect(reloadEntry?.textContent).toContain("CTRL+R");
+        expect(saveEntry?.textContent).toContain("CTRL+S");
+        expect(reloadEntry?.querySelector("svg")).toBeNull();
+        expect(saveEntry?.querySelector("svg")).toBeNull();
 
-        setReloadFile(() => Promise.resolve());
-
-        expect(root.querySelector('[aria-label="toolbar.save"]')).toBeNull();
+        const reload = vi.fn(() => Promise.resolve());
+        setReloadFile(reload);
+        expect(reloadEntry?.disabled).toBe(false);
+        reloadEntry?.click();
+        expect(reload).toHaveBeenCalledOnce();
 
         const save = vi.fn(() => Promise.resolve());
         setSaveFile(save);
-        const saveButton = root.querySelector<HTMLButtonElement>('[aria-label="toolbar.save"]');
-        expect(saveButton).not.toBeNull();
-        expect(saveButton?.disabled).toBe(true);
-        expect(saveButton?.nextElementSibling?.getAttribute("aria-hidden")).toBe("true");
+        expect(saveEntry?.disabled).toBe(true);
 
         setFileModified(true);
-        expect(saveButton?.disabled).toBe(false);
+        expect(saveEntry?.disabled).toBe(false);
         expect(root.querySelector('[aria-label="toolbar.unsavedChanges"]')).not.toBeNull();
 
-        saveButton?.click();
+        saveEntry?.click();
         expect(save).toHaveBeenCalledOnce();
     });
 
-    it("shows the registered sidebar toggle before the action separator", () => {
+    it("shows the registered sidebar toggle without an action separator", () => {
         const root = document.createElement("div");
         document.body.append(root);
         dispose = render(() => <Toolbar />, root);
@@ -134,6 +146,7 @@ describe("Toolbar", () => {
         expect(button?.classList.contains("selected")).toBe(false);
         expect(button?.getAttribute("aria-label")).toBe("toolbar.showSidebar");
         expect(button?.getAttribute("aria-pressed")).toBe("false");
+        expect(root.querySelector("[class*='actionSeparator']")).toBeNull();
     });
 
     it("selects the application theme from the nested choice menu", () => {
@@ -161,6 +174,24 @@ describe("Toolbar", () => {
 
         setTheme("light");
         expect(themeEntry?.textContent).toContain("toolbar.lightTheme");
+    });
+
+    it("opens a workspace from the first menu entry", () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+        dispose = render(() => <Toolbar />, root);
+
+        const entries = root.querySelectorAll<HTMLElement>("[data-toolbar-menu-entry]");
+        expect(entries[0]?.dataset.toolbarMenuEntry).toBe("open-workspace");
+        expect(entries[0]?.textContent).toContain("toolbar.openWorkspace");
+        expect(entries[0]?.textContent).toContain("CTRL+SHIFT+O");
+        expect(entries[0]?.querySelector("svg")).toBeNull();
+        expect(entries[0]?.querySelector("[class*='shortcut']")).not.toBeNull();
+        expect(entries[1]?.dataset.toolbarMenuEntry).toBe("reload");
+        expect(entries[2]?.dataset.toolbarMenuEntry).toBe("save");
+
+        entries[0]?.click();
+        expect(openWorkspace).toHaveBeenCalledOnce();
     });
 
     it("selects whether hidden files are shown from the nested choice menu", () => {
@@ -291,7 +322,7 @@ describe("Toolbar", () => {
                 sections?.[2]?.querySelectorAll<HTMLElement>("[data-toolbar-menu-entry]") ?? []
             ).map(entry => entry.dataset.toolbarMenuEntry)
         ).toEqual(["typography"]);
-        expect(menu?.querySelectorAll('[role="menuitem"]')).toHaveLength(4);
+        expect(menu?.querySelectorAll('[role="menuitem"]')).toHaveLength(7);
         expect(menu?.querySelectorAll('[role="menuitemradio"]')).toHaveLength(13);
     });
 });

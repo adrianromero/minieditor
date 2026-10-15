@@ -12,6 +12,7 @@
         "useDarkTheme": "Erabili gai iluna",
         "useLightTheme": "Erabili gai argia",
         "moreOptions": "Aukera gehiago",
+        "openWorkspace": "Ireki lan-eremua",
         "generalSection": "Orokorra",
         "filesSection": "Fitxategiak",
         "markdownSection": "Markdown",
@@ -153,6 +154,16 @@
         "reloadDiscardChanges": "Fitxategia birkargatu eta gorde gabeko aldaketak baztertu?",
         "navigationSaveFailed": "{{ error }} Jarraitzen baduzu, datuak gal ditzakezu.",
         "closeSaveFailed": "{{ error }} Irteten bazara, datuak gal ditzakezu."
+    },
+    "workspace": {
+        "title": "Ireki lan-eremua",
+        "roots": "Ordenagailuko kokalekuak",
+        "parent": "Guraso-karpeta",
+        "loading": "Karpetak kargatzen...",
+        "noFolders": "Karpeta honek ez du azpikarpetarik",
+        "selectionHint": "Goian agertzen den bidea lan-eremuaren erroa izango da.",
+        "open": "Ireki",
+        "opening": "Irekitzen..."
     },
     "info": {
         "status": "Informazioa",

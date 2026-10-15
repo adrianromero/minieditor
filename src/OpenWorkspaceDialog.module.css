@@ -1,0 +1,117 @@
+.workspaceDialog {
+    width: min(38rem, calc(100vw - 2rem));
+    height: min(38rem, calc(100vh - 2rem));
+    max-width: 38rem;
+    display: none;
+    flex-direction: column;
+    text-align: left;
+}
+
+.workspaceDialog[open] {
+    display: flex;
+}
+
+.iconRow {
+    color: var(--color-question-text);
+    background: linear-gradient(
+        to bottom,
+        var(--color-question-background) 0 50%,
+        var(--color-surface) 50% 100%
+    );
+}
+
+.browser {
+    display: grid;
+    min-height: 0;
+    flex: 1;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem 0;
+}
+
+.locationBar {
+    display: grid;
+    grid-template-columns: auto auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.locationBar button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.locationBar svg {
+    width: 1rem;
+    height: 1rem;
+}
+
+.currentPath {
+    min-width: 0;
+    padding: 0.45rem 0.6rem;
+    overflow: hidden;
+    color: var(--color-text-muted);
+    background: var(--color-surface-subtle);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.directoryList {
+    min-height: 0;
+    overflow: auto;
+    background: var(--color-surface-subtle);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-small);
+}
+
+.directoryEntry {
+    display: grid;
+    width: 100%;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: center;
+    gap: 0.65rem;
+    padding: 0.55rem 0.75rem;
+    color: var(--color-text);
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid var(--color-border-subtle);
+    text-align: left;
+    cursor: pointer;
+}
+
+.directoryEntry:hover,
+.directoryEntry:focus-visible {
+    background: var(--color-primary-soft-hover);
+}
+
+.directoryEntry svg {
+    width: 1.15rem;
+    height: 1.15rem;
+    color: var(--color-folder);
+}
+
+.directoryEntry span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.status,
+.error {
+    padding: 2rem 1rem;
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
+.error {
+    color: var(--color-error-text);
+}
+
+.hint {
+    margin: 0;
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+}

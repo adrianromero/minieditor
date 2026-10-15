@@ -38,6 +38,7 @@
     --color-text: hsl(210, 29%, 24%);
     --color-text-muted: hsl(210, 14%, 44%);
     --color-text-subtle: hsl(211, 12%, 59%);
+    --color-menu-disabled: hsl(211 12% 55%);
 
     --color-background: #ffffff;
     --color-view-background: #fafafa;
@@ -129,6 +130,7 @@
     --color-text: hsl(210 24% 90%);
     --color-text-muted: hsl(211 15% 69%);
     --color-text-subtle: hsl(211 12% 55%);
+    --color-menu-disabled: hsl(211 12% 58%);
     --color-background: hsl(212 28% 10%);
     --color-view-background: hsl(212 25% 12%);
     --color-surface: hsl(212 24% 16%);

@@ -18,6 +18,17 @@ export type DirectoryEntry = {
     kind: "directory" | "file";
 };
 
+export type DirectoryBrowserEntry = {
+    name: string;
+    path: string;
+};
+
+export type DirectoryBrowserLocation = {
+    path: string;
+    parent: string | null;
+    directories: DirectoryBrowserEntry[];
+};
+
 export type ReadFileResult = {
     content: string;
     isNew: boolean;

@@ -12,6 +12,7 @@
         "useDarkTheme": "Usar tema oscuro",
         "useLightTheme": "Usar tema claro",
         "moreOptions": "Más opciones",
+        "openWorkspace": "Abrir espacio",
         "generalSection": "General",
         "filesSection": "Archivos",
         "markdownSection": "Markdown",
@@ -153,6 +154,16 @@
         "reloadDiscardChanges": "¿Recargar el archivo y descartar los cambios sin guardar?",
         "navigationSaveFailed": "{{ error }} Si continúas, podrías perder tus datos.",
         "closeSaveFailed": "{{ error }} Si sales, podrías perder tus datos."
+    },
+    "workspace": {
+        "title": "Abrir espacio",
+        "roots": "Ubicaciones del equipo",
+        "parent": "Carpeta superior",
+        "loading": "Cargando carpetas...",
+        "noFolders": "Esta carpeta no contiene subcarpetas",
+        "selectionHint": "La ruta mostrada arriba será la raíz del espacio.",
+        "open": "Abrir",
+        "opening": "Abriendo..."
     },
     "info": {
         "status": "Información",

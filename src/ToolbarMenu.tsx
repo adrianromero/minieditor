@@ -15,8 +15,9 @@ export type ToolbarMenuActionItem = {
     id: string;
     label: string;
     icon?: LucideIcon;
+    shortcut?: string;
     onSelect: () => void;
-    disabled?: boolean;
+    disabled?: boolean | Accessor<boolean>;
 };
 
 export type ToolbarMenuChoiceOption<Value extends string = string> = {
@@ -34,7 +35,7 @@ export type ToolbarMenuChoiceItem<Value extends string = string> = {
     value: Accessor<Value>;
     options: readonly ToolbarMenuChoiceOption<Value>[];
     onChange(value: Value): void;
-    disabled?: boolean;
+    disabled?: boolean | Accessor<boolean>;
 };
 
 export type ToolbarMenuItem = ToolbarMenuActionItem | ToolbarMenuChoiceItem;
@@ -71,6 +72,10 @@ function hidePopover(popover: HTMLElement | undefined): void {
     if (popover && typeof popover.hidePopover === "function") {
         popover.hidePopover();
     }
+}
+
+function isDisabled(disabled: boolean | Accessor<boolean> | undefined): boolean {
+    return typeof disabled === "function" ? disabled() : Boolean(disabled);
 }
 
 function ToolbarMenuChoice(props: ToolbarMenuChoiceProps): JSX.Element {
@@ -177,7 +182,7 @@ function ToolbarMenuChoice(props: ToolbarMenuChoiceProps): JSX.Element {
                 aria-haspopup="menu"
                 popovertarget={id}
                 tabIndex={-1}
-                disabled={props.item.disabled}
+                disabled={isDisabled(props.item.disabled)}
                 onPointerDown={() => {
                     focusSelectionOnOpen = false;
                 }}
@@ -279,7 +284,7 @@ function ToolbarMenuEntry(props: {
             role="menuitem"
             data-toolbar-menu-entry={item.id}
             tabIndex={-1}
-            disabled={item.disabled}
+            disabled={isDisabled(item.disabled)}
             onClick={() => {
                 item.onSelect();
                 props.closeParent();
@@ -291,6 +296,9 @@ function ToolbarMenuEntry(props: {
                 )}
             </Show>
             <span>{item.label}</span>
+            <Show when={item.shortcut}>
+                {shortcut => <span class={styles.shortcut}>{shortcut()}</span>}
+            </Show>
         </button>
     );
 }

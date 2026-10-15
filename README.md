@@ -53,7 +53,7 @@ Clone or fork the repository, then install the locked npm dependencies from its 
 npm ci
 ```
 
-Start the application in development mode using the process working directory as its base directory:
+Start the application in development mode using the last saved base directory, or the process working directory when no base directory has been saved yet:
 
 ```bash
 npm run tauri dev
@@ -85,23 +85,23 @@ plunibio [FILENAME] [--base-path BASEPATH]
 
 - When `FILENAME` is omitted, Plunibio restores the last filename opened for that base path. If the base path has no saved filename, it opens with no selected filename.
 
-- When `BASEPATH` is omitted, Plunibio uses the process working directory.
+- When `BASEPATH` is omitted, Plunibio uses the base path saved in `~/.plunibio/properties.toml`. If the property is missing, unavailable, or no longer identifies a directory, it falls back to the process working directory.
 
-- When both are omitted, Plunibio uses the process working directory and restores its saved filename when available.
+- When both are omitted, Plunibio selects the saved base path (falling back to the process working directory) and restores that base path's saved filename when available.
 
 - The selected base path is canonicalized before the application starts.
 
 The arguments resolve as follows:
 
-| Arguments provided                | Filename                                                | Base path                                              |
-| --------------------------------- | ------------------------------------------------------- | ------------------------------------------------------ |
-| Neither                           | Last saved filename for the working directory, or empty | Process working directory                              |
-| `FILENAME` only                   | Relative file or folder path                            | Process working directory                              |
-| `--base-path BASEPATH` only       | Last saved filename for `BASEPATH`, or empty            | `BASEPATH`                                             |
-| Both, with an absolute `BASEPATH` | Relative file or folder path                            | Absolute `BASEPATH`                                    |
-| Both, with a relative `BASEPATH`  | Relative file or folder path                            | `BASEPATH` resolved from the process working directory |
+| Arguments provided                | Filename                                                   | Base path                                                                   |
+| --------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Neither                           | Last saved filename for the selected base path, or empty    | Saved base path, or the process working directory as fallback               |
+| `FILENAME` only                   | Relative file or folder path                               | Saved base path, or the process working directory as fallback               |
+| `--base-path BASEPATH` only       | Last saved filename for `BASEPATH`, or empty               | `BASEPATH`                                                                  |
+| Both, with an absolute `BASEPATH` | Relative file or folder path                               | Absolute `BASEPATH`                                                         |
+| Both, with a relative `BASEPATH`  | Relative file or folder path                               | `BASEPATH` resolved from the process working directory                      |
 
-On a normal shutdown, Plunibio stores the last filename for the current canonical base path in `~/.plunibio/properties.toml`, alongside the window dimensions. An explicitly supplied `FILENAME` always takes precedence over the saved value. Configuration read, window sizing, and configuration write failures are logged without displaying an error to the user.
+On a normal shutdown, Plunibio stores the current canonical base path and its last filename in `~/.plunibio/properties.toml`, alongside the window dimensions. Changing the workspace from the application also updates the base path held in memory for the next configuration save. An explicitly supplied `--base-path` or `FILENAME` always takes precedence over its corresponding saved value. Configuration read, path restoration, window sizing, and configuration write failures are logged without displaying an error to the user.
 
 Examples:
 

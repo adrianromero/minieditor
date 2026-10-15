@@ -19,7 +19,7 @@ pub(crate) struct PropertiesState {
     properties: Properties,
 }
 
-pub fn run_with_path(basepath: PathBuf, filename: String) {
+fn run_with_configuration(basepath: PathBuf, filename: String, restore_basepath: bool) {
     let application_properties = Arc::new(Mutex::new(PropertiesState::default()));
     let setup_properties = Arc::clone(&application_properties);
     let event_properties = Arc::clone(&application_properties);
@@ -50,20 +50,44 @@ pub fn run_with_path(basepath: PathBuf, filename: String) {
             };
 
             let app_state = app.state::<AppState>();
+            if restore_basepath {
+                match application_properties.resolved_basepath() {
+                    Ok(Some(canonical)) => {
+                        if let Err(message) =
+                            app_state.set_location(canonical.clone(), app_state.filename()?)
+                        {
+                            error!("Failed to restore the saved base path: {message}");
+                        } else {
+                            info!(
+                                basepath = %canonical.display(),
+                                "Restored the saved base path"
+                            );
+                        }
+                    }
+                    Ok(None) => {}
+                    Err(message) => error!(
+                        error = message,
+                        "Ignored an invalid saved base path"
+                    ),
+                }
+            }
+            let initial_basepath = app_state.basepath();
             match app_state.filename() {
                 Ok(filename) if filename.is_empty() => {
-                    if let Some(saved_filename) =
-                        application_properties.filename_for(app_state.basepath())
-                    {
-                        if paths::validate_relative_filename(saved_filename).is_ok() {
-                            if let Err(message) = app_state.set_filename(saved_filename.to_owned()) {
-                                error!("Failed to restore the saved filename: {message}");
+                    if let Ok(basepath) = initial_basepath.as_ref() {
+                        if let Some(saved_filename) = application_properties.filename_for(basepath) {
+                            if paths::validate_relative_filename(saved_filename).is_ok() {
+                                if let Err(message) =
+                                    app_state.set_filename(saved_filename.to_owned())
+                                {
+                                    error!("Failed to restore the saved filename: {message}");
+                                }
+                            } else {
+                                error!(
+                                    filename = saved_filename,
+                                    "Ignored an invalid saved filename"
+                                );
                             }
-                        } else {
-                            error!(
-                                filename = saved_filename,
-                                "Ignored an invalid saved filename"
-                            );
                         }
                     }
                 }
@@ -132,10 +156,10 @@ pub fn run_with_path(basepath: PathBuf, filename: String) {
                     }
 
                     let app_state = window.app_handle().state::<AppState>();
-                    let filename = match app_state.filename() {
-                        Ok(filename) => Some(filename),
+                    let location = match app_state.location() {
+                        Ok(location) => Some(location),
                         Err(message) => {
-                            error!("Failed to read the current filename before closing: {message}");
+                            error!("Failed to read the current location before closing: {message}");
                             None
                         }
                     };
@@ -146,8 +170,11 @@ pub fn run_with_path(basepath: PathBuf, filename: String) {
                                 state.properties.width = width;
                                 state.properties.height = height;
                             }
-                            if let Some(filename) = filename {
-                                state.properties.set_filename(app_state.basepath(), filename);
+                            if let Some(location) = location {
+                                state.properties.set_basepath(location.basepath.clone());
+                                state
+                                    .properties
+                                    .set_filename(&location.basepath, location.filename);
                             }
                         }
                         Err(error) => {
@@ -183,6 +210,9 @@ pub fn run_with_path(basepath: PathBuf, filename: String) {
         .invoke_handler(tauri::generate_handler![
             commands::initial_config,
             commands::set_current_filename,
+            commands::set_current_basepath,
+            commands::browse_directories,
+            commands::filesystem_roots,
             commands::path_kind,
             commands::resolve_link,
             commands::list_directory,
@@ -197,8 +227,16 @@ pub fn run_with_path(basepath: PathBuf, filename: String) {
         .expect("error while running tauri application");
 }
 
+pub fn run_with_path(basepath: PathBuf, filename: String) {
+    run_with_configuration(basepath, filename, false);
+}
+
+pub fn run_with_default_path(basepath: PathBuf, filename: String) {
+    run_with_configuration(basepath, filename, true);
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let basepath = std::env::current_dir().expect("failed to get current directory");
-    run_with_path(basepath, String::new());
+    run_with_default_path(basepath, String::new());
 }

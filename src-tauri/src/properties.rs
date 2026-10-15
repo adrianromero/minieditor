@@ -13,6 +13,8 @@ const PROPERTIES_FILENAME: &str = "properties.toml";
 pub(crate) struct Properties {
     pub(crate) width: u32,
     pub(crate) height: u32,
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    basepath: Option<PathBuf>,
     #[serde(default, skip_serializing_if = "BTreeMap::is_empty")]
     basepaths: BTreeMap<String, String>,
 }
@@ -22,8 +24,42 @@ impl Properties {
         Self {
             width,
             height,
+            basepath: None,
             basepaths: BTreeMap::new(),
         }
+    }
+
+    pub(crate) fn basepath(&self) -> Option<&Path> {
+        self.basepath.as_deref()
+    }
+
+    pub(crate) fn set_basepath(&mut self, basepath: PathBuf) {
+        self.basepath = Some(basepath);
+    }
+
+    pub(crate) fn resolved_basepath(&self) -> Result<Option<PathBuf>, String> {
+        let Some(basepath) = self.basepath() else {
+            return Ok(None);
+        };
+        if !basepath.is_absolute() {
+            return Err(format!(
+                "saved base path '{}' is not absolute",
+                basepath.display()
+            ));
+        }
+        let canonical = fs::canonicalize(basepath).map_err(|error| {
+            format!(
+                "unable to resolve saved base path '{}': {error}",
+                basepath.display()
+            )
+        })?;
+        if !canonical.is_dir() {
+            return Err(format!(
+                "saved base path '{}' is not a directory",
+                canonical.display()
+            ));
+        }
+        Ok(Some(canonical))
     }
 
     pub(crate) fn filename_for(&self, basepath: &Path) -> Option<&str> {
@@ -116,6 +152,7 @@ mod tests {
             Path::new("/home/user/documents"),
             "notes/today.md".to_owned(),
         );
+        expected.set_basepath(PathBuf::from("/home/user/documents"));
 
         save(&path, &expected).unwrap();
 
@@ -165,6 +202,48 @@ mod tests {
             properties.filename_for(Path::new("/documents/two")),
             Some("folder/second.md")
         );
+    }
+
+    #[test]
+    fn current_basepath_is_stored() {
+        let mut properties = Properties::default();
+        assert_eq!(properties.basepath(), None);
+
+        properties.set_basepath(PathBuf::from("/documents/two"));
+
+        assert_eq!(properties.basepath(), Some(Path::new("/documents/two")));
+    }
+
+    #[test]
+    fn saved_basepath_is_canonicalized_when_available() {
+        let home = test_home();
+        let directory = home.join("workspace");
+        fs::create_dir_all(&directory).unwrap();
+        let mut properties = Properties::default();
+        properties.set_basepath(directory.clone());
+
+        assert_eq!(
+            properties.resolved_basepath().unwrap(),
+            Some(fs::canonicalize(&directory).unwrap())
+        );
+        fs::remove_dir_all(home).unwrap();
+    }
+
+    #[test]
+    fn unavailable_saved_basepath_is_rejected() {
+        let home = test_home();
+        let mut properties = Properties::default();
+        properties.set_basepath(home.join("missing"));
+
+        assert!(properties.resolved_basepath().is_err());
+    }
+
+    #[test]
+    fn relative_saved_basepath_is_rejected() {
+        let mut properties = Properties::default();
+        properties.set_basepath(PathBuf::from("relative/workspace"));
+
+        assert!(properties.resolved_basepath().is_err());
     }
 
     #[test]

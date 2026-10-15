@@ -11,14 +11,23 @@ import { useI18N } from "./Localization";
 export function FileNavigation(): JSX.Element {
     const { t } = useI18N();
     const {
-        main: { filename, loadFilename },
+        main: { basepath, filename, loadFilename },
     } = useAppContext();
     const [filenameHistory, setFilenameHistory] = createSignal<string[]>([filename()]);
     let lastObservedFilename = filename();
+    let lastObservedBasepath = basepath();
     let backNavigationTarget: string | undefined;
 
     createEffect(() => {
+        const currentBasepath = basepath();
         const currentFilename = filename();
+        if (currentBasepath !== lastObservedBasepath) {
+            lastObservedBasepath = currentBasepath;
+            lastObservedFilename = currentFilename;
+            backNavigationTarget = undefined;
+            setFilenameHistory([currentFilename]);
+            return;
+        }
         if (currentFilename === lastObservedFilename) {
             return;
         }

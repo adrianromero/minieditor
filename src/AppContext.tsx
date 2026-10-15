@@ -5,6 +5,7 @@
 
 import {
     Accessor,
+    batch,
     createContext,
     createSignal,
     JSX,
@@ -30,6 +31,9 @@ import {
     saveTypography,
     type AppTypography,
 } from "./TypographyPreferences";
+import OpenWorkspaceDialog from "./OpenWorkspaceDialog";
+import type { InitialConfig } from "./rusttypes";
+import { translateAppError } from "./AppError";
 
 export type SaveFileHandler = () => Promise<void>;
 export type ReloadFileHandler = () => Promise<void>;
@@ -42,6 +46,7 @@ export type AppContextValues = {
     main: {
         basepath: Accessor<string>;
         setBasepath: Setter<string>;
+        openWorkspace: () => void;
         filename: Accessor<string>;
         setFilename: Setter<string>;
         loadFilename: (filename: string) => Promise<void>;
@@ -117,6 +122,7 @@ export function AppProvider(props: {
     const [fileModified, setFileModified] = createSignal(false);
     const [spinnerVisible, setSpinnerVisible] = createSignal(false);
     const [spinnerText, setSpinnerText] = createSignal("");
+    const [workspaceDialogOpen, setWorkspaceDialogOpen] = createSignal(false);
 
     const [appConfirm, setAppConfirm] = createSignal<(() => void) | null>(null);
     const [appClose, setAppClose] = createSignal<(() => void) | null>(null);
@@ -185,6 +191,13 @@ export function AppProvider(props: {
     };
     const shortcuts = [
         {
+            id: "open-workspace",
+            key: "o",
+            shift: true,
+            phase: "capture",
+            getHandler: () => openWorkspace,
+        },
+        {
             id: "save",
             key: "s",
             getHandler: () => saveModifiedFile,
@@ -237,6 +250,47 @@ export function AppProvider(props: {
 
     const setOnunload = (handler: OnunloadHandler | null) => {
         setOnunloadSignal(() => handler);
+    };
+
+    const openWorkspace = (): void => {
+        setWorkspaceDialogOpen(true);
+    };
+
+    const selectWorkspace = async (nextBasepath: string): Promise<boolean> => {
+        try {
+            try {
+                await onunload()?.();
+            } catch (error: unknown) {
+                setWorkspaceDialogOpen(false);
+                const message =
+                    error instanceof UserMessageError ? error.message : t("errors.unknown");
+                const result = await showAppConfirmation(
+                    t("dialog.navigationSaveFailed", { error: message }),
+                    "error"
+                );
+                if (!result) {
+                    setWorkspaceDialogOpen(true);
+                    return false;
+                }
+            }
+
+            const config = await invoke<InitialConfig>("set_current_basepath", {
+                basepath: nextBasepath,
+            });
+            setOnunload(null);
+            batch(() => {
+                setBasepath(config.basepath);
+                setFilename(config.filename);
+            });
+            setWorkspaceDialogOpen(false);
+            return true;
+        } catch (error: unknown) {
+            console.error("Unable to change the current workspace:", error);
+            setWorkspaceDialogOpen(false);
+            await showAppMessage(translateAppError(error, t), "error");
+            setWorkspaceDialogOpen(true);
+            return false;
+        }
     };
 
     const loadFilename = async (nextFilename: string): Promise<void> => {
@@ -311,6 +365,7 @@ export function AppProvider(props: {
                 main: {
                     basepath,
                     setBasepath,
+                    openWorkspace,
                     filename,
                     setFilename,
                     loadFilename,
@@ -350,7 +405,9 @@ export function AppProvider(props: {
             {props.children}
             <AppShortcuts
                 shortcuts={shortcuts}
-                interactionsBlocked={() => spinnerVisible() || appMessage() !== null}
+                interactionsBlocked={() =>
+                    spinnerVisible() || appMessage() !== null || workspaceDialogOpen()
+                }
             />
             <SpinnerPanel visible={spinnerVisible()} text={spinnerText()} />
 
@@ -363,6 +420,13 @@ export function AppProvider(props: {
                 confirmLabel={appConfirm() ? t(appConfirmKey()) : undefined}
                 onConfirm={() => appConfirm()?.()}
                 onClose={() => appClose()?.()}
+            />
+            <OpenWorkspaceDialog
+                open={workspaceDialogOpen()}
+                initialPath={basepath()}
+                showHidden={showHiddenFiles()}
+                onCancel={() => setWorkspaceDialogOpen(false)}
+                onConfirm={selectWorkspace}
             />
         </AppContext.Provider>
     );

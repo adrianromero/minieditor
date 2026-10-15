@@ -188,6 +188,56 @@ fn list_directory_respects_show_hidden_flag() {
 }
 
 #[test]
+fn directory_browser_lists_only_directories_and_reports_the_parent() {
+    tauri::async_runtime::block_on(async {
+        let unique = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_nanos();
+        let base = std::env::temp_dir().join(format!("plunibio-browse-directory-{unique}"));
+        std::fs::create_dir(&base).unwrap();
+        std::fs::create_dir(base.join("visible")).unwrap();
+        std::fs::create_dir(base.join(".hidden")).unwrap();
+        std::fs::write(base.join("file.md"), "Not a directory").unwrap();
+
+        let result = super::browse_directories(base.to_string_lossy().into_owned(), false)
+            .await
+            .unwrap();
+
+        assert_eq!(
+            result.path,
+            std::fs::canonicalize(&base).unwrap().to_string_lossy()
+        );
+        assert_eq!(
+            result.parent.as_deref(),
+            std::fs::canonicalize(base.parent().unwrap())
+                .unwrap()
+                .to_str()
+        );
+        assert_eq!(
+            result
+                .directories
+                .iter()
+                .map(|entry| entry.name.as_str())
+                .collect::<Vec<_>>(),
+            vec!["visible"]
+        );
+
+        let all = super::browse_directories(base.to_string_lossy().into_owned(), true)
+            .await
+            .unwrap();
+        assert_eq!(
+            all.directories
+                .iter()
+                .map(|entry| entry.name.as_str())
+                .collect::<Vec<_>>(),
+            vec![".hidden", "visible"]
+        );
+        std::fs::remove_dir_all(base).unwrap();
+    });
+}
+
+#[test]
 fn missing_binary_file_is_empty_and_new_until_explicitly_saved() {
     tauri::async_runtime::block_on(async {
         let unique = SystemTime::now()

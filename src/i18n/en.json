@@ -12,6 +12,7 @@
         "useDarkTheme": "Use dark theme",
         "useLightTheme": "Use light theme",
         "moreOptions": "More options",
+        "openWorkspace": "Open workspace",
         "generalSection": "General",
         "filesSection": "Files",
         "markdownSection": "Markdown",
@@ -153,6 +154,16 @@
         "reloadDiscardChanges": "Reload the file and discard your unsaved changes?",
         "navigationSaveFailed": "{{ error }} If you continue, your data might be lost.",
         "closeSaveFailed": "{{ error }} If you quit, your data might be lost."
+    },
+    "workspace": {
+        "title": "Open workspace",
+        "roots": "Computer locations",
+        "parent": "Parent folder",
+        "loading": "Loading folders...",
+        "noFolders": "This folder contains no subfolders",
+        "selectionHint": "The path shown above will become the workspace root.",
+        "open": "Open",
+        "opening": "Opening..."
     },
     "info": {
         "status": "Information",

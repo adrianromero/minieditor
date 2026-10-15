@@ -4,9 +4,7 @@
  */
 
 import { Show } from "solid-js";
-import HardDriveDownload from "lucide-solid/icons/hard-drive-download";
 import PanelRight from "lucide-solid/icons/panel-right";
-import RefreshCw from "lucide-solid/icons/refresh-cw";
 import Moon from "lucide-solid/icons/moon";
 import Sun from "lucide-solid/icons/sun";
 import Languages from "lucide-solid/icons/languages";
@@ -26,6 +24,7 @@ import styles from "./Toolbar.module.css";
 export function Toolbar() {
     const { t, locale, setLocale } = useI18N();
     const {
+        main: { openWorkspace },
         editor: {
             saveFile,
             reloadFile,
@@ -61,34 +60,6 @@ export function Toolbar() {
                 </Show>
             </div>
             <div class={styles.toolbarActions}>
-                <Show when={reloadFile()}>
-                    <button
-                        class="stdButton toolbar"
-                        aria-label={t("toolbar.reload")}
-                        title={t("toolbar.reload")}
-                        onClick={() => {
-                            void reloadFile()?.();
-                        }}
-                    >
-                        <RefreshCw aria-hidden="true" />
-                    </button>
-                </Show>
-                <Show when={saveFile()}>
-                    <button
-                        class="stdButton toolbar"
-                        aria-label={t("toolbar.save")}
-                        title={t("toolbar.save")}
-                        disabled={!fileModified()}
-                        onClick={() => {
-                            saveFile()?.();
-                        }}
-                    >
-                        <HardDriveDownload aria-hidden="true" />
-                    </button>
-                </Show>
-                <Show when={reloadFile() || saveFile()}>
-                    <span class={styles.actionSeparator} aria-hidden="true" />
-                </Show>
                 <Show when={toggleSidebar()}>
                     <button
                         class={`stdButton toolbar ${sidebarVisible() ? "selected" : ""}`}
@@ -106,6 +77,33 @@ export function Toolbar() {
                 <ToolbarMenu
                     label={t("toolbar.moreOptions")}
                     blocks={[
+                        {
+                            kind: "action",
+                            id: "open-workspace",
+                            label: t("toolbar.openWorkspace"),
+                            shortcut: "CTRL+SHIFT+O",
+                            onSelect: openWorkspace,
+                        },
+                        {
+                            kind: "action",
+                            id: "reload",
+                            label: t("toolbar.reload"),
+                            shortcut: "CTRL+R",
+                            disabled: () => reloadFile() === null,
+                            onSelect: () => {
+                                void reloadFile()?.();
+                            },
+                        },
+                        {
+                            kind: "action",
+                            id: "save",
+                            label: t("toolbar.save"),
+                            shortcut: "CTRL+S",
+                            disabled: () => saveFile() === null || !fileModified(),
+                            onSelect: () => {
+                                void saveFile()?.();
+                            },
+                        },
                         {
                             kind: "section",
                             id: "general",

@@ -80,6 +80,7 @@ fn resolve_path_from(
 fn main() {
     tracing_subscriber::fmt::init();
     let cli = Cli::parse();
+    let use_saved_basepath = cli.base_path.is_none();
     let (basepath, filename) = resolve_path(cli.filename, cli.base_path).unwrap_or_else(|error| {
         eprintln!("Error: {}", error);
         std::process::exit(2);
@@ -90,7 +91,11 @@ fn main() {
         basepath.display(),
         filename
     );
-    plunibio_lib::run_with_path(basepath, filename)
+    if use_saved_basepath {
+        plunibio_lib::run_with_default_path(basepath, filename)
+    } else {
+        plunibio_lib::run_with_path(basepath, filename)
+    }
 }
 
 #[cfg(test)]

@@ -5,41 +5,58 @@ use crate::app_error::{AppError, AppErrorCode};
 use crate::paths::{
     canonical_basepath, normalize_link_filename, resolve_existing_path, resolve_write_path,
 };
-use std::path::PathBuf;
-use std::sync::Mutex;
+use std::path::{Path, PathBuf};
+use std::sync::{Arc, Mutex};
 use tauri_plugin_opener::OpenerExt;
 use tracing::info;
 
 pub(crate) struct AppState {
-    basepath: PathBuf,
-    filename: Mutex<String>,
+    location: Mutex<AppLocation>,
+}
+
+#[derive(Clone)]
+pub(crate) struct AppLocation {
+    pub(crate) basepath: PathBuf,
+    pub(crate) filename: String,
 }
 
 impl AppState {
     pub(crate) fn new(basepath: PathBuf, filename: String) -> Self {
         Self {
-            basepath,
-            filename: Mutex::new(filename),
+            location: Mutex::new(AppLocation { basepath, filename }),
         }
     }
 
-    pub(crate) fn basepath(&self) -> &PathBuf {
-        &self.basepath
+    pub(crate) fn location(&self) -> Result<AppLocation, String> {
+        self.location
+            .lock()
+            .map(|location| location.clone())
+            .map_err(|error| format!("unable to read the current location: {error}"))
+    }
+
+    pub(crate) fn basepath(&self) -> Result<PathBuf, String> {
+        self.location().map(|location| location.basepath)
     }
 
     pub(crate) fn filename(&self) -> Result<String, String> {
-        self.filename
-            .lock()
-            .map(|filename| filename.clone())
-            .map_err(|error| format!("unable to read the current filename: {error}"))
+        self.location().map(|location| location.filename)
     }
 
     pub(crate) fn set_filename(&self, filename: String) -> Result<(), String> {
-        let mut current = self
-            .filename
+        let mut location = self
+            .location
             .lock()
             .map_err(|error| format!("unable to update the current filename: {error}"))?;
-        *current = filename;
+        location.filename = filename;
+        Ok(())
+    }
+
+    pub(crate) fn set_location(&self, basepath: PathBuf, filename: String) -> Result<(), String> {
+        let mut location = self
+            .location
+            .lock()
+            .map_err(|error| format!("unable to update the current location: {error}"))?;
+        *location = AppLocation { basepath, filename };
         Ok(())
     }
 }
@@ -79,6 +96,21 @@ pub(crate) struct DirectoryEntry {
 
 #[derive(serde::Serialize)]
 #[serde(rename_all = "camelCase")]
+pub(crate) struct DirectoryBrowserEntry {
+    name: String,
+    path: String,
+}
+
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
+pub(crate) struct DirectoryBrowserLocation {
+    path: String,
+    parent: Option<String>,
+    directories: Vec<DirectoryBrowserEntry>,
+}
+
+#[derive(serde::Serialize)]
+#[serde(rename_all = "camelCase")]
 pub(crate) struct ReadFileResult {
     content: String,
     is_new: bool,
@@ -93,9 +125,158 @@ pub(crate) struct ReadBinaryFileResult {
 
 #[tauri::command]
 pub(crate) fn initial_config(state: tauri::State<'_, AppState>) -> Result<InitialConfig, String> {
+    let location = state.location()?;
     Ok(InitialConfig {
-        basepath: state.basepath.to_string_lossy().into_owned(),
-        filename: state.filename()?,
+        basepath: location.basepath.to_string_lossy().into_owned(),
+        filename: location.filename,
+    })
+}
+
+async fn canonical_directory(path: &str) -> Result<PathBuf, AppError> {
+    let requested = Path::new(path);
+    if !requested.is_absolute() {
+        return Err(AppError::invalid_path(
+            path,
+            "directory path must be absolute",
+        ));
+    }
+    let canonical = tokio::fs::canonicalize(requested).await.map_err(|error| {
+        AppError::io("resolve_directory", path, error, AppErrorCode::InvalidPath)
+    })?;
+    let metadata = tokio::fs::metadata(&canonical).await.map_err(|error| {
+        AppError::io(
+            "inspect_directory",
+            path,
+            error,
+            AppErrorCode::InspectPathFailed,
+        )
+    })?;
+    if !metadata.is_dir() {
+        return Err(AppError::invalid_path(path, "path is not a directory"));
+    }
+    Ok(canonical)
+}
+
+#[tauri::command]
+pub(crate) async fn browse_directories(
+    path: String,
+    show_hidden: bool,
+) -> Result<DirectoryBrowserLocation, AppError> {
+    let canonical = canonical_directory(&path).await?;
+    let mut reader = tokio::fs::read_dir(&canonical).await.map_err(|error| {
+        AppError::io(
+            "browse_directory",
+            &path,
+            error,
+            AppErrorCode::ReadDirectoryFailed,
+        )
+    })?;
+    let mut directories = Vec::new();
+    while let Some(entry) = reader.next_entry().await.map_err(|error| {
+        AppError::io(
+            "browse_directory_entry",
+            &path,
+            error,
+            AppErrorCode::ReadDirectoryFailed,
+        )
+    })? {
+        let name = entry.file_name().to_string_lossy().into_owned();
+        if !show_hidden && name.starts_with('.') {
+            continue;
+        }
+        let entry_path = entry.path();
+        let metadata = match tokio::fs::metadata(&entry_path).await {
+            Ok(metadata) => metadata,
+            Err(_) => continue,
+        };
+        if metadata.is_dir() {
+            directories.push(DirectoryBrowserEntry {
+                name,
+                path: entry_path.to_string_lossy().into_owned(),
+            });
+        }
+    }
+    directories.sort_by(|left, right| {
+        left.name
+            .to_lowercase()
+            .cmp(&right.name.to_lowercase())
+            .then_with(|| left.name.cmp(&right.name))
+    });
+    let parent = canonical
+        .parent()
+        .filter(|parent| *parent != canonical)
+        .map(|parent| parent.to_string_lossy().into_owned());
+    Ok(DirectoryBrowserLocation {
+        path: canonical.to_string_lossy().into_owned(),
+        parent,
+        directories,
+    })
+}
+
+#[tauri::command]
+pub(crate) async fn filesystem_roots() -> Vec<DirectoryBrowserEntry> {
+    #[cfg(windows)]
+    {
+        let mut roots = Vec::new();
+        for letter in b'A'..=b'Z' {
+            let path = format!("{}:\\", letter as char);
+            if tokio::fs::metadata(&path)
+                .await
+                .is_ok_and(|metadata| metadata.is_dir())
+            {
+                roots.push(DirectoryBrowserEntry {
+                    name: path.clone(),
+                    path,
+                });
+            }
+        }
+        roots
+    }
+    #[cfg(not(windows))]
+    {
+        vec![DirectoryBrowserEntry {
+            name: "/".to_owned(),
+            path: "/".to_owned(),
+        }]
+    }
+}
+
+#[tauri::command]
+pub(crate) async fn set_current_basepath(
+    state: tauri::State<'_, AppState>,
+    properties_state: tauri::State<'_, Arc<Mutex<crate::PropertiesState>>>,
+    basepath: String,
+) -> Result<InitialConfig, AppError> {
+    let canonical = canonical_directory(&basepath).await?;
+    let previous = state.location().map_err(|error| {
+        AppError::internal(
+            AppErrorCode::InvalidPath,
+            "read_current_location",
+            &basepath,
+            &error,
+        )
+    })?;
+    state
+        .set_location(canonical.clone(), String::new())
+        .map_err(|error| {
+            AppError::internal(
+                AppErrorCode::InvalidPath,
+                "set_current_location",
+                &basepath,
+                &error,
+            )
+        })?;
+    // Persisting the previous filename is best-effort and must never delay the
+    // workspace transition (for example while a window event is saving properties).
+    if let Ok(mut properties) = properties_state.try_lock() {
+        properties.properties.set_basepath(canonical.clone());
+        properties
+            .properties
+            .set_filename(&previous.basepath, previous.filename);
+    }
+    Ok(InitialConfig {
+        basepath: canonical.to_string_lossy().into_owned(),
+        filename: String::new(),
     })
 }
 

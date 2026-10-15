@@ -12,6 +12,7 @@
         "useDarkTheme": "Utilitza el tema fosc",
         "useLightTheme": "Utilitza el tema clar",
         "moreOptions": "Més opcions",
+        "openWorkspace": "Obre un espai",
         "generalSection": "General",
         "filesSection": "Fitxers",
         "markdownSection": "Markdown",
@@ -153,6 +154,16 @@
         "reloadDiscardChanges": "Voleu tornar a carregar el fitxer i descartar els canvis sense desar?",
         "navigationSaveFailed": "{{ error }} Si continueu, podríeu perdre les dades.",
         "closeSaveFailed": "{{ error }} Si sortiu, podríeu perdre les dades."
+    },
+    "workspace": {
+        "title": "Obre un espai",
+        "roots": "Ubicacions de l'equip",
+        "parent": "Carpeta superior",
+        "loading": "S'estan carregant les carpetes...",
+        "noFolders": "Aquesta carpeta no conté subcarpetes",
+        "selectionHint": "La ruta mostrada a dalt serà l'arrel de l'espai.",
+        "open": "Obre",
+        "opening": "S'està obrint..."
     },
     "info": {
         "status": "Informació",

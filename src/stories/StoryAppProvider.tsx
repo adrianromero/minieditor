@@ -75,6 +75,7 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
         main: {
             basepath,
             setBasepath,
+            openWorkspace: () => undefined,
             filename,
             setFilename,
             loadFilename: async (nextFilename) => {

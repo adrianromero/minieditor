@@ -12,6 +12,7 @@
         "useDarkTheme": "Usar o tema escuro",
         "useLightTheme": "Usar o tema claro",
         "moreOptions": "Máis opcións",
+        "openWorkspace": "Abrir espazo",
         "generalSection": "Xeral",
         "filesSection": "Ficheiros",
         "markdownSection": "Markdown",
@@ -153,6 +154,16 @@
         "reloadDiscardChanges": "Recargar o ficheiro e descartar os cambios sen gardar?",
         "navigationSaveFailed": "{{ error }} Se continúas, poderías perder os datos.",
         "closeSaveFailed": "{{ error }} Se saes, poderías perder os datos."
+    },
+    "workspace": {
+        "title": "Abrir espazo",
+        "roots": "Localizacións do equipo",
+        "parent": "Cartafol superior",
+        "loading": "Cargando cartafoles...",
+        "noFolders": "Este cartafol non contén subcartafoles",
+        "selectionHint": "A ruta mostrada arriba será a raíz do espazo.",
+        "open": "Abrir",
+        "opening": "Abrindo..."
     },
     "info": {
         "status": "Información",
