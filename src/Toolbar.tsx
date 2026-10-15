@@ -105,118 +105,147 @@ export function Toolbar() {
                 </Show>
                 <ToolbarMenu
                     label={t("toolbar.moreOptions")}
-                    items={[
+                    blocks={[
                         {
-                            kind: "choice",
-                            id: "hidden-files",
-                            label: t("folder.hiddenFiles"),
-                            value: hiddenFilesVisibility,
-                            options: [
+                            kind: "section",
+                            id: "general",
+                            label: t("toolbar.generalSection"),
+                            items: [
                                 {
-                                    value: "show",
-                                    label: t("folder.show"),
-                                    icon: Eye,
-                                },
+                                    kind: "choice",
+                                    id: "theme",
+                                    label: t("toolbar.theme"),
+                                    value: theme,
+                                    options: [
+                                        {
+                                            value: "light",
+                                            label: t("toolbar.lightTheme"),
+                                            icon: Sun,
+                                        },
+                                        {
+                                            value: "dark",
+                                            label: t("toolbar.darkTheme"),
+                                            icon: Moon,
+                                        },
+                                    ],
+                                    onChange: (nextTheme): void => {
+                                        setTheme(nextTheme);
+                                    },
+                                } satisfies ToolbarMenuChoiceItem<AppTheme>,
                                 {
-                                    value: "hide",
-                                    label: t("folder.hide"),
-                                    icon: EyeOff,
-                                },
+                                    kind: "choice",
+                                    id: "language",
+                                    label: t("toolbar.language"),
+                                    currentIcon: Languages,
+                                    value: locale,
+                                    options: [
+                                        {
+                                            value: "en",
+                                            label: "English",
+                                            description: "English",
+                                        },
+                                        {
+                                            value: "es",
+                                            label: "Español",
+                                            description: "Spanish",
+                                        },
+                                        {
+                                            value: "ca",
+                                            label: "Català",
+                                            description: "Catalan",
+                                        },
+                                        {
+                                            value: "gl",
+                                            label: "Galego",
+                                            description: "Galician",
+                                        },
+                                        {
+                                            value: "eu",
+                                            label: "Euskara",
+                                            description: "Basque",
+                                        },
+                                    ],
+                                    onChange: (nextLocale): void => {
+                                        setLocale(nextLocale);
+                                    },
+                                } satisfies ToolbarMenuChoiceItem<Locale>,
                             ],
-                            onChange: (visibility): void => {
-                                setShowHiddenFiles(visibility === "show");
-                            },
-                        } satisfies ToolbarMenuChoiceItem<HiddenFilesVisibility>,
+                        },
                         {
-                            kind: "choice",
-                            id: "theme",
-                            label: t("toolbar.theme"),
-                            value: theme,
-                            options: [
+                            kind: "section",
+                            id: "files",
+                            label: t("toolbar.filesSection"),
+                            items: [
                                 {
-                                    value: "light",
-                                    label: t("toolbar.lightTheme"),
-                                    icon: Sun,
-                                },
-                                {
-                                    value: "dark",
-                                    label: t("toolbar.darkTheme"),
-                                    icon: Moon,
-                                },
+                                    kind: "choice",
+                                    id: "hidden-files",
+                                    label: t("folder.hiddenFiles"),
+                                    value: hiddenFilesVisibility,
+                                    options: [
+                                        {
+                                            value: "show",
+                                            label: t("folder.show"),
+                                            icon: Eye,
+                                        },
+                                        {
+                                            value: "hide",
+                                            label: t("folder.hide"),
+                                            icon: EyeOff,
+                                        },
+                                    ],
+                                    onChange: (visibility): void => {
+                                        setShowHiddenFiles(visibility === "show");
+                                    },
+                                } satisfies ToolbarMenuChoiceItem<HiddenFilesVisibility>,
                             ],
-                            onChange: (nextTheme): void => {
-                                setTheme(nextTheme);
-                            },
-                        } satisfies ToolbarMenuChoiceItem<AppTheme>,
+                        },
                         {
-                            kind: "choice",
-                            id: "typography",
-                            label: t("toolbar.typography"),
-                            currentIcon: TypeIcon,
-                            value: typography,
-                            options: [
+                            kind: "section",
+                            id: "markdown",
+                            label: t("toolbar.markdownSection"),
+                            items: [
                                 {
-                                    value: "sans-serif",
-                                    label: t("toolbar.sansSerifTypography"),
-                                    description: t("toolbar.sansSerifTypographyDescription"),
-                                },
-                                {
-                                    value: "serif",
-                                    label: t("toolbar.serifTypography"),
-                                    description: t("toolbar.serifTypographyDescription"),
-                                },
-                                {
-                                    value: "modern",
-                                    label: t("toolbar.modernTypography"),
-                                    description: t("toolbar.modernTypographyDescription"),
-                                },
-                                {
-                                    value: "reading",
-                                    label: t("toolbar.readingTypography"),
-                                    description: t("toolbar.readingTypographyDescription"),
-                                },
+                                    kind: "choice",
+                                    id: "typography",
+                                    label: t("toolbar.typography"),
+                                    currentIcon: TypeIcon,
+                                    value: typography,
+                                    options: [
+                                        {
+                                            value: "sans-serif",
+                                            label: t("toolbar.sansSerifTypography"),
+                                            description: t(
+                                                "toolbar.sansSerifTypographyDescription"
+                                            ),
+                                        },
+                                        {
+                                            value: "serif",
+                                            label: t("toolbar.serifTypography"),
+                                            description: t(
+                                                "toolbar.serifTypographyDescription"
+                                            ),
+                                        },
+                                        {
+                                            value: "modern",
+                                            label: t("toolbar.modernTypography"),
+                                            description: t(
+                                                "toolbar.modernTypographyDescription"
+                                            ),
+                                        },
+                                        {
+                                            value: "reading",
+                                            label: t("toolbar.readingTypography"),
+                                            description: t(
+                                                "toolbar.readingTypographyDescription"
+                                            ),
+                                        },
+                                    ],
+                                    onChange: (nextTypography): void => {
+                                        setTypography(nextTypography);
+                                    },
+                                } satisfies ToolbarMenuChoiceItem<AppTypography>,
                             ],
-                            onChange: (nextTypography): void => {
-                                setTypography(nextTypography);
-                            },
-                        } satisfies ToolbarMenuChoiceItem<AppTypography>,
-                        {
-                            kind: "choice",
-                            id: "language",
-                            label: t("toolbar.language"),
-                            currentIcon: Languages,
-                            value: locale,
-                            options: [
-                                {
-                                    value: "en",
-                                    label: "English",
-                                    description: "English",
-                                },
-                                {
-                                    value: "es",
-                                    label: "Español",
-                                    description: "Spanish",
-                                },
-                                {
-                                    value: "ca",
-                                    label: "Català",
-                                    description: "Catalan",
-                                },
-                                {
-                                    value: "gl",
-                                    label: "Galego",
-                                    description: "Galician",
-                                },
-                                {
-                                    value: "eu",
-                                    label: "Euskara",
-                                    description: "Basque",
-                                },
-                            ],
-                            onChange: (nextLocale): void => {
-                                setLocale(nextLocale);
-                            },
-                        } satisfies ToolbarMenuChoiceItem<Locale>,
+                        },
                     ]}
                 />
             </div>

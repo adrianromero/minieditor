@@ -39,9 +39,18 @@ export type ToolbarMenuChoiceItem<Value extends string = string> = {
 
 export type ToolbarMenuItem = ToolbarMenuActionItem | ToolbarMenuChoiceItem;
 
-type ToolbarMenuProps = {
+export type ToolbarMenuSection = {
+    kind: "section";
+    id: string;
     label: string;
     items: readonly ToolbarMenuItem[];
+};
+
+export type ToolbarMenuBlock = ToolbarMenuItem | ToolbarMenuSection;
+
+type ToolbarMenuProps = {
+    label: string;
+    blocks: readonly ToolbarMenuBlock[];
 };
 
 type ToolbarMenuChoiceProps = {
@@ -254,6 +263,38 @@ function ToolbarMenuChoice(props: ToolbarMenuChoiceProps): JSX.Element {
     );
 }
 
+function ToolbarMenuEntry(props: {
+    item: ToolbarMenuItem;
+    closeParent: () => void;
+}): JSX.Element {
+    const item = props.item;
+    if (item.kind === "choice") {
+        return <ToolbarMenuChoice item={item} closeParent={props.closeParent} />;
+    }
+
+    return (
+        <button
+            class={styles.menuItem}
+            type="button"
+            role="menuitem"
+            data-toolbar-menu-entry={item.id}
+            tabIndex={-1}
+            disabled={item.disabled}
+            onClick={() => {
+                item.onSelect();
+                props.closeParent();
+            }}
+        >
+            <Show when={item.icon}>
+                {icon => (
+                    <Dynamic component={icon()} class={styles.itemIcon} aria-hidden="true" />
+                )}
+            </Show>
+            <span>{item.label}</span>
+        </button>
+    );
+}
+
 export function ToolbarMenu(props: ToolbarMenuProps): JSX.Element {
     const id = `toolbar-menu-${createUniqueId()}`;
     const anchorName = `--${id}-anchor`;
@@ -357,36 +398,29 @@ export function ToolbarMenu(props: ToolbarMenuProps): JSX.Element {
                 onToggle={handleToggle}
                 onKeyDown={handleKeyDown}
             >
-                <For each={props.items}>
-                    {item => {
-                        if (item.kind === "choice") {
-                            return <ToolbarMenuChoice item={item} closeParent={closeMenu} />;
+                <For each={props.blocks}>
+                    {block => {
+                        if (block.kind !== "section") {
+                            return <ToolbarMenuEntry item={block} closeParent={closeMenu} />;
                         }
 
+                        const labelId = `${id}-section-${block.id}`;
                         return (
-                            <button
-                                class={styles.menuItem}
-                                type="button"
-                                role="menuitem"
-                                data-toolbar-menu-entry={item.id}
-                                tabIndex={-1}
-                                disabled={item.disabled}
-                                onClick={() => {
-                                    item.onSelect();
-                                    closeMenu();
-                                }}
+                            <div
+                                class={styles.menuSection}
+                                role="group"
+                                aria-labelledby={labelId}
+                                data-toolbar-menu-section={block.id}
                             >
-                                <Show when={item.icon}>
-                                    {icon => (
-                                        <Dynamic
-                                            component={icon()}
-                                            class={styles.itemIcon}
-                                            aria-hidden="true"
-                                        />
+                                <div id={labelId} class={styles.sectionTitle}>
+                                    {block.label}
+                                </div>
+                                <For each={block.items}>
+                                    {item => (
+                                        <ToolbarMenuEntry item={item} closeParent={closeMenu} />
                                     )}
-                                </Show>
-                                <span>{item.label}</span>
-                            </button>
+                                </For>
+                            </div>
                         );
                     }}
                 </For>

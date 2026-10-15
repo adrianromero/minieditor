@@ -252,7 +252,7 @@ describe("Toolbar", () => {
         expect(reading?.getAttribute("aria-checked")).toBe("true");
     });
 
-    it("renders the native popover menu with four choices", () => {
+    it("renders the native popover menu with its grouped choices", () => {
         const root = document.createElement("div");
         document.body.append(root);
         dispose = render(() => <Toolbar />, root);
@@ -267,6 +267,30 @@ describe("Toolbar", () => {
         expect(trigger?.getAttribute("aria-haspopup")).toBe("menu");
         expect(menu?.getAttribute("popover")).toBe("auto");
         expect(menu?.getAttribute("role")).toBe("menu");
+        const sections = menu?.querySelectorAll<HTMLElement>(
+            "[data-toolbar-menu-section]"
+        );
+        expect(
+            Array.from(sections ?? []).map(section => section.dataset.toolbarMenuSection)
+        ).toEqual(["general", "files", "markdown"]);
+        expect(sections?.[0]?.firstElementChild?.textContent).toBe("toolbar.generalSection");
+        expect(sections?.[1]?.firstElementChild?.textContent).toBe("toolbar.filesSection");
+        expect(sections?.[2]?.firstElementChild?.textContent).toBe("toolbar.markdownSection");
+        expect(
+            Array.from(
+                sections?.[0]?.querySelectorAll<HTMLElement>("[data-toolbar-menu-entry]") ?? []
+            ).map(entry => entry.dataset.toolbarMenuEntry)
+        ).toEqual(["theme", "language"]);
+        expect(
+            Array.from(
+                sections?.[1]?.querySelectorAll<HTMLElement>("[data-toolbar-menu-entry]") ?? []
+            ).map(entry => entry.dataset.toolbarMenuEntry)
+        ).toEqual(["hidden-files"]);
+        expect(
+            Array.from(
+                sections?.[2]?.querySelectorAll<HTMLElement>("[data-toolbar-menu-entry]") ?? []
+            ).map(entry => entry.dataset.toolbarMenuEntry)
+        ).toEqual(["typography"]);
         expect(menu?.querySelectorAll('[role="menuitem"]')).toHaveLength(4);
         expect(menu?.querySelectorAll('[role="menuitemradio"]')).toHaveLength(13);
     });

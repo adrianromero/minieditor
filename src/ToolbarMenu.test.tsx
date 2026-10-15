@@ -27,7 +27,7 @@ describe("ToolbarMenu", () => {
             () => (
                 <ToolbarMenu
                     label="More options"
-                    items={[
+                    blocks={[
                         { kind: "action", id: "one", label: "One", onSelect },
                         { kind: "action", id: "two", label: "Two", onSelect: vi.fn() },
                     ]}
@@ -42,9 +42,10 @@ describe("ToolbarMenu", () => {
 
         expect(onSelect).toHaveBeenCalledOnce();
         expect(hidePopover).toHaveBeenCalledOnce();
+        expect(menu?.querySelector('[role="group"]')).toBeNull();
     });
 
-    it("moves focus through enabled items with the keyboard", () => {
+    it("moves focus through sections and standalone items in block order", () => {
         const root = document.createElement("div");
         document.body.append(root);
 
@@ -52,16 +53,41 @@ describe("ToolbarMenu", () => {
             () => (
                 <ToolbarMenu
                     label="More options"
-                    items={[
-                        { kind: "action", id: "one", label: "One", onSelect: vi.fn() },
+                    blocks={[
+                        {
+                            kind: "section",
+                            id: "first",
+                            label: "First section",
+                            items: [
+                                { kind: "action", id: "one", label: "One", onSelect: vi.fn() },
+                                {
+                                    kind: "action",
+                                    id: "disabled",
+                                    label: "Disabled",
+                                    onSelect: vi.fn(),
+                                    disabled: true,
+                                },
+                            ],
+                        },
                         {
                             kind: "action",
-                            id: "disabled",
-                            label: "Disabled",
+                            id: "standalone",
+                            label: "Standalone",
                             onSelect: vi.fn(),
-                            disabled: true,
                         },
-                        { kind: "action", id: "three", label: "Three", onSelect: vi.fn() },
+                        {
+                            kind: "section",
+                            id: "second",
+                            label: "Second section",
+                            items: [
+                                {
+                                    kind: "action",
+                                    id: "three",
+                                    label: "Three",
+                                    onSelect: vi.fn(),
+                                },
+                            ],
+                        },
                     ]}
                 />
             ),
@@ -72,10 +98,24 @@ describe("ToolbarMenu", () => {
         const enabledItems = menu?.querySelectorAll<HTMLButtonElement>(
             '[role="menuitem"]:not(:disabled)'
         );
+        const groups = menu?.querySelectorAll<HTMLElement>('[role="group"]');
+
+        expect(groups).toHaveLength(2);
+        expect(groups?.[0]?.getAttribute("aria-labelledby")).toBe(
+            groups?.[0]?.firstElementChild?.id
+        );
+        expect(groups?.[0]?.firstElementChild?.textContent).toBe("First section");
+        expect(groups?.[1]?.firstElementChild?.textContent).toBe("Second section");
+        expect(groups?.[0]?.firstElementChild?.getAttribute("tabindex")).toBeNull();
+        expect(enabledItems?.[1]?.dataset.toolbarMenuEntry).toBe("standalone");
+
         enabledItems?.[0]?.focus();
         menu?.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
 
         expect(document.activeElement).toBe(enabledItems?.[1]);
+
+        menu?.dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowDown", bubbles: true }));
+        expect(document.activeElement).toBe(enabledItems?.[2]);
 
         menu?.dispatchEvent(new KeyboardEvent("keydown", { key: "Home", bubbles: true }));
         expect(document.activeElement).toBe(enabledItems?.[0]);
@@ -90,21 +130,28 @@ describe("ToolbarMenu", () => {
             () => (
                 <ToolbarMenu
                     label="More options"
-                    items={[
+                    blocks={[
                         {
-                            kind: "choice",
-                            id: "choice",
-                            label: "Choice",
-                            value,
-                            options: [
+                            kind: "section",
+                            id: "main",
+                            label: "Main",
+                            items: [
                                 {
-                                    value: "first",
-                                    label: "First",
-                                    description: "First description",
+                                    kind: "choice",
+                                    id: "choice",
+                                    label: "Choice",
+                                    value,
+                                    options: [
+                                        {
+                                            value: "first",
+                                            label: "First",
+                                            description: "First description",
+                                        },
+                                        { value: "second", label: "Second" },
+                                    ],
+                                    onChange: setValue,
                                 },
-                                { value: "second", label: "Second" },
                             ],
-                            onChange: setValue,
                         },
                     ]}
                 />
