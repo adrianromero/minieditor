@@ -44,6 +44,7 @@ describe("createFileEditorController", () => {
         const [filename, setFilename] = createSignal("notes.md");
         const [fileModified, setFileModified] = createSignal(false);
         const [sidebarVisible, setSidebarVisible] = createSignal(true);
+        const [showHiddenFiles, setShowHiddenFiles] = createSignal(false);
         const [theme, setTheme] = createSignal<"light" | "dark">("light");
         const [typography, setTypography] = createSignal<
             "sans-serif" | "serif" | "modern" | "reading"
@@ -90,6 +91,8 @@ describe("createFileEditorController", () => {
                 setSearchFile: vi.fn(),
                 sidebarVisible,
                 setSidebarVisible,
+                showHiddenFiles,
+                setShowHiddenFiles,
                 toggleSidebar: () => null,
                 setToggleSidebar: vi.fn(),
                 theme,

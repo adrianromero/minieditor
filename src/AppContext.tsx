@@ -22,6 +22,7 @@ import { UserMessageError } from "./UserMessageError";
 import { MessageInfoKind } from "./messagesinfo";
 import AppShortcuts, { type ShortcutDefinition } from "./AppShortcuts";
 import { loadSidebarVisible, saveSidebarVisible } from "./SidebarPreferences";
+import { loadShowHiddenFiles, saveShowHiddenFiles } from "./HiddenFilesPreferences";
 import { applyTheme, loadTheme, saveTheme, type AppTheme } from "./ThemePreferences";
 import {
     applyTypography,
@@ -67,6 +68,8 @@ export type AppContextValues = {
         setSearchFile: (handler: SearchFileHandler | null) => void;
         sidebarVisible: Accessor<boolean>;
         setSidebarVisible: Setter<boolean>;
+        showHiddenFiles: Accessor<boolean>;
+        setShowHiddenFiles: Setter<boolean>;
         toggleSidebar: Accessor<ToggleSidebarHandler | null>;
         setToggleSidebar: (handler: ToggleSidebarHandler | null) => void;
         theme: Accessor<AppTheme>;
@@ -102,6 +105,7 @@ export function AppProvider(props: {
     const [reloadFile, setReloadFileSignal] = createSignal<ReloadFileHandler | null>(null);
     const [searchFile, setSearchFileSignal] = createSignal<SearchFileHandler | null>(null);
     const [sidebarVisible, setSidebarVisibleSignal] = createSignal(loadSidebarVisible());
+    const [showHiddenFiles, setShowHiddenFilesSignal] = createSignal(loadShowHiddenFiles());
     const [toggleSidebar, setToggleSidebarSignal] = createSignal<ToggleSidebarHandler | null>(null);
     const initialTheme = loadTheme();
     applyTheme(initialTheme);
@@ -141,6 +145,14 @@ export function AppProvider(props: {
         const visible = setSidebarVisibleSignal(value);
         if (visible !== previous) {
             saveSidebarVisible(visible);
+        }
+        return visible;
+    };
+    const setShowHiddenFiles: Setter<boolean> = (value) => {
+        const previous = showHiddenFiles();
+        const visible = setShowHiddenFilesSignal(value);
+        if (visible !== previous) {
+            saveShowHiddenFiles(visible);
         }
         return visible;
     };
@@ -321,6 +333,8 @@ export function AppProvider(props: {
                     setSearchFile,
                     sidebarVisible,
                     setSidebarVisible,
+                    showHiddenFiles,
+                    setShowHiddenFiles,
                     toggleSidebar,
                     setToggleSidebar,
                     theme,

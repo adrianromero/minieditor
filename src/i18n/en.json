@@ -32,8 +32,9 @@
     "folder": {
         "loading": "Loading {{ path }}...",
         "empty": "This folder is empty",
-        "showHidden": "Show hidden files",
-        "hideHidden": "Hide hidden files"
+        "hiddenFiles": "Hidden files",
+        "show": "Show",
+        "hide": "Hide"
     },
     "search": {
         "title": "Search",

@@ -11,6 +11,8 @@ import Moon from "lucide-solid/icons/moon";
 import Sun from "lucide-solid/icons/sun";
 import Languages from "lucide-solid/icons/languages";
 import TypeIcon from "lucide-solid/icons/type";
+import Eye from "lucide-solid/icons/eye";
+import EyeOff from "lucide-solid/icons/eye-off";
 import { useAppContext } from "./AppContext";
 import FileBreadcrumb from "./FileBreadcrumb";
 import FileNavigation from "./FileNavigation";
@@ -29,6 +31,8 @@ export function Toolbar() {
             reloadFile,
             toggleSidebar,
             sidebarVisible,
+            showHiddenFiles,
+            setShowHiddenFiles,
             theme,
             setTheme,
             typography,
@@ -36,6 +40,10 @@ export function Toolbar() {
             fileModified,
         },
     } = useAppContext();
+    type HiddenFilesVisibility = "show" | "hide";
+    const hiddenFilesVisibility = (): HiddenFilesVisibility =>
+        showHiddenFiles() ? "show" : "hide";
+
     return (
         <header class={styles.editorToolbar}>
             <div class={styles.toolbarLeft}>
@@ -98,6 +106,27 @@ export function Toolbar() {
                 <ToolbarMenu
                     label={t("toolbar.moreOptions")}
                     items={[
+                        {
+                            kind: "choice",
+                            id: "hidden-files",
+                            label: t("folder.hiddenFiles"),
+                            value: hiddenFilesVisibility,
+                            options: [
+                                {
+                                    value: "show",
+                                    label: t("folder.show"),
+                                    icon: Eye,
+                                },
+                                {
+                                    value: "hide",
+                                    label: t("folder.hide"),
+                                    icon: EyeOff,
+                                },
+                            ],
+                            onChange: (visibility): void => {
+                                setShowHiddenFiles(visibility === "show");
+                            },
+                        } satisfies ToolbarMenuChoiceItem<HiddenFilesVisibility>,
                         {
                             kind: "choice",
                             id: "theme",

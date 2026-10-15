@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+import { createSignal, type Accessor, type Setter } from "solid-js";
 import { render } from "solid-js/web";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type { DirectoryEntry } from "../rusttypes";
@@ -11,6 +12,8 @@ import EditorFolder from "./EditorFolder";
 
 const invokeMock = vi.hoisted(() => vi.fn());
 let reloadFile: ReloadFileHandler | null;
+let showHiddenFiles: Accessor<boolean>;
+let setShowHiddenFiles: Setter<boolean>;
 
 vi.mock("@tauri-apps/api/core", () => ({ invoke: invokeMock }));
 
@@ -30,9 +33,7 @@ vi.mock("../AppContext", () => ({
             setReloadFile: (handler: ReloadFileHandler | null) => {
                 reloadFile = handler;
             },
-            sidebarVisible: () => true,
-            setSidebarVisible: vi.fn(),
-            setToggleSidebar: vi.fn(),
+            showHiddenFiles,
         },
     }),
 }));
@@ -46,6 +47,7 @@ describe("EditorFolder", () => {
 
     beforeEach(() => {
         reloadFile = null;
+        [showHiddenFiles, setShowHiddenFiles] = createSignal(false);
         invokeMock.mockImplementation(
             async (_command: string, args: { showHidden: boolean }): Promise<DirectoryEntry[]> =>
                 args.showHidden
@@ -64,7 +66,7 @@ describe("EditorFolder", () => {
         document.body.replaceChildren();
     });
 
-    it("reloads the directory when hidden files are toggled", async () => {
+    it("reloads the directory when the hidden files preference changes", async () => {
         const root = document.createElement("div");
         document.body.append(root);
         dispose = render(() => <EditorFolder />, root);
@@ -79,9 +81,8 @@ describe("EditorFolder", () => {
             showHidden: false,
         });
 
-        const toggle = root.querySelector<HTMLButtonElement>('[aria-pressed="false"]');
-        expect(toggle?.textContent).toContain("folder.showHidden");
-        toggle?.click();
+        expect(root.querySelector("aside")).toBeNull();
+        setShowHiddenFiles(true);
 
         await vi.waitFor(() => {
             expect(root.textContent).toContain(".hidden.md");
@@ -91,8 +92,6 @@ describe("EditorFolder", () => {
             filename: "docs",
             showHidden: true,
         });
-        expect(toggle?.getAttribute("aria-pressed")).toBe("true");
-        expect(toggle?.textContent).toContain("folder.hideHidden");
     });
 
     it("registers a context reload handler and removes it on cleanup", async () => {

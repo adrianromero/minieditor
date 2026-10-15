@@ -32,8 +32,9 @@
     "folder": {
         "loading": "{{ path }} kargatzen...",
         "empty": "Karpeta hau hutsik dago",
-        "showHidden": "Erakutsi ezkutuko fitxategiak",
-        "hideHidden": "Ezkutatu ezkutuko fitxategiak"
+        "hiddenFiles": "Ezkutuko fitxategiak",
+        "show": "Erakutsi",
+        "hide": "Ezkutatu"
     },
     "search": {
         "title": "Bilatu",

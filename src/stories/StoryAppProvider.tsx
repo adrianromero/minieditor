@@ -42,6 +42,7 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
     );
     const [searchFile, setSearchFileSignal] = createSignal<SearchFileHandler | null>(null);
     const [sidebarVisible, setSidebarVisible] = createSignal(true);
+    const [showHiddenFiles, setShowHiddenFiles] = createSignal(false);
     const [toggleSidebar, setToggleSidebarSignal] = createSignal<ToggleSidebarHandler | null>(null);
     const initialTheme = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
     const [theme, setTheme] = createSignal<"light" | "dark">(initialTheme);
@@ -98,6 +99,8 @@ export function StoryAppProvider(props: StoryAppProviderProps): JSX.Element {
             setSearchFile,
             sidebarVisible,
             setSidebarVisible,
+            showHiddenFiles,
+            setShowHiddenFiles,
             toggleSidebar,
             setToggleSidebar,
             theme,

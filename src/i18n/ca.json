@@ -32,8 +32,9 @@
     "folder": {
         "loading": "S'està carregant {{ path }}...",
         "empty": "Aquesta carpeta és buida",
-        "showHidden": "Mostra els fitxers ocults",
-        "hideHidden": "Amaga els fitxers ocults"
+        "hiddenFiles": "Fitxers ocults",
+        "show": "Mostra",
+        "hide": "Amaga"
     },
     "search": {
         "title": "Cerca",

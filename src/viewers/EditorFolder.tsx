@@ -3,10 +3,8 @@
  * SPDX-License-Identifier: MIT
  */
 
-import { createResource, createSignal, For, JSX, Match, onCleanup, Show, Switch } from "solid-js";
+import { createResource, For, JSX, Match, onCleanup, Show, Switch } from "solid-js";
 import { invoke } from "@tauri-apps/api/core";
-import Eye from "lucide-solid/icons/eye";
-import EyeOff from "lucide-solid/icons/eye-off";
 import File from "lucide-solid/icons/file";
 import Folder from "lucide-solid/icons/folder";
 import { useAppContext } from "../AppContext";
@@ -15,7 +13,6 @@ import styles from "./EditorFolder.module.css";
 import { translateAppError } from "../AppError";
 import { Dynamic } from "solid-js/web";
 import type { DirectoryEntry } from "../rusttypes";
-import AppSidebar from "../commons/AppSidebar";
 
 type DirectoryResult =
     | { entries: DirectoryEntry[]; error?: never }
@@ -23,14 +20,13 @@ type DirectoryResult =
 
 export function EditorFolder(): JSX.Element {
     const { t } = useI18N();
-    const [showHidden, setShowHidden] = createSignal(false);
     const {
         main: { basepath, filename, loadFilename },
         spinner: { showSpinner, hideSpinner, setSpinnerParams },
-        editor: { setReloadFile },
+        editor: { setReloadFile, showHiddenFiles },
     } = useAppContext();
     const [directoryResult, { refetch }] = createResource(
-        () => ({ basepath: basepath(), filename: filename(), showHidden: showHidden() }),
+        () => ({ basepath: basepath(), filename: filename(), showHidden: showHiddenFiles() }),
         async (path): Promise<DirectoryResult> => {
             setSpinnerParams(t("folder.loading", { path: path.filename }));
             showSpinner();
@@ -116,21 +112,6 @@ export function EditorFolder(): JSX.Element {
                     </Switch>
                 </Show>
             </div>
-            <AppSidebar>
-                <div class="sidebarPanel">
-                    <div class="sidebarButtonGrid sidebarButtonGrid--1">
-                        <button
-                            class={`stdButton toolbar ${showHidden() ? "selected" : ""}`}
-                            type="button"
-                            aria-pressed={showHidden()}
-                            onClick={() => setShowHidden((visible) => !visible)}
-                        >
-                            <Dynamic component={showHidden() ? EyeOff : Eye} aria-hidden="true" />
-                            {t(showHidden() ? "folder.hideHidden" : "folder.showHidden")}
-                        </button>
-                    </div>
-                </div>
-            </AppSidebar>
         </section>
     );
 }

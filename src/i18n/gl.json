@@ -32,8 +32,9 @@
     "folder": {
         "loading": "Cargando {{ path }}...",
         "empty": "Este cartafol está baleiro",
-        "showHidden": "Mostrar os ficheiros ocultos",
-        "hideHidden": "Ocultar os ficheiros ocultos"
+        "hiddenFiles": "Ficheiros ocultos",
+        "show": "Mostrar",
+        "hide": "Ocultar"
     },
     "search": {
         "title": "Buscar",

@@ -36,6 +36,7 @@ describe("Toolbar", () => {
     let setSidebarVisible: (visible: boolean) => void;
     let setFileModified: (modified: boolean) => void;
     let setTheme: (theme: AppTheme) => void;
+    let showHiddenFiles: Accessor<boolean>;
 
     beforeEach(() => {
         const [saveFile, setSaveFileSignal] = createSignal<SaveFileHandler | null>(null);
@@ -43,6 +44,8 @@ describe("Toolbar", () => {
         const [toggleSidebar, setToggleSidebarSignal] =
             createSignal<ReturnType<AppContextValues["editor"]["toggleSidebar"]>>(null);
         const [sidebarVisible, setSidebarVisibleSignal] = createSignal(true);
+        const [showHiddenFilesSignal, setShowHiddenFilesSignal] = createSignal(false);
+        showHiddenFiles = showHiddenFilesSignal;
         const [fileModified, setFileModifiedSignal] = createSignal(false);
         const [theme, setThemeSignal] = createSignal<AppTheme>("light");
         const [typographySignal, setTypographySignal] = createSignal<AppTypography>("sans-serif");
@@ -64,6 +67,8 @@ describe("Toolbar", () => {
             setSearchFile: vi.fn(),
             sidebarVisible,
             setSidebarVisible: setSidebarVisibleSignal,
+            showHiddenFiles,
+            setShowHiddenFiles: setShowHiddenFilesSignal,
             toggleSidebar,
             setToggleSidebar,
             theme,
@@ -158,6 +163,32 @@ describe("Toolbar", () => {
         expect(themeEntry?.textContent).toContain("toolbar.lightTheme");
     });
 
+    it("selects whether hidden files are shown from the nested choice menu", () => {
+        const root = document.createElement("div");
+        document.body.append(root);
+        dispose = render(() => <Toolbar />, root);
+
+        const entry = root.querySelector<HTMLButtonElement>(
+            '[data-toolbar-menu-entry="hidden-files"]'
+        );
+        const show = root.querySelector<HTMLButtonElement>('[data-choice-option="show"]');
+        const hide = root.querySelector<HTMLButtonElement>('[data-choice-option="hide"]');
+
+        expect(entry?.textContent).toContain("folder.hiddenFiles");
+        expect(entry?.textContent).toContain("folder.hide");
+        expect(entry?.querySelector(".lucide-eye-off")).not.toBeNull();
+        expect(show?.getAttribute("aria-checked")).toBe("false");
+        expect(hide?.getAttribute("aria-checked")).toBe("true");
+
+        show?.click();
+
+        expect(showHiddenFiles()).toBe(true);
+        expect(entry?.textContent).toContain("folder.show");
+        expect(entry?.querySelector(".lucide-eye")).not.toBeNull();
+        expect(show?.getAttribute("aria-checked")).toBe("true");
+        expect(hide?.getAttribute("aria-checked")).toBe("false");
+    });
+
     it("selects the application language from the nested choice menu", () => {
         const root = document.createElement("div");
         document.body.append(root);
@@ -221,7 +252,7 @@ describe("Toolbar", () => {
         expect(reading?.getAttribute("aria-checked")).toBe("true");
     });
 
-    it("renders the native popover menu with three choices", () => {
+    it("renders the native popover menu with four choices", () => {
         const root = document.createElement("div");
         document.body.append(root);
         dispose = render(() => <Toolbar />, root);
@@ -236,7 +267,7 @@ describe("Toolbar", () => {
         expect(trigger?.getAttribute("aria-haspopup")).toBe("menu");
         expect(menu?.getAttribute("popover")).toBe("auto");
         expect(menu?.getAttribute("role")).toBe("menu");
-        expect(menu?.querySelectorAll('[role="menuitem"]')).toHaveLength(3);
-        expect(menu?.querySelectorAll('[role="menuitemradio"]')).toHaveLength(11);
+        expect(menu?.querySelectorAll('[role="menuitem"]')).toHaveLength(4);
+        expect(menu?.querySelectorAll('[role="menuitemradio"]')).toHaveLength(13);
     });
 });
