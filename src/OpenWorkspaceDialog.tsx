@@ -12,6 +12,7 @@ import { createEffect, createSignal, For, JSX, Show } from "solid-js";
 import { translateAppError } from "./AppError";
 import dialogStyles from "./Dialog.module.css";
 import styles from "./OpenWorkspaceDialog.module.css";
+import folderStyles from "./viewers/EditorFolder.module.css";
 import { useI18N } from "./Localization";
 import type { DirectoryBrowserEntry, DirectoryBrowserLocation } from "./rusttypes";
 
@@ -152,19 +153,26 @@ export function OpenWorkspaceDialog(props: OpenWorkspaceDialogProps): JSX.Elemen
                         <div class={styles.status}>{t("workspace.noFolders")}</div>
                     </Show>
                     <Show when={!loading() && !error()}>
-                        <For each={displayedEntries()}>
-                            {(entry) => (
-                                <button
-                                    class={styles.directoryEntry}
-                                    type="button"
-                                    disabled={confirming()}
-                                    onClick={() => void loadDirectory(entry.path)}
-                                >
-                                    <Folder aria-hidden="true" />
-                                    <span>{entry.name}</span>
-                                </button>
-                            )}
-                        </For>
+                        <ul class={folderStyles.entryList}>
+                            <For each={displayedEntries()}>
+                                {(entry) => (
+                                    <li>
+                                        <button
+                                            class={`${folderStyles.entryButton} ${styles.directoryEntry}`}
+                                            type="button"
+                                            disabled={confirming()}
+                                            onClick={() => void loadDirectory(entry.path)}
+                                        >
+                                            <Folder
+                                                class={`${folderStyles.entryIcon} ${folderStyles.directoryIcon} ${styles.directoryIcon}`}
+                                                aria-hidden="true"
+                                            />
+                                            <span class={folderStyles.entryName}>{entry.name}</span>
+                                        </button>
+                                    </li>
+                                )}
+                            </For>
+                        </ul>
                     </Show>
                 </div>
                 <p class={styles.hint}>{t("workspace.selectionHint")}</p>
