@@ -137,6 +137,8 @@ describe("Toolbar", () => {
         setToggleSidebar(toggle);
 
         const button = root.querySelector<HTMLButtonElement>('[aria-label="toolbar.hideSidebar"]');
+        expect(button?.classList.contains("mainbar")).toBe(true);
+        expect(button?.classList.contains("toolbar")).toBe(false);
         expect(button?.classList.contains("selected")).toBe(true);
         expect(button?.getAttribute("aria-pressed")).toBe("true");
 
@@ -295,6 +297,8 @@ describe("Toolbar", () => {
         const menu = menuId ? root.querySelector<HTMLElement>(`#${menuId}`) : null;
 
         expect(trigger).not.toBeNull();
+        expect(trigger?.classList.contains("mainbar")).toBe(true);
+        expect(trigger?.classList.contains("toolbar")).toBe(false);
         expect(trigger?.getAttribute("aria-haspopup")).toBe("menu");
         expect(menu?.getAttribute("popover")).toBe("auto");
         expect(menu?.getAttribute("role")).toBe("menu");

@@ -373,7 +373,45 @@ body {
 .stdButton.toolbar > .lucide {
     width: 16px;
     height: 16px;
-    stroke-width: 1.6px;
+    stroke-width: 2px;
+}
+
+.stdButton.mainbar {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.55rem;
+    color: var(--color-on-secondary);
+    background: transparent;
+    border-color: transparent;
+}
+
+.stdButton.mainbar:hover {
+    background: var(--color-secondary-hover);
+}
+
+.stdButton.mainbar:active {
+    background: var(--color-secondary-active);
+}
+
+.stdButton.mainbar.selected:not(:disabled) {
+    color: var(--color-primary);
+    background: var(--color-primary-soft);
+    border-color: transparent;
+}
+
+.stdButton.mainbar.selected:not(:disabled):hover {
+    background: var(--color-primary-soft-hover);
+}
+
+.stdButton.mainbar.selected:not(:disabled):active {
+    background: var(--color-primary-soft-active);
+}
+
+.stdButton.mainbar > .lucide {
+    width: 16px;
+    height: 16px;
+    stroke-width: 2px;
 }
 
 .stdButton.small {
@@ -447,6 +485,14 @@ body {
     border-color: var(--color-border-disabled);
     /* box-shadow: none; */
     cursor: not-allowed;
+}
+
+.stdButton.mainbar:disabled,
+.stdButton.mainbar:disabled:hover,
+.stdButton.mainbar:disabled:active {
+    background: transparent;
+    color: var(--color-text-subtle);
+    border-color: transparent;
 }
 
 @media (prefers-reduced-motion: reduce) {

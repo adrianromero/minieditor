@@ -43,6 +43,15 @@ describe("FileNavigation", () => {
         loadFilename.mockClear();
     });
 
+    it("uses the borderless main bar button style", () => {
+        const { back, forward } = renderNavigation();
+
+        expect(back?.classList.contains("mainbar")).toBe(true);
+        expect(forward?.classList.contains("mainbar")).toBe(true);
+        expect(back?.classList.contains("toolbar")).toBe(false);
+        expect(forward?.classList.contains("toolbar")).toBe(false);
+    });
+
     it("navigates backward and forward without deleting history", () => {
         const { back, forward } = renderNavigation();
 

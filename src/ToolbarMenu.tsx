@@ -372,7 +372,7 @@ export function ToolbarMenu(props: ToolbarMenuProps): JSX.Element {
         <>
             <button
                 ref={trigger}
-                class="stdButton toolbar"
+                class="stdButton mainbar"
                 style={{ "anchor-name": anchorName }}
                 type="button"
                 aria-label={props.label}

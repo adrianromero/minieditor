@@ -62,7 +62,7 @@ export function Toolbar() {
             <div class={styles.toolbarActions}>
                 <Show when={toggleSidebar()}>
                     <button
-                        class={`stdButton toolbar ${sidebarVisible() ? "selected" : ""}`}
+                        class={`stdButton mainbar ${sidebarVisible() ? "selected" : ""}`}
                         type="button"
                         aria-label={t(
                             sidebarVisible() ? "toolbar.hideSidebar" : "toolbar.showSidebar"
