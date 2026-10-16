@@ -40,6 +40,7 @@ export function Dialog(props: DialogProps): JSX.Element {
             ref={dialogRef}
             class={`${styles.dialog} ${styles[info().class]}`}
             aria-labelledby={titleId}
+            tabIndex={-1}
             onCancel={(e) => {
                 e.preventDefault();
                 props.onCancel?.();
@@ -51,7 +52,7 @@ export function Dialog(props: DialogProps): JSX.Element {
             <div class={styles.iconRow}>
                 <Dynamic component={info().icon} class={styles.icon} aria-hidden="true" />
             </div>
-            <h2 id={titleId} class={styles.title}>
+            <h2 id={titleId} class={styles.title} tabIndex={-1}>
                 {t(info().literal)}
             </h2>
             <div class={styles.message}>{props.message}</div>

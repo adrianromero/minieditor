@@ -100,7 +100,8 @@ export function OpenWorkspaceDialog(props: OpenWorkspaceDialogProps): JSX.Elemen
             ref={dialogRef}
             class={`${dialogStyles.dialog} ${styles.workspaceDialog}`}
             aria-labelledby="open-workspace-title"
-            onCancel={event => {
+            tabIndex={-1}
+            onCancel={(event) => {
                 event.preventDefault();
                 if (!confirming()) props.onCancel();
             }}
@@ -108,7 +109,7 @@ export function OpenWorkspaceDialog(props: OpenWorkspaceDialogProps): JSX.Elemen
             <div class={`${dialogStyles.iconRow} ${styles.iconRow}`}>
                 <FolderOpen class={dialogStyles.icon} aria-hidden="true" />
             </div>
-            <h2 id="open-workspace-title" class={dialogStyles.title}>
+            <h2 id="open-workspace-title" tabIndex={-1} class={dialogStyles.title}>
                 {t("workspace.title")}
             </h2>
             <div class={styles.browser}>
@@ -137,12 +138,12 @@ export function OpenWorkspaceDialog(props: OpenWorkspaceDialogProps): JSX.Elemen
                         <ArrowUp aria-hidden="true" />
                     </button>
                     <div class={styles.currentPath} title={location()?.path ?? ""}>
-                        {roots() ? t("workspace.roots") : location()?.path ?? props.initialPath}
+                        {roots() ? t("workspace.roots") : (location()?.path ?? props.initialPath)}
                     </div>
                 </div>
                 <div class={styles.directoryList} aria-busy={loading()}>
                     <Show when={error()}>
-                        {message => <div class={styles.error}>{message()}</div>}
+                        {(message) => <div class={styles.error}>{message()}</div>}
                     </Show>
                     <Show when={loading()}>
                         <div class={styles.status}>{t("workspace.loading")}</div>
@@ -152,7 +153,7 @@ export function OpenWorkspaceDialog(props: OpenWorkspaceDialogProps): JSX.Elemen
                     </Show>
                     <Show when={!loading() && !error()}>
                         <For each={displayedEntries()}>
-                            {entry => (
+                            {(entry) => (
                                 <button
                                     class={styles.directoryEntry}
                                     type="button"
