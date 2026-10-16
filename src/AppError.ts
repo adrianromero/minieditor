@@ -46,7 +46,7 @@ export function translateAppError(error: unknown, t: Translator, fallback?: stri
         return fallbackMessage;
     }
 
-    const path = payload.path ?? t("toolbar.basePath");
+    const path = payload.path ?? "[ . ]";
     const translationKey = `backendErrors.${payload.code}`;
     if (!hasTranslationKey(translationKey)) {
         return fallbackMessage;

@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2026 Adrián Romero
+ * SPDX-License-Identifier: MIT
+ */
+
 .workspaceDialog {
     width: min(38rem, calc(100vw - 2rem));
     height: min(38rem, calc(100vh - 2rem));

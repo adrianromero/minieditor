@@ -3,6 +3,7 @@
  * SPDX-License-Identifier: MIT
  */
 
+import Folder from "lucide-solid/icons/folder";
 import { createMemo, For, JSX, Show } from "solid-js";
 import { useAppContext } from "./AppContext";
 import { useI18N } from "./Localization";
@@ -39,14 +40,20 @@ export function FileBreadcrumb(): JSX.Element {
             <nav class={styles.breadcrumb} aria-label={t("toolbar.pathNavigation")}>
                 <Show
                     when={segments().length > 0}
-                    fallback={<span class={styles.currentSegment}>{t("toolbar.basePath")}</span>}
+                    fallback={
+                        <span class={styles.currentSegment} aria-label={basepath()}>
+                            <Folder class={styles.homeIcon} aria-hidden="true" />
+                        </span>
+                    }
                 >
                     <button
                         type="button"
                         class={styles.segmentLink}
+                        aria-label={basepath()}
+                        title={basepath()}
                         onClick={() => void loadFilename("")}
                     >
-                        {t("toolbar.basePath")}
+                        <Folder class={styles.homeIcon} aria-hidden="true" />
                     </button>
                     <span class={styles.separator} aria-hidden="true">
                         /
@@ -62,7 +69,9 @@ export function FileBreadcrumb(): JSX.Element {
                             <>
                                 <Show
                                     when={index() < visibleSegments().length - 1}
-                                    fallback={<span class={styles.currentSegment}>{segment.name}</span>}
+                                    fallback={
+                                        <span class={styles.currentSegment}>{segment.name}</span>
+                                    }
                                 >
                                     <button
                                         type="button"
