@@ -5,6 +5,7 @@
     },
     "toolbar": {
         "back": "Back",
+        "forward": "Forward",
         "reload": "Reload",
         "save": "Save",
         "showSidebar": "Show sidebar",

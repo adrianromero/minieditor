@@ -4,7 +4,8 @@
  */
 
 import ArrowLeft from "lucide-solid/icons/arrow-left";
-import { createEffect, createSignal, JSX } from "solid-js";
+import ArrowRight from "lucide-solid/icons/arrow-right";
+import { batch, createEffect, createSignal, JSX } from "solid-js";
 import { useAppContext } from "./AppContext";
 import { useI18N } from "./Localization";
 
@@ -14,9 +15,10 @@ export function FileNavigation(): JSX.Element {
         main: { basepath, filename, loadFilename },
     } = useAppContext();
     const [filenameHistory, setFilenameHistory] = createSignal<string[]>([filename()]);
+    const [historyIndex, setHistoryIndex] = createSignal(0);
     let lastObservedFilename = filename();
     let lastObservedBasepath = basepath();
-    let backNavigationTarget: string | undefined;
+    let historyNavigationTarget: { filename: string; index: number } | undefined;
 
     createEffect(() => {
         const currentBasepath = basepath();
@@ -24,8 +26,11 @@ export function FileNavigation(): JSX.Element {
         if (currentBasepath !== lastObservedBasepath) {
             lastObservedBasepath = currentBasepath;
             lastObservedFilename = currentFilename;
-            backNavigationTarget = undefined;
-            setFilenameHistory([currentFilename]);
+            historyNavigationTarget = undefined;
+            batch(() => {
+                setFilenameHistory([currentFilename]);
+                setHistoryIndex(0);
+            });
             return;
         }
         if (currentFilename === lastObservedFilename) {
@@ -33,46 +38,62 @@ export function FileNavigation(): JSX.Element {
         }
 
         lastObservedFilename = currentFilename;
-        if (currentFilename === backNavigationTarget) {
-            setFilenameHistory((history) => history.slice(0, -1));
-            backNavigationTarget = undefined;
+        if (currentFilename === historyNavigationTarget?.filename) {
+            setHistoryIndex(historyNavigationTarget.index);
+            historyNavigationTarget = undefined;
             return;
         }
 
-        backNavigationTarget = undefined;
-        setFilenameHistory((history) => [...history, currentFilename]);
+        historyNavigationTarget = undefined;
+        const retainedHistory = filenameHistory().slice(0, historyIndex() + 1);
+        batch(() => {
+            setFilenameHistory([...retainedHistory, currentFilename]);
+            setHistoryIndex(retainedHistory.length);
+        });
     });
 
-    const navigateBack = async (): Promise<void> => {
+    const navigateHistory = async (nextIndex: number): Promise<void> => {
         const history = filenameHistory();
-        if (history.length <= 1) {
+        if (nextIndex < 0 || nextIndex >= history.length || nextIndex === historyIndex()) {
             return;
         }
 
-        const target = history[history.length - 2];
+        const target = history[nextIndex];
         if (target === undefined) {
             return;
         }
 
-        backNavigationTarget = target;
+        historyNavigationTarget = { filename: target, index: nextIndex };
         await loadFilename(target);
 
         if (filename() !== target) {
-            backNavigationTarget = undefined;
+            historyNavigationTarget = undefined;
         }
     };
 
     return (
-        <button
-            type="button"
-            class="stdButton toolbar"
-            disabled={filenameHistory().length <= 1}
-            aria-label={t("toolbar.back")}
-            title={t("toolbar.back")}
-            onClick={() => void navigateBack()}
-        >
-            <ArrowLeft class="actionIcon" aria-hidden="true" />
-        </button>
+        <>
+            <button
+                type="button"
+                class="stdButton toolbar"
+                disabled={historyIndex() <= 0}
+                aria-label={t("toolbar.back")}
+                title={t("toolbar.back")}
+                onClick={() => void navigateHistory(historyIndex() - 1)}
+            >
+                <ArrowLeft class="actionIcon" aria-hidden="true" />
+            </button>
+            <button
+                type="button"
+                class="stdButton toolbar"
+                disabled={historyIndex() >= filenameHistory().length - 1}
+                aria-label={t("toolbar.forward")}
+                title={t("toolbar.forward")}
+                onClick={() => void navigateHistory(historyIndex() + 1)}
+            >
+                <ArrowRight class="actionIcon" aria-hidden="true" />
+            </button>
+        </>
     );
 }
 

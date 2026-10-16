@@ -5,6 +5,7 @@
     },
     "toolbar": {
         "back": "Atrás",
+        "forward": "Adiante",
         "reload": "Recargar",
         "save": "Gardar",
         "showSidebar": "Mostrar a barra lateral",
