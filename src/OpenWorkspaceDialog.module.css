@@ -74,19 +74,6 @@
     padding: 0 var(--radius-medium);
 }
 
-.directoryEntry {
-    gap: 0.65rem;
-    padding: 0.55rem 0.75rem;
-    font-size: 0.833rem;
-    line-height: normal;
-}
-
-.directoryIcon {
-    width: 1.15rem;
-    height: 1.15rem;
-    font-size: 1rem;
-}
-
 .status,
 .error {
     padding: 2rem 1rem;

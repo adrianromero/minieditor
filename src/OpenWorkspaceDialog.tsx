@@ -116,7 +116,7 @@ export function OpenWorkspaceDialog(props: OpenWorkspaceDialogProps): JSX.Elemen
             <div class={styles.browser}>
                 <div class={styles.locationBar}>
                     <button
-                        class="stdButton toolbar"
+                        class="stdButton mainbar"
                         type="button"
                         aria-label={t("workspace.roots")}
                         title={t("workspace.roots")}
@@ -126,7 +126,7 @@ export function OpenWorkspaceDialog(props: OpenWorkspaceDialogProps): JSX.Elemen
                         <HardDrive aria-hidden="true" />
                     </button>
                     <button
-                        class="stdButton toolbar"
+                        class="stdButton mainbar"
                         type="button"
                         aria-label={t("workspace.parent")}
                         title={t("workspace.parent")}
@@ -158,13 +158,13 @@ export function OpenWorkspaceDialog(props: OpenWorkspaceDialogProps): JSX.Elemen
                                 {(entry) => (
                                     <li>
                                         <button
-                                            class={`${folderStyles.entryButton} ${styles.directoryEntry}`}
+                                            class={`${folderStyles.entryButton} ${folderStyles.entryButtonSmall}`}
                                             type="button"
                                             disabled={confirming()}
                                             onClick={() => void loadDirectory(entry.path)}
                                         >
                                             <Folder
-                                                class={`${folderStyles.entryIcon} ${folderStyles.directoryIcon} ${styles.directoryIcon}`}
+                                                class={`${folderStyles.entryIcon} ${folderStyles.entryIconSmall} ${folderStyles.directoryIcon}`}
                                                 aria-hidden="true"
                                             />
                                             <span class={folderStyles.entryName}>{entry.name}</span>
